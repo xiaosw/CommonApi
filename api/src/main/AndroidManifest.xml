@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.xiaosw.api">
+
+    <application>
+
+        <provider android:authorities="com.xiaosw.api.provider.InitAndroidContextProvider"
+            android:name=".provider.InitAndroidContextProvider" />
+
+    </application>
+
+</manifest>

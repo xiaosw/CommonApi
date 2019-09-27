@@ -1,0 +1,21 @@
+ext {
+
+    // 测试
+    junit="junit:junit:$JUNIT_VERSION"
+    androidx_runner="androidx.test:runner:$ANDROIDX_RUNNER_VERSION"
+    androidx_espresso_core="androidx.test.espresso:espresso-core:$ANDROIDX_ESPRESSO_CORE_VERSION"
+    androidx_test = [
+            androidx_runner,
+            androidx_espresso_core
+    ]
+
+    // kotlin
+    kotlin="org.jetbrains.kotlin:kotlin-stdlib-jdk7:$KOTLIN_VERSION"
+
+    // androidx
+    appcompat="androidx.appcompat:appcompat:$APPCOMPAT_VERSION"
+    core_ktx="androidx.core:core-ktx:$CORE_KTX_VERSION"
+
+    google_gson = "com.google.code.gson:gson:${GSON_VERSION}"
+
+}
