@@ -145,6 +145,7 @@ object EnvironmentUtil {
             if (exists()) {
                 if (isFile) {
                     delete()
+                    Logger.i(TAG, "delete file [$absolutePath]")
                     return true
                 } else {
                     Logger.w(TAG, "deleteFile: path [$absolutePath] is dir!")
@@ -167,18 +168,22 @@ object EnvironmentUtil {
     @JvmOverloads
     fun deleteDir(dir: File?) {
         dir?.run{
-            if(exists() && isDirectory) {
-                listFiles()?.forEach {
-                    if(it.isDirectory) {
-                        deleteDir(it) // 递归删除目录
-                    } else {
-                        Logger.i(TAG, "delete file [${it.absolutePath}]")
-                        it.delete() // 删除文件
-                    }
-                }
-                delete() // 删除目录
-                Logger.i(TAG, "delete dir [$absolutePath]")
+            if (!exists()) {
+                return
             }
+            if (isFile) {
+                deleteFile(this)
+                return
+            }
+            listFiles()?.forEach {
+                if(it.isDirectory) {
+                    deleteDir(it) // 递归删除目录
+                } else {
+                    deleteFile(it)
+                }
+            }
+            delete() // 删除目录
+            Logger.i(TAG, "delete dir [$absolutePath]")
         }
     }
 }

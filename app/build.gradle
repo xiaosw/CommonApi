@@ -32,6 +32,7 @@ dependencies {
     implementation rootProject.ext.appcompat
     implementation rootProject.ext.core_ktx
     implementation rootProject.ext.kotlin
+    implementation rootProject.ext.constraint_layout
 
     testImplementation rootProject.ext.junit
     androidTestImplementation rootProject.ext.androidx_test

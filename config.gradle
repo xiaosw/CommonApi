@@ -15,6 +15,7 @@ ext {
     // androidx
     appcompat="androidx.appcompat:appcompat:$APPCOMPAT_VERSION"
     core_ktx="androidx.core:core-ktx:$CORE_KTX_VERSION"
+    constraint_layout="androidx.constraintlayout:constraintlayout:$CONSTRAINT_LAYOUT_VERSION"
 
     // jet pack
     start_up="androidx.startup:startup-runtime:$START_UP_VERSION"

@@ -13,7 +13,7 @@ import android.os.Build
 import android.telephony.TelephonyManager
 import android.text.format.Formatter
 import com.xiaosw.api.AndroidContext
-import com.xiaosw.api.extend.checkPermissionCompat
+import com.xiaosw.api.extend.checkSelfPermissionCompat
 import com.xiaosw.api.extend.tryCatch
 import com.xiaosw.api.logger.Logger
 import java.io.BufferedReader
@@ -67,7 +67,7 @@ object DeviceUtil {
 
                 6//IMSI
                 -> {
-                    if (context.checkPermissionCompat(Manifest.permission.READ_PHONE_STATE)) {
+                    if (context.checkSelfPermissionCompat(Manifest.permission.READ_PHONE_STATE)) {
                         return telephonyManager.subscriberId
                     } else {
                         Logger.e("getPhoneInfo: not granted READ_PHONE_STATE permission!",
@@ -78,7 +78,7 @@ object DeviceUtil {
                 }
                 7// Operating system version
                 -> {
-                    if (context.checkPermissionCompat(Manifest.permission.READ_PHONE_STATE)) {
+                    if (context.checkSelfPermissionCompat(Manifest.permission.READ_PHONE_STATE)) {
                         return telephonyManager.deviceSoftwareVersion
                     } else {
                         Logger.e("getPhoneInfo: not granted READ_PHONE_STATE permission!",
@@ -89,7 +89,7 @@ object DeviceUtil {
                 }
                 8//SIM card serial number
                 -> {
-                    if (context.checkPermissionCompat(Manifest.permission.READ_PHONE_STATE)) {
+                    if (context.checkSelfPermissionCompat(Manifest.permission.READ_PHONE_STATE)) {
                         return telephonyManager.simSerialNumber
                     } else {
                         Logger.e("getPhoneInfo: not granted READ_PHONE_STATE permission!",
@@ -136,7 +136,7 @@ object DeviceUtil {
         val context = AndroidContext.get()
         var hostIp: String? = null
         try {
-            if (!context.checkPermissionCompat(Manifest.permission.ACCESS_NETWORK_STATE)) {
+            if (!context.checkSelfPermissionCompat(Manifest.permission.ACCESS_NETWORK_STATE)) {
                 return ""
             }
             val info = (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).activeNetworkInfo
@@ -163,10 +163,10 @@ object DeviceUtil {
                 }
             } else if (info.type == ConnectivityManager.TYPE_WIFI) {//Currently using a wireless network
                 // 1ms
-                if (!context.checkPermissionCompat(Manifest.permission.ACCESS_WIFI_STATE)) {
+                if (!context.checkSelfPermissionCompat(Manifest.permission.ACCESS_WIFI_STATE)) {
                     return ""
                 }
-                tryCatch {
+                tryCatch(def = null) {
                     val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
                     if (null != wifiManager) {
                         val wifiInfo = wifiManager.connectionInfo

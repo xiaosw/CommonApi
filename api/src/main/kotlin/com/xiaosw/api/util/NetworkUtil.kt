@@ -13,7 +13,6 @@ import android.net.wifi.WifiManager
 import android.os.Parcelable
 import android.telephony.TelephonyManager
 import com.xiaosw.api.AndroidContext
-import com.xiaosw.api.extend.checkPermissionCompat
 import com.xiaosw.api.extend.checkSelfPermissionCompat
 import com.xiaosw.api.logger.Logger
 import java.lang.ref.WeakReference
@@ -53,8 +52,7 @@ object NetworkUtil {
     fun initNetStatus() {
         val context = AndroidContext.get()
         // check permission
-        if (context.checkSelfPermissionCompat(Manifest.permission.ACCESS_NETWORK_STATE)
-            == PackageManager.PERMISSION_GRANTED) {
+        if (context.checkSelfPermissionCompat(Manifest.permission.ACCESS_NETWORK_STATE)) {
             val cm = context
                 .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             if (cm != null) {
@@ -143,7 +141,7 @@ object NetworkUtil {
     @JvmStatic
     fun getNetworkType(): String {
         val context = AndroidContext.get()
-        if (!context.checkPermissionCompat(Manifest.permission.ACCESS_NETWORK_STATE)) {
+        if (!context.checkSelfPermissionCompat(Manifest.permission.ACCESS_NETWORK_STATE)) {
             return ""
         }
         var strNetworkType = ""

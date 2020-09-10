@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import com.xiaosw.api.util.ScreenUtil
 import com.xiaosw.api.util.ToastUtil
 
@@ -14,11 +16,6 @@ import com.xiaosw.api.util.ToastUtil
  * @Date 2019-04-26.
  * @Author xiaosw<xiaosw0802@163.com>.
  */
-inline fun Context.checkSelfPermissionCompat(permission: String) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-    checkSelfPermission(permission)
-} else {
-    PackageManager.PERMISSION_GRANTED
-}
 
 /**
  * @ClassName {@link Context}
@@ -46,14 +43,21 @@ inline  fun Context.showToast(textId: Int,
                                     duration: Int = Toast.LENGTH_SHORT)
         = ToastUtil.showToast(this, textId, duration)
 
-fun Context.checkPermissionCompat(vararg permissions: String) : Boolean {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+fun Context?.checkSelfPermissionCompat(vararg permissions: String) : Boolean {
+    this?.let {
+        val isM = applicationInfo.targetSdkVersion >= Build.VERSION_CODES.M
         for (permission in permissions) {
-            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            if (isM) {
+                if (ContextCompat.checkSelfPermission(this, permission)
+                            != PackageManager.PERMISSION_GRANTED) {
+                    return false
+                }
+            } else if (PermissionChecker.checkSelfPermission(this, permission)
+                != PermissionChecker.PERMISSION_GRANTED) {
                 return false
             }
         }
         return true
     }
-    return true
+    return false
 }
