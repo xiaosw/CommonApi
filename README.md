@@ -12,15 +12,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.xiaosw:CommonApi:1.0.0'
+    implementation 'com.github.xiaosw:CommonApi:1.0.0'
 }
 ```
  
 ## FAQ
-如果设备多个项目引用 [CommonApi](https://github.com/xiaosw/CommonApi) 导致安装失败，可使用以下配置解决：
-```xml
-<provider
-    android:authorities="you package.provider.InitAndroidContextProvider"
-    android:name="com.xiaosw.api.provider.InitAndroidContextProvider"
-    tools:replace="android:authorities"/>
-```

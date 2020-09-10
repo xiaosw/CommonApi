@@ -1,10 +1,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.xiaosw.api">
 
     <application>
 
-        <provider android:authorities="com.xiaosw.api.provider.InitAndroidContextProvider"
-            android:name=".provider.InitAndroidContextProvider" />
+        <provider
+            android:authorities="${applicationId}.androidx-startup"
+            android:name="androidx.startup.InitializationProvider"
+            android:exported="false"
+            tools:node="merge">
+
+            <meta-data android:value="androidx.startup"
+                android:name="com.xiaosw.api.init.AppInitializer"/>
+
+        </provider>
 
     </application>
 
