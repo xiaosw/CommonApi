@@ -47,6 +47,9 @@ fun Context?.checkSelfPermissionCompat(vararg permissions: String) : Boolean {
     this?.let {
         val isM = applicationInfo.targetSdkVersion >= Build.VERSION_CODES.M
         for (permission in permissions) {
+            if (permission.isNull(true)) {
+                continue
+            }
             if (isM) {
                 if (ContextCompat.checkSelfPermission(this, permission)
                             != PackageManager.PERMISSION_GRANTED) {

@@ -2,10 +2,17 @@ package com.xiaosw.api.manager
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.os.Bundle
+import android.os.SystemClock
+import com.xiaosw.api.AndroidContext
+import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.showToast
 import com.xiaosw.api.logger.Logger
+import com.xiaosw.api.util.AppUtils
 import java.lang.ref.WeakReference
+import java.util.concurrent.CopyOnWriteArraySet
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.system.exitProcess
 
 /**
@@ -20,12 +27,23 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
      private val mActivityList by lazy {
         mutableListOf<WeakReference<Activity?>>()
     }
+
+    private val mAppLifecycleListeners by lazy {
+        CopyOnWriteArraySet<WeakReference<AppLifecycleListener>>()
+    }
+
     private var mCurrentActivityRef: WeakReference<Activity?>? = null
 
     private var mLastClickExitTime = 0L
 
     var topActivity: Activity? = null
         get() = mCurrentActivityRef?.get()
+
+    private var mActiveStartTime = 0L
+
+    private val mIsAppForeground by lazy {
+        AtomicBoolean()
+    }
 
     internal fun init(app: Application?) {
         app?.let {
@@ -45,13 +63,13 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityResumed(activity: Activity?) {
+        Logger.d("onActivityResumed: activity = $activity, top activity = $topActivity")
+        notifyAppForegroundIfNeeded()
         if (mCurrentActivityRef == null
             || mCurrentActivityRef?.get() == null
             || mCurrentActivityRef?.get() != activity) {
             mCurrentActivityRef = WeakReference(activity)
         }
-        Logger.d("onActivityResumed: activity = $activity")
-        Logger.d("onActivityResumed: top activity = $topActivity")
     }
 
     override fun onActivityPaused(activity: Activity?) {
@@ -64,6 +82,7 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityStopped(activity: Activity?) {
         Logger.d("onActivityStopped: $activity")
+        notifyAppBackgroundIfNeeded(activity)
     }
 
     override fun onActivityDestroyed(activity: Activity?) {
@@ -75,6 +94,33 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
             mActivityList.clear()
             mActivityList.addAll(it)
         }
+    }
+
+    fun registerAppLifecycleListener(listener: AppLifecycleListener?) {
+        listener?.let { newElement ->
+            mAppLifecycleListeners.indexOfFirst { old ->
+                newElement == old?.get()
+            }.also {
+                if (it < 0) {
+                    mAppLifecycleListeners.add(WeakReference(newElement))
+                }
+            }
+        }
+    }
+
+    fun unregisterAppLifecycleListener(listener: AppLifecycleListener?) {
+        mAppLifecycleListeners.forEach {
+            if (it?.get() == listener) {
+                mAppLifecycleListeners.remove(it)
+            }
+        }
+    }
+
+    fun clearAppLifecycleListener(listener: AppLifecycleListener?) {
+        if (mAppLifecycleListeners.isNull(false)) {
+            return
+        }
+        mAppLifecycleListeners?.clear()
     }
 
     @JvmOverloads
@@ -101,7 +147,7 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
     @JvmStatic
     fun doubleClickExitApp(prompt: String) {
         with(System.currentTimeMillis()) {
-            if ((this - mLastClickExitTime) > 1500) {
+            if ((this - mLastClickExitTime) > 2000) {
                 topActivity?.showToast(prompt)
                 mLastClickExitTime = this
             } else {
@@ -110,4 +156,55 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
         }
     }
 
+    private inline fun notifyAppForegroundIfNeeded() {
+        if (mIsAppForeground.get()) {
+            return
+        }
+        mAppLifecycleListeners?.forEach {
+            it?.get()?.run {
+                onAppForeground()
+            }
+        }
+        mActiveStartTime = SystemClock.elapsedRealtime()
+        mIsAppForeground.compareAndSet(false, true)
+    }
+
+    private inline fun notifyAppBackgroundIfNeeded(context: Context?) {
+        var ctx = context
+        if (ctx.isNull()) {
+            ctx = AndroidContext.get()
+        }
+        if (ctx.isNull() || !mIsAppForeground.get()) {
+            return
+        }
+        AppUtils.isAppForeground(ctx, object : AppUtils.CallBack() {
+            override fun callBack(isForeground: Boolean) {
+               if (!isForeground) {
+                   val activeTime = SystemClock.elapsedRealtime() - mActiveStartTime
+                   mAppLifecycleListeners?.forEach {
+                       it?.get()?.onAppBackground(activeTime)
+                   }
+                   mActiveStartTime = 0L
+                   mIsAppForeground.compareAndSet(true, false)
+               }
+            }
+        })
+    }
+
+    /**
+     * App 前后台切换监听
+     */
+    interface AppLifecycleListener {
+        /**
+         * app 进入前台
+         */
+        fun onAppForeground()
+
+        /**
+         * App 进入后台
+         * @param activeTime milliseconds
+         */
+        fun onAppBackground(activeTime: Long)
+
+    }
 }

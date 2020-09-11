@@ -54,12 +54,16 @@ object ThreadManager {
         }
     }
 
+    @JvmStatic
     fun submit(@ThreadType type: Int = THREAD_TYPE_WORK, task: Runnable) = executor(type).submit(task)
 
+    @JvmStatic
     fun <T> submit(@ThreadType type: Int = THREAD_TYPE_WORK, task: Callable<T>) = executor(type).submit<T>(task)
 
+    @JvmStatic
     fun execute(@ThreadType type: Int = THREAD_TYPE_WORK, task: Runnable) = executor(type).execute(task)
 
+    @JvmStatic
     fun isShutdown(@ThreadType type: Int) : Boolean {
         return when(type) {
             THREAD_TYPE_WORK -> {
@@ -74,6 +78,7 @@ object ThreadManager {
         }
     }
 
+    @JvmStatic
     fun shutdown(@ThreadType type: Int) {
         when(type) {
             THREAD_TYPE_WORK -> {
@@ -88,6 +93,7 @@ object ThreadManager {
         }
     }
 
+    @JvmStatic
     fun shutdownNow(@ThreadType type: Int) {
         when(type) {
             THREAD_TYPE_WORK -> {
@@ -116,6 +122,7 @@ object ThreadManager {
         }
     }
 
+    @JvmStatic
     fun release() {
         try {
             mLook.lock()
@@ -128,7 +135,6 @@ object ThreadManager {
         }
     }
 
-    private const val TAG = "ThreadManager"
     const val THREAD_TYPE_WORK = 1
     const val THREAD_TYPE_IO = 2
 
