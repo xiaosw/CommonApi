@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.Keep
 import androidx.startup.Initializer
 import com.xiaosw.api.AndroidContext
+import com.xiaosw.api.manager.DensityManager
 
 /**
  * @ClassName [AppInitializer]
@@ -17,6 +18,7 @@ internal class AppInitializer : Initializer<Unit> {
 
     override fun create(context: Context) {
         AndroidContext.init(context)
+        DensityManager.init(context)
     }
 
     override fun dependencies(): MutableList<Class<out Initializer<Any>>> {
