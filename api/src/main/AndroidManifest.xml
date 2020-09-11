@@ -7,6 +7,10 @@
 
     <application>
 
+        <meta-data android:name="APP_BASE_DP" android:value="@dimen/base_dp" />
+        <meta-data android:name="APP_BASE_DP_BY_WIDTH" android:value="true"/>
+        <meta-data android:name="APP_BASE_DP_ENABLE" android:value="true"/>
+
         <provider
             android:authorities="${applicationId}.androidx-startup"
             android:name="androidx.startup.InitializationProvider"

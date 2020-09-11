@@ -44,9 +44,9 @@ object DensityManager {
      */
     private var mOriginalDensityDpi = 0
 
-    private val mAutoAdjustDensityAnnotation by lazy {
-        javaClass.getAnnotation(AutoAdjustDensity::class.java) as AutoAdjustDensity
-    }
+    private var mBaseDp = 0f
+    private var mBaseDpByWidth = true
+    private var mBaseDpEnable = true
 
     private val mThirdAutoAdjustPageWhiteList by lazy {
         CopyOnWriteArraySet<Class<out Activity>?>()
@@ -99,16 +99,19 @@ object DensityManager {
 
     @JvmStatic
     @JvmOverloads
-    fun init(context: Context) {
+    internal fun init(context: Context, baseDp: Float, baseDpByWidth: Boolean, baseDpEnable: Boolean = true) {
         synchronized(this) {
             if (isInitialization.get()) {
                 return
             }
-            context?.let { ctx ->
-                mOriginalDensity = ctx.resources.displayMetrics.density
-                mOriginalScaledDensity = ctx.resources.displayMetrics.scaledDensity
-                mOriginalDensityDpi = ctx.resources.displayMetrics.densityDpi
-                mApp = (ctx.applicationContext as Application).also { app ->
+            mBaseDp = baseDp
+            mBaseDpByWidth = baseDpByWidth
+            mBaseDpEnable = baseDpEnable
+            with(context) {
+                mOriginalDensity = resources.displayMetrics.density
+                mOriginalScaledDensity = resources.displayMetrics.scaledDensity
+                mOriginalDensityDpi = resources.displayMetrics.densityDpi
+                mApp = (applicationContext as Application).also { app ->
                     app.registerComponentCallbacks(mComponentCallbacks)
                     app.registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks)
                 }
@@ -118,14 +121,30 @@ object DensityManager {
 
     private fun adjustDensityIfNeeded(activity: Activity?) {
         activity?.javaClass?.run {
-            var annotation = getAnnotation(AutoAdjustDensity::class.java)
-            if (null == annotation && mThirdAutoAdjustPageWhiteList.contains(this)) {
-                annotation = mAutoAdjustDensityAnnotation
+            var baseDp = 0f
+            var baseDpByWidth = true
+
+            // @AutoAdjustDensity 注解优先级最高
+            getAnnotation(AutoAdjustDensity::class.java)?.let {
+                baseDp = it.baseDp
+                baseDpByWidth = it.baseDpByWidth
             }
-            annotation?.run {
-                modifyDisplayMetrics(mApp, baseDp, baseDpByWidth)
-                modifyDisplayMetrics(activity, baseDp, baseDpByWidth)
+
+            if (baseDp < 0) {
+                if (mBaseDpEnable // 全局配置
+                    || mThirdAutoAdjustPageWhiteList.contains(this) // 白名单配置
+                ) {
+                    baseDp = mBaseDp
+                    baseDpByWidth = mBaseDpByWidth
+                }
             }
+
+            if (baseDp <= 0) {
+                return
+            }
+
+            modifyDisplayMetrics(mApp, baseDp, baseDpByWidth)
+            modifyDisplayMetrics(activity, baseDp, baseDpByWidth)
         }
     }
 
