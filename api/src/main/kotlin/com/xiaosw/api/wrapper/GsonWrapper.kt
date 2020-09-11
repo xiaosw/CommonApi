@@ -1,12 +1,10 @@
 package com.xiaosw.api.wrapper
 
 import android.text.TextUtils
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.xiaosw.api.logger.Logger
 import org.json.JSONArray
 import org.json.JSONObject
-import java.lang.ref.SoftReference
 import java.lang.reflect.Type
 
 /**
@@ -23,21 +21,10 @@ object GsonWrapper {
             "══════════════════════════════════════════"
 
 
-    private var sGsonRef: SoftReference<Gson> = SoftReference(buildGson())
-
     private inline fun buildGson() = GsonBuilder().disableHtmlEscaping().create()
 
     @JvmStatic
-    fun gson() : Gson {
-        if (null == sGsonRef.get() || sGsonRef.get() == null) {
-            synchronized(this)     {
-                if (null == sGsonRef || sGsonRef.get() == null) {
-                    sGsonRef = SoftReference(buildGson())
-                }
-            }
-        }
-        return sGsonRef.get()!!
-    }
+    fun gson() = buildGson()
 
     @JvmStatic
     fun <T> fromJson(json: String, clazz: Class<T>) : T = gson().fromJson(json, clazz)

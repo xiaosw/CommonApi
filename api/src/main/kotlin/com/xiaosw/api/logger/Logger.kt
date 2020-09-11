@@ -1,7 +1,7 @@
 package com.xiaosw.api.logger
 
 import android.util.Log
-import com.xiaosw.api.config.AppConfig
+import com.xiaosw.api.wrapper.GsonWrapper
 
 /**
  * @ClassName [Logger]
@@ -19,52 +19,64 @@ object Logger {
 
     /** 日志 tag 格式 */
     const val TAG_FORMAT = "%s.%s:L%d"
-    val LOG_UTILS_CLASS by lazy {
+    val LOG_UTILS_CLASS: String by lazy {
         Logger::class.java.name
-    }
-
-    private val sMessage by lazy {
-        mutableListOf<String>()
     }
 
     var mPreTag = ""
         private set
     private var mLogLevel = LogLevel.DEBUG
 
-    fun init(logLevel: LogLevel, preTag: String = "xiaosw-") {
+    @JvmStatic
+    @JvmOverloads
+    fun init(logLevel: LogLevel, preTag: String = "xsw-") {
         mLogLevel = logLevel
         mPreTag = preTag
     }
 
     @JvmStatic
-    inline fun findTag() : String {
-        var lastClassIsLogUtils= false
-        Thread.currentThread().stackTrace.forEach {
-            with(it.className == LOG_UTILS_CLASS) {
-                if (!this && lastClassIsLogUtils) { // Target Class
-                    val className = it.className
-                    val simpleName = className.substring(className.lastIndexOf(".") + 1)
-                    return TAG_FORMAT.format("$mPreTag$simpleName", it.methodName, it.lineNumber)
+    fun findTag() : String {
+        with(Thread.currentThread().stackTrace) {
+            var traceOffset = -1
+            var lastClassIsLogUtils= false
+            for (position in 0 until size) {
+                val e: StackTraceElement = get(position)
+                val isLogUtils = e.className == LOG_UTILS_CLASS
+                if (!isLogUtils && lastClassIsLogUtils) { // Target Class
+                    traceOffset = position
+                    break
                 }
-                lastClassIsLogUtils = this
+                lastClassIsLogUtils = isLogUtils
+            }
+            if (traceOffset === -1) {
+                return mPreTag
+            }
+            with(get(traceOffset)) {
+                var stackTrace: String = toString()
+                stackTrace = stackTrace.substring(stackTrace.lastIndexOf(40.toChar()), stackTrace.length)
+                var tag = "%s.%s%s"
+                var callerClazzName: String = className
+                callerClazzName = callerClazzName.substring(callerClazzName.lastIndexOf(".") + 1)
+                return String.format(tag, "$mPreTag$callerClazzName", methodName, stackTrace)
             }
         }
         return mPreTag
     }
 
-    private inline fun splitMessageIfNeeded(message: String) : MutableList<String> {
-        sMessage.clear()
-        var msg = message
-        while (msg.length > MAX_MESSAGE_LEN) {
-            sMessage.add(msg.substring(0,
-                MAX_MESSAGE_LEN
-            ))
-            msg = msg.substring(MAX_MESSAGE_LEN)
+
+    private inline fun splitMessageIfNeeded(message: String?) : MutableList<String> {
+        val messages = mutableListOf<String>()
+        message?.let {
+            var msg = it
+            while (msg.length > MAX_MESSAGE_LEN) {
+                messages.add(msg.substring(0, MAX_MESSAGE_LEN))
+                msg = msg.substring(MAX_MESSAGE_LEN)
+            }
+            if (msg.isNotEmpty()) {
+                messages.add(msg)
+            }
         }
-        if (msg.isNotEmpty()) {
-            sMessage.add(msg)
-        }
-        return sMessage
+        return messages
     }
 
     @JvmStatic
@@ -72,13 +84,13 @@ object Logger {
 
     @JvmStatic
     @JvmOverloads
-    fun println(message: String, isError: Boolean = false) {
-        if (AppConfig.isDebug && mLogLevel.value <= Log.VERBOSE) {
+    fun println(message: String?, isError: Boolean = false) {
+        if (mLogLevel.value <= Log.VERBOSE) {
             splitMessageIfNeeded(message).forEach {
                 if (isError) {
-                    System.err.println(it)
+                    System.err.println(GsonWrapper.formatJsonToLog(it))
                 } else {
-                    println(it)
+                    println(GsonWrapper.formatJsonToLog(it))
                 }
             }
         }
@@ -86,60 +98,71 @@ object Logger {
 
     @JvmStatic
     @JvmOverloads
-    fun v(message: String, tag: String = findTag(), throwable: Throwable? = null) {
-        if (AppConfig.isDebug && mLogLevel.value <= Log.VERBOSE) {
+    fun v(message: String?, tag: String = findTag(), throwable: Throwable? = null) {
+        if (mLogLevel.value <= Log.VERBOSE) {
             splitMessageIfNeeded(message).forEach {
                 throwable?.run {
-                    Log.v(tag, it, this)
-                } ?: Log.v(tag, it)
+                    Log.v(tag, GsonWrapper.formatJsonToLog(it), this)
+                } ?: Log.v(tag, GsonWrapper.formatJsonToLog(it))
             }
         }
     }
 
     @JvmStatic
     @JvmOverloads
-    fun d(message: String, tag: String = findTag(), throwable: Throwable? = null) {
-        if (AppConfig.isDebug && mLogLevel.value <= Log.DEBUG) {
+    fun d(message: String?, tag: String = findTag(), throwable: Throwable? = null) {
+        if (mLogLevel.value <= Log.DEBUG) {
             splitMessageIfNeeded(message).forEach {
                 throwable?.run {
-                    Log.d(tag, it, this)
-                } ?: Log.d(tag, it)
+                    Log.d(tag, GsonWrapper.formatJsonToLog(it), this)
+                } ?: Log.d(tag, GsonWrapper.formatJsonToLog(it))
             }
         }
     }
 
     @JvmStatic
     @JvmOverloads
-    fun i(message: String, tag: String = findTag(), throwable: Throwable? = null) {
-        if (AppConfig.isDebug && mLogLevel.value <= Log.INFO) {
+    fun i(message: String?, tag: String = findTag(), throwable: Throwable? = null) {
+        if (mLogLevel.value <= Log.INFO) {
             splitMessageIfNeeded(message).forEach {
                 throwable?.run {
-                    Log.i(tag, it, this)
-                } ?: Log.i(tag, it)
+                    Log.i(tag, GsonWrapper.formatJsonToLog(it), this)
+                } ?: Log.i(tag, GsonWrapper.formatJsonToLog(it))
             }
         }
     }
 
     @JvmStatic
     @JvmOverloads
-    fun w(message: String, tag: String = findTag(), throwable: Throwable? = null) {
-        if (AppConfig.isDebug && mLogLevel.value <= Log.WARN) {
+    fun w(message: String?, tag: String = findTag(), throwable: Throwable? = null) {
+        if (mLogLevel.value <= Log.WARN) {
             splitMessageIfNeeded(message).forEach {
                 throwable?.run {
-                    Log.w(tag, it, this)
-                } ?: Log.w(tag, it)
+                    Log.w(tag, GsonWrapper.formatJsonToLog(it), this)
+                } ?: Log.w(tag, GsonWrapper.formatJsonToLog(it))
             }
         }
     }
 
     @JvmStatic
     @JvmOverloads
-    fun e(message: String, tag: String = findTag(), throwable: Throwable? = null) {
-        if (AppConfig.isDebug && mLogLevel.value <= Log.ERROR) {
-            splitMessageIfNeeded(message).forEach {
-                throwable?.run {
-                    Log.e(tag, it, this)
-                } ?: Log.e(tag, it)
+    fun e(message: String? = "", tag: String = findTag(), throwable: Throwable? = null) {
+        message?.let {
+            if (mLogLevel.value <= Log.ERROR) {
+                splitMessageIfNeeded(message).forEach {
+                    throwable?.run {
+                        Log.e(tag, GsonWrapper.formatJsonToLog(it), this)
+                    } ?: Log.e(tag, GsonWrapper.formatJsonToLog(it))
+                }
+            }
+        }
+    }
+
+    @JvmStatic
+    fun e(throwable: Throwable? = null) {
+        if (mLogLevel.value <= Log.ERROR) {
+            throwable?.run {
+                Log.e(findTag(), "", this)
             }
         }
     }

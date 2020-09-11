@@ -29,7 +29,7 @@ object AppConfig {
     var isDebug = false
         set(value) {
             field = value
-            Logger.init(if (field) Logger.LogLevel.VERBOSE else Logger.LogLevel.NONE)
+            Logger.init(if (field) Logger.LogLevel.VERBOSE else Logger.LogLevel.NONE, "xsw---> ")
             NetworkUtil.init()
         }
 
