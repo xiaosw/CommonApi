@@ -53,16 +53,16 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
 
     }
 
-    override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         mActivityList.add(WeakReference(activity))
         Logger.d("onActivityCreated: activity = $activity")
     }
 
-    override fun onActivityStarted(activity: Activity?) {
+    override fun onActivityStarted(activity: Activity) {
         Logger.d("onActivityStarted: activity = $activity")
     }
 
-    override fun onActivityResumed(activity: Activity?) {
+    override fun onActivityResumed(activity: Activity) {
         Logger.d("onActivityResumed: activity = $activity, top activity = $topActivity")
         notifyAppForegroundIfNeeded()
         if (mCurrentActivityRef == null
@@ -72,20 +72,20 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
         }
     }
 
-    override fun onActivityPaused(activity: Activity?) {
+    override fun onActivityPaused(activity: Activity) {
         Logger.d("onActivityPaused: $activity")
     }
 
-    override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
         Logger.d("onActivitySaveInstanceState: $activity")
     }
 
-    override fun onActivityStopped(activity: Activity?) {
+    override fun onActivityStopped(activity: Activity) {
         Logger.d("onActivityStopped: $activity")
         notifyAppBackgroundIfNeeded(activity)
     }
 
-    override fun onActivityDestroyed(activity: Activity?) {
+    override fun onActivityDestroyed(activity: Activity) {
         Logger.d("onActivityDestroyed: activity = $activity")
         mActivityList.filter {
             val act = it?.get()

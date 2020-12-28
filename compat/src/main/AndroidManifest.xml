@@ -1,0 +1,15 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.xsw.compat" >
+
+    <application>
+        <activity android:name=".start.bridge.StartBridgeActivity"
+            android:theme="@style/StartBridge"
+            android:excludeFromRecents="true"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:taskAffinity=":StartBridgeActivity"
+            android:exported="false"/>
+    </application>
+
+</manifest>

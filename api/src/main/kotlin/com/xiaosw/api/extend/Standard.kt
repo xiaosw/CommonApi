@@ -5,6 +5,7 @@ import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.logger.report.ReportManager
 import com.xiaosw.api.util.EnvironmentUtil
 import java.io.File
+import java.lang.Exception
 import kotlin.jvm.internal.Intrinsics
 
 
@@ -23,12 +24,15 @@ import kotlin.jvm.internal.Intrinsics
 inline fun <T, R> T.tryCatch(
     errorMessage: String = ""
     , def: R? = null
+    , showException: Boolean = true
     , block: (T) -> R
 ) : R? {
     try {
         return block(this)
     } catch (e: Throwable) {
-        Logger.e("tryCatch: errorMessage = $errorMessage", throwable = e)
+        if (showException) {
+            Logger.e("tryCatch: errorMessage = $errorMessage", throwable = e)
+        }
     }
     return def
 }

@@ -79,7 +79,7 @@ object DeviceUtil {
                 7// Operating system version
                 -> {
                     if (context.checkSelfPermissionCompat(Manifest.permission.READ_PHONE_STATE)) {
-                        return telephonyManager.deviceSoftwareVersion
+                        return telephonyManager.deviceSoftwareVersion + ""
                     } else {
                         Logger.e("getPhoneInfo: not granted READ_PHONE_STATE permission!",
                             TAG
