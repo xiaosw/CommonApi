@@ -45,6 +45,10 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
         AtomicBoolean()
     }
 
+    private val isFirstLauncher by lazy {
+        AtomicBoolean(true)
+    }
+
     internal fun init(app: Application?) {
         app?.let {
             it.unregisterActivityLifecycleCallbacks(this)
@@ -162,11 +166,12 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
         }
         mAppLifecycleListeners?.forEach {
             it?.get()?.run {
-                onAppForeground()
+                onAppForeground(isFirstLauncher.get())
             }
         }
         mActiveStartTime = SystemClock.elapsedRealtime()
         mIsAppForeground.compareAndSet(false, true)
+        isFirstLauncher.compareAndSet(true, false)
     }
 
     private inline fun notifyAppBackgroundIfNeeded(context: Context?) {
@@ -198,7 +203,7 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
         /**
          * app 进入前台
          */
-        fun onAppForeground()
+        fun onAppForeground(isFirstLauncher: Boolean)
 
         /**
          * App 进入后台

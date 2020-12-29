@@ -43,8 +43,8 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         })
     }
 
-    override fun onAppForeground() {
-        Logger.i("onAppForeground")
+    override fun onAppForeground(isFirstLauncher: Boolean) {
+        Logger.i("onAppForeground: $isFirstLauncher")
     }
 
     override fun onAppBackground(activeTime: Long) {
