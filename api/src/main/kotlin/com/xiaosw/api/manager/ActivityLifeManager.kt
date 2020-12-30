@@ -86,6 +86,9 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityStopped(activity: Activity) {
         Logger.d("onActivityStopped: $activity")
+        if (mCurrentActivityRef?.get() == activity) {
+            return
+        }
         notifyAppBackgroundIfNeeded(activity)
     }
 
