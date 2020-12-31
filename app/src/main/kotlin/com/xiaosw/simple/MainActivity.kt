@@ -14,7 +14,9 @@ import com.xiaosw.api.annotation.AutoAdjustDensity
 import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.manager.ActivityLifeManager
 import com.xiaosw.api.manager.DensityManager
+import com.xiaosw.api.util.FpsMonitor
 import com.xsw.compat.start.StartManager
+import kotlinx.android.synthetic.main.activity_main.*
 
 /**
  * @ClassName: [MainActivity]
@@ -26,21 +28,32 @@ import com.xsw.compat.start.StartManager
 @AutoAdjustDensity(baseDp = 360f, baseDpByWidth = true)
 class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListener {
 
+    private val mFpsCallback by lazy {
+        object : FpsMonitor.OnFpsMonitorListener {
+            override fun onFpsMonitor(fps: Int) {
+                Logger.i("fps: $fps")
+                tv_fps.text = "FPS:$fps"
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         DensityManager.addThirdAutoAdjustPage(javaClass)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         ActivityLifeManager.registerAppLifecycleListener(this)
 
-        registerReceiver(object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                val result = StartManager.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("pinduoduo://")))
-                Logger.i("result = $result")
-            }
+//        registerReceiver(object : BroadcastReceiver() {
+//            override fun onReceive(context: Context?, intent: Intent?) {
+//                val result = StartManager.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("pinduoduo://")))
+//                Logger.i("result = $result")
+//            }
+//
+//        }, IntentFilter().also {
+//            it.addAction(Intent.ACTION_SCREEN_OFF)
+//        })
 
-        }, IntentFilter().also {
-            it.addAction(Intent.ACTION_SCREEN_OFF)
-        })
+        FpsMonitor.start(mFpsCallback)
     }
 
     override fun onAppForeground(isFirstLauncher: Boolean) {
