@@ -1,5 +1,7 @@
 package com.xiaosw.api.extend
 
+import android.app.Activity
+import android.content.Context
 import android.os.Build
 import android.text.Html
 import android.text.TextUtils
@@ -68,3 +70,31 @@ inline fun TextView.isEmpty(isTrim: Boolean = false) : Boolean {
 
 @JvmOverloads
 inline fun TextView.isNotEmpty(isTrim: Boolean = false) = !isEmpty(isTrim)
+
+inline fun View.findActivity() : Activity? {
+    if (isNull() || context.isNull()) {
+        return null
+    }
+    var ctx = context
+    if (context.javaClass.name.contains("com.android.internal.policy.DecorContext")) {
+        tryCatch {
+            val mPhoneWindowField = context.javaClass.getDeclaredField("mPhoneWindow")
+            if (mPhoneWindowField.isNull()) {
+                return null
+            }
+            mPhoneWindowField.isAccessible = true
+            val mPhoneWindow = mPhoneWindowField.get(it)
+            if (mPhoneWindow.isNull()) {
+                return null
+            }
+            val getContextMethod = mPhoneWindow.javaClass.getDeclaredMethod("getContext")
+            if (getContextMethod.isNull()) {
+                return null
+            }
+            (getContextMethod.invoke(mPhoneWindow) as? Context)?.let { getContext ->
+                ctx = getContext
+            }
+        }
+    }
+    return ctx?.findActivity() ?: null
+}

@@ -1,11 +1,14 @@
 package com.xiaosw.api.extend
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
+import androidx.fragment.app.FragmentActivity
 import com.xiaosw.api.util.ScreenUtil
 import com.xiaosw.api.util.ToastUtil
 
@@ -63,4 +66,32 @@ fun Context?.checkSelfPermissionCompat(vararg permissions: String) : Boolean {
         return true
     }
     return false
+}
+
+fun Context?.findActivity() : Activity? {
+    if (isNull()) {
+        return null
+    }
+    if (this is Activity) {
+        return this
+    }
+    if (this is ContextWrapper) {
+        return baseContext.findActivity()
+    }
+    return null
+}
+
+fun Context?.isDestroyed() : Boolean {
+    val activity = findActivity()
+    if (activity.isNull()) {
+        return true
+    }
+    var isDestroyed = false
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        isDestroyed = activity!!.isDestroyed
+    }
+    (activity as? FragmentActivity)?.let {
+        isDestroyed = it.isDestroyed
+    }
+    return isDestroyed
 }
