@@ -10,6 +10,12 @@
         <meta-data android:name="APP_BASE_DP" android:value="@dimen/base_dp" />
         <meta-data android:name="APP_BASE_DP_BY_WIDTH" android:value="true"/>
         <meta-data android:name="APP_BASE_DP_ENABLE" android:value="true"/>
+        <meta-data android:name="AUTO_UNREGISTER_ACTIVITY_RECEIVER" android:value="true"/>
+        <meta-data android:name="ACTIVITY_NOT_REGISTER_ENABLE" android:value="true"/>
+
+        <activity android:name=".proxy.StandardActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="standard"/>
 
         <provider
             android:authorities="${applicationId}.androidx-startup"

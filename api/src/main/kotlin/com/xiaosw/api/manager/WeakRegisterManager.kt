@@ -50,4 +50,14 @@ class WeakRegisterManager<T> {
         }
     }
 
+    interface IRegisterManager<T> {
+
+        fun register(t: T)
+
+        fun unregister(t: T)
+
+        fun clear()
+
+    }
+
 }

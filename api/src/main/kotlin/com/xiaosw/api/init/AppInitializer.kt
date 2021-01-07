@@ -7,7 +7,8 @@ import androidx.startup.Initializer
 import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.BuildConfig
 import com.xiaosw.api.config.AppConfig
-import com.xiaosw.api.manager.HookActivityManager
+import com.xiaosw.api.hook.HookManager
+import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.manager.DensityManager
 import com.xiaosw.api.manager.ThreadManager
 
@@ -32,7 +33,12 @@ class AppInitializer : Initializer<Unit> {
                         , metaData.getBoolean("APP_BASE_DP_BY_WIDTH")
                         , metaData.getBoolean("APP_BASE_DP_ENABLE"))
                     if (metaData.getBoolean("AUTO_UNREGISTER_ACTIVITY_RECEIVER")) {
-                        HookActivityManager.hook()
+                        val result = HookManager.autoManagerReceiver()
+                        Logger.e("autoManagerReceiver: $result")
+                    }
+                    if (metaData.getBoolean("ACTIVITY_NOT_REGISTER_ENABLE")) {
+                        val result = HookManager.enableActivityNotRegister()
+                        Logger.e("enableActivityNotRegister: $result")
                     }
                 }
         })

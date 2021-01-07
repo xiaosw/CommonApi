@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -14,6 +15,7 @@ import com.xiaosw.api.annotation.AutoAdjustDensity
 import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.manager.ActivityLifeManager
 import com.xiaosw.api.manager.DensityManager
+import com.xiaosw.api.proxy.StandardActivity
 import com.xiaosw.api.util.FpsMonitor
 import com.xsw.compat.start.StartManager
 import kotlinx.android.synthetic.main.activity_main.*
@@ -31,7 +33,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
     private val mFpsCallback by lazy {
         object : FpsMonitor.OnFpsMonitorListener {
             override fun onFpsMonitor(fps: Int) {
-                Logger.i("fps: $fps")
+//                Logger.i("fps: $fps")
                 tv_fps.text = "FPS:$fps"
             }
         }
@@ -54,6 +56,10 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         })
 
         FpsMonitor.start(mFpsCallback)
+
+        tv_text.setOnClickListener {
+            startActivity(Intent(this, NotRegisterActivity::class.java))
+        }
     }
 
     override fun onAppForeground(isFirstLauncher: Boolean) {

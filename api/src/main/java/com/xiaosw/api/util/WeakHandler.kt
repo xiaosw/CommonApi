@@ -153,7 +153,7 @@ class WeakHandler(looper: Looper?, private val callback: Handler.Callback? = nul
         override fun run() {
             mChainedRef?.get()?.remove()
             with(mDelegate?.get()) {
-                Logger.i("weak runnable run: $this")
+                Logger.v("weak runnable run: $this")
                 this?.run()
             }
         }
