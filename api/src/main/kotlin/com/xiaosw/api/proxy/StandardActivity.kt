@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
  * Created by admin at 2021-01-07
  * @Email xiaosw0802@163.com
  */
-class StandardActivity : AppCompatActivity() {
+internal class StandardActivity : AppCompatActivity() {
 
 
 

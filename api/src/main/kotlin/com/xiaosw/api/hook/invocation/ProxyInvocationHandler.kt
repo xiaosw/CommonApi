@@ -13,20 +13,21 @@ import java.lang.reflect.Method
  * @Email xiaosw0802@163.com
  */
 internal class ProxyInvocationHandler(
-    private val target: Any? = null,
+    private val target: Any? = null
 ) : InvocationHandler, WeakRegisterManager.IRegisterManager<InvocationHandlerIntercept> {
 
     private val mIntercepts = WeakRegisterManager<InvocationHandlerIntercept>()
 
-    override fun invoke(proxy: Any?, method: Method, args: Array<out Any?>) : Any? {
-        printInvokeLog(method, args)
+    override fun invoke(proxy: Any?, method: Method, args: Array<Any?>?) : Any? {
+        val arguments = args ?: emptyArray()
+        printInvokeLog(method, arguments)
         val realProxy = target ?: proxy
         mIntercepts?.forEach { intercept ->
             tryCatch(showException = false) {
-                intercept?.interceptInvoke(realProxy, method.name, args)
+                intercept?.interceptInvoke(realProxy, method.name, arguments)
             }
         }
-        return method.invoke(realProxy, *args)
+        return method.invoke(realProxy, *arguments)
     }
 
     override fun register(intercept: InvocationHandlerIntercept)
@@ -49,7 +50,7 @@ internal class ProxyInvocationHandler(
                     sb.append(", ")
                 }
             }
-            Logger.i("invoke: ${method.name}, $sb")
+            Logger.e("invoke: ${method.name}, $sb", "ProxyInvocationHandler")
         }
     }
 

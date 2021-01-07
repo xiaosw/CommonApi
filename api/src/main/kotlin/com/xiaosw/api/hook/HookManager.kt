@@ -1,6 +1,7 @@
 package com.xiaosw.api.hook
 
 import com.xiaosw.api.hook.intercept.ActivityNotRegisterInvocationIntercept
+import com.xiaosw.api.hook.intercept.ActivityTaskManagerInvocationIntercept
 import com.xiaosw.api.hook.intercept.ReceiverInvocationIntercept
 
 /**
@@ -20,6 +21,10 @@ object HookManager {
         ActivityNotRegisterInvocationIntercept()
     }
 
+    private val mActivityTaskManagerInvocationIntercept by lazy {
+        ActivityTaskManagerInvocationIntercept()
+    }
+
     fun autoManagerReceiver() : Boolean {
         HookAMS.register(mReceiverInvocationIntercept)
         return HookAMS.isHookSuccess()
@@ -27,6 +32,7 @@ object HookManager {
 
     fun enableActivityNotRegister() : Boolean {
          // android.content.ActivityNotFoundException
+        HookATM.register(mActivityTaskManagerInvocationIntercept)
         HookPM.register(mActivityNotRegisterInvocationIntercept)
         return HookPM.isHookSuccess()
     }

@@ -31,7 +31,7 @@ internal class ReceiverInvocationIntercept : InvocationHandlerIntercept
         AndroidContext.get().registerActivityLifecycleCallbacks(this)
     }
 
-    override fun interceptInvoke(proxy: Any?, methodName: String, args: Array<out Any?>) {
+    override fun interceptInvoke(proxy: Any?, methodName: String, args: Array<Any?>) {
         tryCatch(showException = false) {
             when(methodName) {
                 "registerReceiver" -> {

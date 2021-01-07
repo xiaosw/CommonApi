@@ -9,6 +9,6 @@ package com.xiaosw.api.hook.invocation
  */
 internal interface InvocationHandlerIntercept {
 
-    fun interceptInvoke(proxy: Any?, methodName: String, args: Array<out Any?>)
+    fun interceptInvoke(proxy: Any?, methodName: String, args: Array<Any?>)
 
 }

@@ -15,7 +15,9 @@
 
         <activity android:name=".proxy.StandardActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:launchMode="standard"/>
+            android:launchMode="standard"
+            android:enabled="true"
+            android:exported="false"/>
 
         <provider
             android:authorities="${applicationId}.androidx-startup"
