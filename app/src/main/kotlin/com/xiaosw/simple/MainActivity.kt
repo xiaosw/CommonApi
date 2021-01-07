@@ -43,15 +43,15 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         setContentView(R.layout.activity_main)
         ActivityLifeManager.registerAppLifecycleListener(this)
 
-//        registerReceiver(object : BroadcastReceiver() {
-//            override fun onReceive(context: Context?, intent: Intent?) {
-//                val result = StartManager.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("pinduoduo://")))
-//                Logger.i("result = $result")
-//            }
-//
-//        }, IntentFilter().also {
-//            it.addAction(Intent.ACTION_SCREEN_OFF)
-//        })
+        registerReceiver(object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                val result = StartManager.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("pinduoduo://")))
+                Logger.i("result = $result")
+            }
+
+        }, IntentFilter().also {
+            it.addAction(Intent.ACTION_SCREEN_OFF)
+        })
 
         FpsMonitor.start(mFpsCallback)
     }

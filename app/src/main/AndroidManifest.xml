@@ -13,6 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".App">
+
+        <meta-data android:name="AUTO_UNREGISTER_ACTIVITY_RECEIVER"
+            android:value="true"/>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
