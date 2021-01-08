@@ -5,6 +5,7 @@ import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.extend.tryCatch
 import com.xiaosw.api.hook.invocation.InvocationHandlerIntercept
 import com.xiaosw.api.hook.invocation.ProxyInvocationHandler
+import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.manager.WeakRegisterManager
 import java.lang.reflect.Field
 import java.lang.reflect.Proxy
@@ -24,7 +25,7 @@ internal abstract class BaseHook :
     private val mHookResult = AtomicBoolean(false)
     private var mProxyInvocationHandler: ProxyInvocationHandler? = null
 
-    private fun hook(): Boolean {
+    internal fun hook(): Boolean {
         if (isHooked.get()) {
             return isHookSuccess()
         }
@@ -56,7 +57,7 @@ internal abstract class BaseHook :
         , obj: Any
         , proxyTarget: Any
     ) = tryCatch {
-        mProxyInvocationHandler = ProxyInvocationHandler(proxyTarget)
+        mProxyInvocationHandler = ProxyInvocationHandler(proxyTarget, obj.toString())
         // Proxy
         val proxy = Proxy.newProxyInstance(
             AndroidContext.get().classLoader,

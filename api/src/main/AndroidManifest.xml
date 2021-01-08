@@ -19,6 +19,24 @@
             android:enabled="true"
             android:exported="false"/>
 
+        <activity android:name=".proxy.SingleTopActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTop"
+            android:enabled="true"
+            android:exported="false"/>
+
+        <activity android:name=".proxy.SingleTaskActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTask"
+            android:enabled="true"
+            android:exported="false"/>
+
+        <activity android:name=".proxy.SingleInstanceActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleInstance"
+            android:enabled="true"
+            android:exported="false"/>
+
         <provider
             android:authorities="${applicationId}.androidx-startup"
             android:name="androidx.startup.InitializationProvider"

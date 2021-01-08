@@ -13,7 +13,7 @@ class ActivityTaskManagerInvocationIntercept : InvocationHandlerIntercept {
 
     override fun interceptInvoke(proxy: Any?, methodName: String, args: Array<Any?>) {
         if ("startActivity" == methodName) {
-            ActivityNotRegisterInvocationIntercept.replaceIntent(args)
+            ActivityNotRegisterInvocationIntercept.replace2ProxyIntent(args)
         }
     }
 

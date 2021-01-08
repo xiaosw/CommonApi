@@ -12,12 +12,19 @@ import java.lang.reflect.Field
  */
 object HookUtil {
 
-    fun safe2Class(className: String?) = className?.tryCatch {
+    fun safe2Class(
+        className: String?
+        , showException: Boolean = true
+    ) = className?.tryCatch(showException = showException) {
         Class.forName(className)
     } ?: null
 
-    fun getDeclaredField(clazz: Class<*>?, filedName: String?, isAccessible: Boolean = true) : Field? {
-        return clazz?.tryCatch {
+    fun getDeclaredField(
+        clazz: Class<*>?
+        , filedName: String?
+        , isAccessible: Boolean = true
+        , showException: Boolean = true) : Field? {
+        return clazz?.tryCatch(showException = showException) {
             it.getDeclaredField(filedName).also { field ->
                 field.isAccessible = isAccessible
             }

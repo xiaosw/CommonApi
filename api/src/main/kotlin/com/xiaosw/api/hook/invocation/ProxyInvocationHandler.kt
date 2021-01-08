@@ -13,7 +13,8 @@ import java.lang.reflect.Method
  * @Email xiaosw0802@163.com
  */
 internal class ProxyInvocationHandler(
-    private val target: Any? = null
+    private val target: Any? = null,
+    private val tag: String?
 ) : InvocationHandler, WeakRegisterManager.IRegisterManager<InvocationHandlerIntercept> {
 
     private val mIntercepts = WeakRegisterManager<InvocationHandlerIntercept>()
@@ -50,7 +51,7 @@ internal class ProxyInvocationHandler(
                     sb.append(", ")
                 }
             }
-            Logger.e("invoke: ${method.name}, $sb", "ProxyInvocationHandler")
+            Logger.d("invoke: ${method.name}, $sb", "ProxyInvocationHandler#${tag ?: Logger.findTag()}")
         }
     }
 

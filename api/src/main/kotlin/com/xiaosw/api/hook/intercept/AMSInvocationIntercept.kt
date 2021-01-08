@@ -14,13 +14,13 @@ import java.lang.ref.WeakReference
 import java.util.*
 
 /**
- * @ClassName: [ReceiverInvocationIntercept]
+ * @ClassName: [AMSInvocationIntercept]
  * @Description:
  *
  * Created by admin at 2021-01-07
  * @Email xiaosw0802@163.com
  */
-internal class ReceiverInvocationIntercept : InvocationHandlerIntercept
+internal class AMSInvocationIntercept : InvocationHandlerIntercept
     , Application.ActivityLifecycleCallbacks {
 
     private val sReceiverRef by lazy {
@@ -32,7 +32,7 @@ internal class ReceiverInvocationIntercept : InvocationHandlerIntercept
     }
 
     override fun interceptInvoke(proxy: Any?, methodName: String, args: Array<Any?>) {
-        tryCatch(showException = false) {
+        tryCatch(showException = true) {
             when(methodName) {
                 "registerReceiver" -> {
                     handleRegisterReceiver(args)
@@ -43,7 +43,7 @@ internal class ReceiverInvocationIntercept : InvocationHandlerIntercept
                 }
 
                 "startActivity" -> {
-                    startActivity(args)
+                    ActivityNotRegisterInvocationIntercept.replace2ProxyIntent(args)
                 }
             }
         }
@@ -119,15 +119,6 @@ internal class ReceiverInvocationIntercept : InvocationHandlerIntercept
             }
             block.invoke(true,  mContext, mReceiver)
         }
-    }
-
-
-
-    private inline fun startActivity(args: Array<out Any?>) {
-        if (null == args) {
-            return
-        }
-
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {

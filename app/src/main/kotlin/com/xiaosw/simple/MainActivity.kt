@@ -1,9 +1,6 @@
 package com.xiaosw.simple
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
