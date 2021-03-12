@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
+import androidx.annotation.Keep
 import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.showToast

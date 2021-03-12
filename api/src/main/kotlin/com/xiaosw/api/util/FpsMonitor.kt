@@ -83,6 +83,7 @@ object FpsMonitor {
         }
     }
 
+    @Keep
     interface OnFpsMonitorListener {
 
         fun onFpsMonitor(fps: Int)
