@@ -1,5 +1,6 @@
 package com.xiaosw.api.config
 
+import androidx.annotation.Keep
 import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.util.NetworkUtil
 
@@ -10,6 +11,7 @@ import com.xiaosw.api.util.NetworkUtil
  * @Date 2019-08-09.
  * @Author xiaosw<xiaosw0802@163.com>.
  */
+@Keep
 object AppConfig {
 
     const val REQUEST_MIMETYPE_JSON = "application/json; charset=utf-8"

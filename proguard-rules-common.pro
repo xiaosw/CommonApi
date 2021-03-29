@@ -39,6 +39,7 @@
 -dontoptimize
 # 保留注解不混淆
 -keepattributes *Annotation*,InnerClasses
+-keep class **$Properties
 # 避免混淆泛型
 -keepattributes Signature
 # 保留代码行号，方便异常信息的追踪
@@ -99,9 +100,6 @@
     public static int e(...);
 }
 
-# 避免资源混淆
--keep class **.R$* {*;}
-
 # 避免混淆枚举类
 -keepclassmembers enum * {
     public static **[] values();
@@ -130,3 +128,9 @@
 }
 
 -keep public class * extends androidx.annotation.Keep
+
+# 避免资源混淆
+-keepclassmembers class **.R$* {
+       public static <fields>;
+}
+-keep class **.R$* {*;}

@@ -2,6 +2,7 @@ package com.xiaosw.api
 
 import android.app.Application
 import android.content.Context
+import androidx.annotation.Keep
 import com.xiaosw.api.manager.ActivityLifeManager
 
 /**
@@ -11,6 +12,7 @@ import com.xiaosw.api.manager.ActivityLifeManager
  * @Date 2019-08-09.
  * @Author xiaosw<xiaosw0802@163.com>.
  */
+@Keep
 object AndroidContext {
 
     private var mApp: Application? = null

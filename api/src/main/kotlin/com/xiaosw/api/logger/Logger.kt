@@ -1,6 +1,7 @@
 package com.xiaosw.api.logger
 
 import android.util.Log
+import androidx.annotation.Keep
 import com.xiaosw.api.wrapper.GsonWrapper
 
 /**
@@ -10,6 +11,7 @@ import com.xiaosw.api.wrapper.GsonWrapper
  * @Date 2019-08-09.
  * @Author xiaosw<xiaosw0802@163.com>.
  */
+@Keep
 object Logger {
 
     /**
