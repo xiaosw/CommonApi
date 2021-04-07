@@ -14,7 +14,7 @@ import java.lang.reflect.Method
  * Create by xsw at 2021/04/07 10:34.
  */
 @Keep
-object ReflectCompat : ReflectCompatDelegate() {
+object ReflectCompat : ReflectCompatDelegate {
 
     private const val TAG = "ReflectCompat"
 
@@ -23,12 +23,10 @@ object ReflectCompat : ReflectCompatDelegate() {
     }
 
     init {
-         compat(ReflectCompat::class.java)
+        compat()
     }
 
-    override fun compat(className: String) = mReflectDelegate.compat(className)
-
-    override fun compat(clazz: Class<*>) = mReflectDelegate.compat(clazz)
+    override fun compat() = mReflectDelegate.compat()
 
     fun forName(className: String): Class<*>? {
         return Class.forName(className)
@@ -69,7 +67,7 @@ object ReflectCompat : ReflectCompatDelegate() {
             if (null == values || values.isEmpty()) {
                 method.invoke(targetObj)
             } else {
-                method.invoke(targetObj, values)
+                method.invoke(targetObj, *values)
             }
         }
 

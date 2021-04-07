@@ -24,8 +24,7 @@ public class FileSizeUtil {
     private static final int ERROR = -1;
 
     public static boolean externalMemoryAvailable() {
-        return Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED);
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
     public static long getAvailableInternalMemorySize() {
@@ -95,7 +94,8 @@ public class FileSizeUtil {
 
     public static String formatFileSize(long size, boolean isInteger) {
         DecimalFormat df = isInteger ? fileIntegerFormat : fileDecimalFormat;
-        String fileSizeString = "0M";
+        String fileSizeString = "0" +
+                "M";
         if (size < 1024 && size > 0) {
             fileSizeString = df.format((double) size) + "B";
         } else if (size < 1024 * 1024) {

@@ -6,10 +6,8 @@ package com.xiaosw.api.reflect.compat
  *
  * Create by xsw at 2021/04/07 11:25.
  */
-internal class DefaultCompat : ReflectCompatDelegate() {
+internal class DefaultCompat : ReflectCompatDelegate {
 
-    override fun compat(className: String) = true
-
-    override fun compat(clazz: Class<*>) = true
+    override fun compat() = true
 
 }

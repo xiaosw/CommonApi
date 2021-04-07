@@ -19,7 +19,7 @@ internal object UnsafeHelper {
     }
 
     private val mUnsafe by lazy {
-        val unsafe = tryCatch {
+        tryCatch {
             ReflectCompat.getMethod(mUnsafeClazz, "getUnsafe")?.let {
                 ReflectCompat.invokeStaticMethod(it)
             }
@@ -86,7 +86,7 @@ internal object UnsafeHelper {
         ReflectCompat.invokeMethod(mObjectFieldOffset, mUnsafe, field) as? Long ?: 0L
 
     fun putLong(targetObj: Any?, offset: Long, newValue: Long) = ReflectCompat.invokeMethod(
-        mObjectFieldOffset,
+        mPutLong,
         mUnsafe,
         targetObj,
         offset,
@@ -95,7 +95,7 @@ internal object UnsafeHelper {
         ?: 0L
 
     fun putInt(targetObj: Any?, offset: Long, newValue: Int) = ReflectCompat.invokeMethod(
-        mObjectFieldOffset,
+        mPutInt,
         mUnsafe,
         targetObj,
         offset,
@@ -104,7 +104,7 @@ internal object UnsafeHelper {
         ?: 0L
 
     fun putObject(targetObj: Any?, offset: Long, newValue: Any?) = ReflectCompat.invokeMethod(
-        mObjectFieldOffset,
+        mPutObject,
         mUnsafe,
         targetObj,
         offset,

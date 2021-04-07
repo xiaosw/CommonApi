@@ -11,9 +11,6 @@ import android.os.Build
 internal class ReflectCompatFactory {
 
     fun create() : ReflectCompatDelegate {
-        if (limitReflectAllApi()) {
-            return LimitAllCompat()
-        }
         if (limitReflectHiddenApi()) {
             return LimitHiddenCompat()
         }
@@ -24,15 +21,4 @@ internal class ReflectCompatFactory {
      * 是否限制反射 @Hidden API
      */
     private inline fun limitReflectHiddenApi() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
-
-    /**
-     * 是否限制反射所有 API
-     */
-    private inline fun limitReflectAllApi() : Boolean {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
-            return false
-        }
-        // 后续版本如果禁止反射所有 API, 这里需要返回 false
-        return false
-    }
 }

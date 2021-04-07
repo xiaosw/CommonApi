@@ -6,6 +6,7 @@ import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.reflect.ReflectCompat
 import java.lang.Exception
 import java.lang.reflect.Method
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * ClassName: [LimitHiddenCompat]
@@ -14,12 +15,24 @@ import java.lang.reflect.Method
  * Create by xsw at 2021/04/07 10:37.
  */
 @TargetApi(Build.VERSION_CODES.P)
-internal class LimitHiddenCompat : ReflectCompatDelegate() {
+internal class LimitHiddenCompat : ReflectCompatDelegate {
 
     // VMRuntime
     private var sVMRuntime: Any? = null
+
     // VMRuntime#setHiddenApiExemptions(String[] signaturePrefixes);
     private var setHiddenApiExemptions : Method? = null
+
+    private val mOriginalClassLoader = javaClass.classLoader
+
+    private val mClassLoaderOffset by lazy {
+        ReflectCompat.getField(Class::class.java, "classLoader")?.let {
+            UnsafeHelper.objectFieldOffset(it)
+        }
+    }
+    private val isModifyClassLoader by lazy {
+        AtomicBoolean(false)
+    }
 
     init {
         val clazz = Class::class.java
@@ -56,37 +69,14 @@ internal class LimitHiddenCompat : ReflectCompatDelegate() {
 
     }
 
-    override fun compat(className: String) = ReflectCompat.forName(className)?.let {
-        compat(it)
-    } ?: false
-
-    override fun compat(clazz: Class<*>) = try {
-        when {
-            exemptAll() -> {
-                Logger.e("exemptAll")
-                true
-            }
-
-            replaceClassLoader(clazz) -> {
-                Logger.e("replaceClassLoader")
-                true
-            }
-
-            else -> {
-                Logger.e("field!")
-                false
-            }
-        }
-    } catch (e: Exception) {
-        Logger.e(e)
-        false
-    }
+    override fun compat() = exemptAll()
 
     private inline fun exempt(vararg signaturePrefixes: String) = internalExempt(*signaturePrefixes)
 
     private inline fun exemptAll() = exempt("L")
 
     private fun internalExempt(vararg signaturePrefixes: String) = try {
+        modifyClassLoader()
         if (null == sVMRuntime || null == setHiddenApiExemptions) {
             false
         } else {
@@ -96,6 +86,27 @@ internal class LimitHiddenCompat : ReflectCompatDelegate() {
     } catch (e: Exception) {
         Logger.e(e)
         false
+    } finally {
+        restoreClassLoader()
+    }
+
+    @Synchronized
+    private inline fun modifyClassLoader() {
+        mClassLoaderOffset?.let {
+            UnsafeHelper.putObject(javaClass, it, null)
+            isModifyClassLoader.compareAndSet(false, true)
+        }
+    }
+
+    @Synchronized
+    private inline fun restoreClassLoader() {
+        if (!isModifyClassLoader.get()) {
+            return
+        }
+        mClassLoaderOffset?.let {
+            UnsafeHelper.putObject(javaClass, it, mOriginalClassLoader)
+            isModifyClassLoader.compareAndSet(true, false)
+        }
     }
 
 }
