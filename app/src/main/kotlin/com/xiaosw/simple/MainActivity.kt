@@ -3,11 +3,13 @@ package com.xiaosw.simple
 import android.content.*
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.xiaosw.api.annotation.AutoAdjustDensity
 import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.manager.ActivityLifeManager
 import com.xiaosw.api.manager.DensityManager
+import com.xiaosw.api.reflect.ReflectCompat
 import com.xiaosw.api.util.FpsMonitor
 import com.xsw.compat.start.StartManager
 import kotlinx.android.synthetic.main.activity_main.*
@@ -50,7 +52,9 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         FpsMonitor.start(mFpsCallback)
 
         tv_text.setOnClickListener {
-            startActivity(Intent(this, NotRegisterActivity::class.java))
+            //startActivity(Intent(this, NotRegisterActivity::class.java))
+            val main = ReflectCompat.forName(MainActivity::class.java.name)
+            Log.e("MainActivity", "onCreate: $main")
         }
     }
 
