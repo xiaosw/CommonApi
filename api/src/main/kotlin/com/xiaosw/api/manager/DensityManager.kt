@@ -130,7 +130,7 @@ object DensityManager {
                 baseDpByWidth = it.baseDpByWidth
             }
 
-            if (baseDp < 0) {
+            if (baseDp <= 0) {
                 if (mBaseDpEnable // 全局配置
                     || mThirdAutoAdjustPageWhiteList.contains(this) // 白名单配置
                 ) {

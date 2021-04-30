@@ -1,11 +1,14 @@
 package com.xiaosw.api.extend
 
+import android.content.res.TypedArray
 import com.xiaosw.api.exception.TryCatchException
 import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.logger.report.ReportManager
 import com.xiaosw.api.util.EnvironmentUtil
 import java.io.File
 import java.lang.Exception
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import kotlin.jvm.internal.Intrinsics
 
 
@@ -63,6 +66,15 @@ inline fun <T, R> T.tryCatchAndReport(
 @JvmOverloads
 inline fun Any?.isNull() = null == this
 
+
+@ExperimentalContracts
+inline fun Any?.isNotNull() : Boolean {
+    contract {
+        returns(true) implies (null != this@isNotNull)
+    }
+    return !isNull()
+}
+
 @JvmOverloads
 inline fun Any?.areEqual(second: Any?, ignoreCase: Boolean = false) : Boolean {
     if (this is String && second is String) {
@@ -118,6 +130,18 @@ inline fun File?.delete() {
             EnvironmentUtil.deleteFile(this)
         } else {
             EnvironmentUtil.deleteDir(this)
+        }
+    }
+}
+
+inline fun <T : TypedArray?> T?.use(block: T.() -> Unit) {
+    this?.run {
+        try {
+            block(this)
+        } finally {
+            tryCatch(showException = false) {
+                recycle()
+            }
         }
     }
 }

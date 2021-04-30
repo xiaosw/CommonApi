@@ -50,6 +50,9 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
         AtomicBoolean(true)
     }
 
+    private var mStartCount = 0
+    private var mResumeCount = 0
+
     internal fun init(app: Application?) {
         app?.let {
             it.unregisterActivityLifecycleCallbacks(this)
@@ -65,10 +68,12 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityStarted(activity: Activity) {
         Logger.d("onActivityStarted: activity = $activity")
+        mStartCount++
     }
 
     override fun onActivityResumed(activity: Activity) {
         Logger.d("onActivityResumed: activity = $activity, top activity = $topActivity")
+        mResumeCount++
         notifyAppForegroundIfNeeded()
         if (mCurrentActivityRef == null
             || mCurrentActivityRef?.get() == null
@@ -78,6 +83,7 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityPaused(activity: Activity) {
+        mResumeCount--
         Logger.d("onActivityPaused: $activity")
     }
 
@@ -90,6 +96,7 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
         if (mCurrentActivityRef?.get() == activity) {
             return
         }
+        mStartCount--
         notifyAppBackgroundIfNeeded(activity)
     }
 
@@ -186,18 +193,14 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
         if (ctx.isNull() || !mIsAppForeground.get()) {
             return
         }
-        AppUtils.isAppForeground(ctx, object : AppUtils.CallBack() {
-            override fun callBack(isForeground: Boolean) {
-               if (!isForeground) {
-                   val activeTime = SystemClock.elapsedRealtime() - mActiveStartTime
-                   mAppLifecycleListeners?.forEach {
-                       it?.get()?.onAppBackground(activeTime)
-                   }
-                   mActiveStartTime = 0L
-                   mIsAppForeground.compareAndSet(true, false)
-               }
+        if (mStartCount === 0) {
+            val activeTime = SystemClock.elapsedRealtime() - mActiveStartTime
+            mAppLifecycleListeners?.forEach {
+                it?.get()?.onAppBackground(activeTime)
             }
-        })
+            mActiveStartTime = 0L
+            mIsAppForeground.compareAndSet(true, false)
+        }
     }
 
     /**

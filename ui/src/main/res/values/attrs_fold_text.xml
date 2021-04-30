@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FoldTextLayout">
+        <attr name="android:text"/>
+        <attr name="android:textSize"/>
+        <attr name="android:textColor"/>
+        <attr name="android:textStyle"/>
+        <attr name="android:maxLines"/>
+        <attr name="isDefFold" format="boolean|reference"/>
+        <attr name="ellipsizeEnd" format="string|reference"/>
+        <attr name="foldTipText" format="string|reference"/>
+        <attr name="foldAnim" format="integer|reference"/>
+        <attr name="unfoldTipText" format="string|reference"/>
+        <attr name="unfoldAnim" format="integer|reference"/>
+        <attr name="tipTextColor" format="color|reference"/>
+        <attr name="tipTextSize" format="dimension|reference"/>
+        <attr name="tipTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="tipDrawableRight" format="reference"/>
+        <attr name="tipDrawableAnimEnable" format="boolean|reference"/>
+    </declare-styleable>
+</resources>
