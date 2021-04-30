@@ -11,6 +11,7 @@ ext {
 
     // kotlin
     kotlin="org.jetbrains.kotlin:kotlin-stdlib-jdk7:$KOTLIN_VERSION"
+    kotlinx_corotines_core="org.jetbrains.kotlinx:kotlinx-coroutines-core:$KOTLINX_COROUTINES_CORE_VERSION"
 
     // androidx
     appcompat="androidx.appcompat:appcompat:$APPCOMPAT_VERSION"

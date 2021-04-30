@@ -1,4 +1,4 @@
-package com.xsw.ui.widget
+package com.xsw.ui.widget.fold
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -11,9 +11,7 @@ import android.view.animation.RotateAnimation
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import com.xiaosw.api.extend.isNotNull
 import com.xiaosw.api.extend.isNull
-import com.xiaosw.api.logger.Logger
 import com.xsw.ui.R
 import kotlin.properties.Delegates
 
@@ -54,7 +52,7 @@ internal class FoldTextActionView @JvmOverloads constructor (
             , 0.5f
         ).also {
             it.fillAfter = true
-            it.duration = 300
+            it.duration = 200
         }
     }
 
@@ -66,7 +64,7 @@ internal class FoldTextActionView @JvmOverloads constructor (
             , Animation.RELATIVE_TO_SELF
             , 0.5f).also {
             it.fillAfter = true
-            it.duration = 300
+            it.duration = 200
         }
     }
 

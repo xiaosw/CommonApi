@@ -4,6 +4,8 @@ import android.content.*
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.xiaosw.api.annotation.AutoAdjustDensity
 import com.xiaosw.api.logger.Logger
@@ -12,7 +14,11 @@ import com.xiaosw.api.manager.DensityManager
 import com.xiaosw.api.reflect.ReflectCompat
 import com.xiaosw.api.util.FpsMonitor
 import com.xsw.compat.start.StartManager
+import com.xsw.ui.widget.FlickerProgressBar
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * @ClassName: [MainActivity]
@@ -55,6 +61,25 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
             //startActivity(Intent(this, NotRegisterActivity::class.java))
             val main = ReflectCompat.forName(MainActivity::class.java.name)
             Log.e("MainActivity", "onCreate: $main")
+        }
+
+        setFlickerProgressBar()
+    }
+
+    private inline fun setFlickerProgressBar() {
+        with(flicker_progress_bar) {
+            status = FlickerProgressBar.Status.DOWNLOADING
+            onFlickerProgressBarClickListener = object : FlickerProgressBar.OnFlickerProgressBarClickListener {
+                override fun onClick(view: View?, status: FlickerProgressBar.Status) {
+                    Toast.makeText(this@MainActivity, status.desc, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        GlobalScope.launch {
+            repeat(100) {
+                delay(100)
+                flicker_progress_bar.setProgress(it + 1)
+            }
         }
     }
 

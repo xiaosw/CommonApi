@@ -1,4 +1,4 @@
-package com.xsw.ui.widget
+package com.xsw.ui.widget.fold
 
 import android.content.Context
 import android.text.Layout
@@ -8,7 +8,6 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.ViewTreeObserver.OnPreDrawListener
 import android.widget.TextView
 import com.xiaosw.api.extend.isNull
-import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.util.StringUtils
 import com.xiaosw.api.util.Utils.isEmpty
 

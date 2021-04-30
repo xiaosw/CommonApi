@@ -101,10 +101,12 @@ object ScreenUtil {
     }
 
     @JvmStatic
+    @JvmOverloads
     inline fun dp2px(context: Context = AndroidContext.get(), dp: Float) =
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.resources.displayMetrics)
 
     @JvmStatic
+    @JvmOverloads
     inline fun dp2sp(context: Context = AndroidContext.get(), dp: Float) : Float {
         return px2sp(
             context,
@@ -113,20 +115,24 @@ object ScreenUtil {
     }
 
     @JvmStatic
+    @JvmOverloads
     inline fun px2dp(context: Context = AndroidContext.get(), px: Float) : Float {
         return px / context.resources.displayMetrics.density + 0.5f
     }
 
     @JvmStatic
+    @JvmOverloads
     inline fun sp2px(context: Context = AndroidContext.get(), sp: Float) =
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics)
 
     @JvmStatic
+    @JvmOverloads
     inline fun px2sp(context: Context = AndroidContext.get(), px: Float) : Float {
         return px / context.resources.displayMetrics.scaledDensity + 0.5f
     }
 
     @JvmStatic
+    @JvmOverloads
     inline fun sp2dp(context: Context = AndroidContext.get(), sp: Float) : Float {
         return px2dp(
             context,

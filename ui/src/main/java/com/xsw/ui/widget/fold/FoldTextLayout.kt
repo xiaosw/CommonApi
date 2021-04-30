@@ -1,7 +1,6 @@
-package com.xsw.ui.widget
+package com.xsw.ui.widget.fold
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
@@ -9,11 +8,9 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.TextView.BufferType
 import com.xiaosw.api.extend.use
-import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.util.Utils.isEmpty
 import com.xsw.ui.R
 import kotlin.properties.Delegates

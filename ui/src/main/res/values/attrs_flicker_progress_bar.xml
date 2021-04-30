@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FlickerProgressBar">
+        <attr name="downloadText" format="string|reference"/>
+        <attr name="downloadTextColor" format="color|reference"/>
+        <attr name="downloadBackgroundColor" format="color|reference"/>
+        <attr name="downloadingText" format="string|reference"/>
+        <attr name="downloadProgressColor" format="color|reference"/>
+        <attr name="downloadingTextColor" format="color|reference"/>
+        <attr name="downloadingClipTextColor" format="color|reference"/>
+        <attr name="downloadingBackgroundColor" format="color|reference"/>
+        <attr name="pauseText" format="string|reference"/>
+        <attr name="pauseTextColor" format="color|reference"/>
+        <attr name="pauseClipTextColor" format="color|reference"/>
+        <attr name="pauseBackgroundColor" format="color|reference"/>
+        <attr name="pauseProgressColor" format="color|reference"/>
+        <attr name="pauseBorderColor" format="color|reference"/>
+        <attr name="pauseBorderWidth" format="dimension|reference"/>
+        <attr name="completeText" format="string|reference"/>
+        <attr name="completeTextColor" format="color|reference"/>
+        <attr name="completeBackgroundColor" format="color|reference"/>
+        <attr name="installedText" format="string|reference"/>
+        <attr name="installedTextColor" format="color|reference"/>
+        <attr name="installedBackgroundColor" format="color|reference"/>
+        <attr name="android:textSize" />
+        <attr name="android:radius" />
+        <attr name="android:max" />
+        <attr name="android:progress" />
+    </declare-styleable>
+</resources>
