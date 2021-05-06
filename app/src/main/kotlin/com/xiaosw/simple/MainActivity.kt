@@ -59,8 +59,9 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
 
         tv_text.setOnClickListener {
             //startActivity(Intent(this, NotRegisterActivity::class.java))
-            val main = ReflectCompat.forName(MainActivity::class.java.name)
-            Log.e("MainActivity", "onCreate: $main")
+            startActivity(Intent(this, MaterialDesignActivity::class.java))
+//            val main = ReflectCompat.forName(MainActivity::class.java.name)
+//            Log.e("MainActivity", "onCreate: $main")
         }
 
         setFlickerProgressBar()

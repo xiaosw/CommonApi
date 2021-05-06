@@ -1,6 +1,7 @@
 package com.xiaosw.simple
 
 import android.app.Application
+import com.xiaosw.api.logger.Logger
 
 /**
  * @ClassName: [App]
@@ -10,5 +11,10 @@ import android.app.Application
  * @Email xiaosw0802@163.com
  */
 class App : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        Logger.init(if (BuildConfig.DEBUG) Logger.LogLevel.VERBOSE else Logger.LogLevel.NONE)
+    }
 
 }

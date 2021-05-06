@@ -2,4 +2,10 @@
 <resources>
     <item name="fold_text" type="id"/>
     <item name="fold_action" type="id"/>
+
+    <item name="status_bar_view" type="id" />
+    <item name="navigation_bar_view" type="id" />
+    <item name="fits_layout_overlap" type="id" />
+    <item name="action_bar_container" type="id" />
+
 </resources>

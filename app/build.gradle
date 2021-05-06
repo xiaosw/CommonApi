@@ -34,6 +34,7 @@ dependencies {
     implementation rootProject.ext.kotlin
     implementation rootProject.ext.constraint_layout
     implementation rootProject.ext.kotlinx_corotines_core
+    implementation rootProject.ext.material
 
     testImplementation rootProject.ext.junit
     androidTestImplementation rootProject.ext.androidx_test

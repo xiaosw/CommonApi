@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.Material">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">#FFFF0000</item>
+<!--        <item name="android:windowTranslucentStatus">true</item>-->
+    </style>
+
 </resources>
