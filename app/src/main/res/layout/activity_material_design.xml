@@ -2,54 +2,53 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:expanded="false"
-        app:elevation="0dp">
+        android:background="@color/_F8F8F8"
+        android:fitsSystemWindows="false">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minHeight="?attr/actionBarSize"
-            app:contentScrim="@android:color/transparent"
+            android:minHeight="@dimen/material_title_bar_height"
+            android:fitsSystemWindows="false"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
+                android:id="@+id/iv_parallax"
                 android:layout_width="match_parent"
                 android:layout_height="280dp"
-                android:background="@color/colorAccent"
                 android:minHeight="100dp"
-                app:layout_collapseMode="parallax" />
+                android:src="@mipmap/test"
+                android:fitsSystemWindows="false"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.3"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/title_bar_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="?attr/actionBarSize"
+                android:layout_height="@dimen/material_title_bar_height"
+                android:paddingTop="@dimen/material_title_bar_padding"
                 android:fitsSystemWindows="true"
                 app:layout_collapseMode="pin">
 
                 <ImageView
-                    android:id="@+id/iv_left"
+                    android:id="@+id/iv_back"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_launcher"
-                    android:fitsSystemWindows="true"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/ic_black_back"
+                    android:scaleType="fitCenter"
+                    android:layout_marginLeft="16dp"
+                    android:paddingRight="22dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/iv_right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_launcher"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -57,8 +56,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Material Design"
-                    android:textColor="@color/_3FB4FF"
+                    android:text="标题"
+                    android:textColor="@color/_FFFFFF"
                     android:textSize="@dimen/sp_18"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"

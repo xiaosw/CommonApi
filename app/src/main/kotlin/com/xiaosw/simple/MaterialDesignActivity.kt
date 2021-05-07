@@ -1,12 +1,14 @@
 package com.xiaosw.simple
 
+import android.graphics.Color
 import android.os.Bundle
-import android.view.View
+import androidx.annotation.FloatRange
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.AppBarLayout
 import com.xiaosw.api.logger.Logger
 import com.xsw.ui.statusbar.immersionBar
 import kotlinx.android.synthetic.main.activity_material_design.*
+import kotlin.math.abs
 
 /**
  * ClassName: [MaterialDesignActivity]
@@ -16,10 +18,17 @@ import kotlinx.android.synthetic.main.activity_material_design.*
  */
 open class MaterialDesignActivity : AppCompatActivity() {
 
+    private val expandedTitleColor by lazy {
+        Color.BLACK
+    }
+
+    private val collapsingTitleColor by lazy {
+        Color.WHITE
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_material_design)
-        resetStatusBarColor()
         app_bar_layout.addOnOffsetChangedListener(object : CompatOnOffsetChangedListener<AppBarLayout>() {
 
             override fun onOffsetChanged(
@@ -27,77 +36,31 @@ open class MaterialDesignActivity : AppCompatActivity() {
                 verticalOffset: Int,
                 status: Status
             ) {
-                Logger.e("status = $status, verticalOffset = $verticalOffset")
+                val scrollPercent = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange
+                title_bar_container.setBackgroundColor(translateColor(Color.WHITE, 0xffffff, 1 - scrollPercent))
+                iv_parallax.alpha = 1 - scrollPercent
+                tv_center.setTextColor(translateColor(collapsingTitleColor, expandedTitleColor, scrollPercent))
             }
 
         })
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // System Bar
-    ///////////////////////////////////////////////////////////////////////////
-    protected fun resetStatusBarColor() {
-        resetStatusBarColor(getStatusBarColor(), isFitsSystemWindows(), isStatusBarDarkFont())
+    private inline fun translateColor(
+        from: Int
+        , to: Int
+        , @FloatRange(from = .0, to = 1.0) percent: Float
+    ) : Int {
+        val fromA = Color.alpha(from)
+        val fromR = Color.red(from)
+        val fromG = Color.green(from)
+        val fromB = Color.blue(from)
+        val toA = Color.alpha(to)
+        val toR = Color.red(to)
+        val toG = Color.green(to)
+        val toB = Color.blue(to)
+        return Color.argb(fromA + ((toA - fromA) * percent).toInt()
+            , fromR + ((toR - fromR) * percent).toInt()
+            , fromG + ((toG - fromG) * percent).toInt()
+            , fromB + ((toB - fromB) * percent).toInt())
     }
-
-    protected fun setStatusBarColor(statusBarColor: Int?) {
-        setStatusBarColor(statusBarColor, isFitsSystemWindows(), isStatusBarDarkFont())
-    }
-
-    @JvmOverloads
-    fun resetStatusBarColor(
-        currentStatusColor: Int = getStatusBarColor(),
-        isFitsSystemWindows: Boolean,
-        isStatusBarDarkFont: Boolean
-    ) {
-        if (!isImmersionBarEnabled()) {
-            return
-        }
-        setStatusBarColor(currentStatusColor, isFitsSystemWindows, isStatusBarDarkFont)
-    }
-
-    fun setStatusBarColor(
-        statusBarColor: Int?,
-        isFitsSystemWindows: Boolean,
-        isStatusBarDarkFont: Boolean
-    ) {
-        if (!isImmersionBarEnabled() || statusBarColor == null) {
-            return
-        }
-        immersionBar {
-            fitsSystemWindows(isFitsSystemWindows)
-            if (isFitsSystemWindows()) {
-                statusBarColorInt(statusBarColor)
-            }
-            navigationBarColorInt(statusBarColor)
-            statusBarDarkFont(isStatusBarDarkFont)
-            fullScreen(true)
-            navigationBarEnable(false)
-            init()
-        }
-    }
-
-    fun getStatusBarColor(): Int {
-        return View.NO_ID
-    }
-
-    protected fun isFullScreen(): Boolean {
-        return false
-    }
-
-    /**
-     * 是否使用沉浸式
-     */
-    protected fun isImmersionBarEnabled(): Boolean {
-        return true
-    }
-
-    protected fun isStatusBarDarkFont(): Boolean {
-        return true
-    }
-
-    protected fun isFitsSystemWindows(): Boolean {
-        return false
-    }
-
 }

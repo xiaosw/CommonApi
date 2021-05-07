@@ -1,0 +1,13 @@
+<resources>
+
+    <style name="AppTheme.Material.Light">
+        <item name="android:statusBarColor">#ff0000</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="AppTheme.Material.Dark">
+        <item name="android:statusBarColor">#ff0000</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+</resources>
