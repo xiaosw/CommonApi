@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.view.Gravity
 import android.widget.TextView
 import android.widget.Toast
+import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.R
 import com.xiaosw.api.extend.tryCatch
 import java.lang.ref.WeakReference
@@ -35,7 +36,10 @@ object ToastUtil {
 
     @JvmStatic
     @JvmOverloads
-    fun showToast(context: Context, message: CharSequence, duration: Int = Toast.LENGTH_SHORT) : Boolean {
+    fun showToast(context: Context = AndroidContext.get()
+                  , message: CharSequence
+                  , duration: Int = Toast.LENGTH_SHORT
+    ) : Boolean {
         var isShow = false
         tryCatch {
             cancelLastIfNeeded()

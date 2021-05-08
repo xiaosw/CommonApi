@@ -85,6 +85,22 @@
             app:foldAnim="@anim/anim_fold"
             app:unfoldAnim="@anim/anim_unfold"/>
 
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00f"
+            android:fillViewport="true">
+
+            <com.xsw.ui.widget.FlowLayout
+                android:id="@+id/flow_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:lines="3"
+                android:background="#f00"/>
+
+        </HorizontalScrollView>
+
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

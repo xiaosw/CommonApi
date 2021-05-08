@@ -5,6 +5,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.xiaosw.api.annotation.AutoAdjustDensity
@@ -13,12 +15,16 @@ import com.xiaosw.api.manager.ActivityLifeManager
 import com.xiaosw.api.manager.DensityManager
 import com.xiaosw.api.reflect.ReflectCompat
 import com.xiaosw.api.util.FpsMonitor
+import com.xiaosw.api.util.ToastUtil
 import com.xsw.compat.start.StartManager
 import com.xsw.ui.widget.FlickerProgressBar
+import com.xsw.ui.widget.FlowLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.random.Random
+import kotlin.random.nextUInt
 
 /**
  * @ClassName: [MainActivity]
@@ -34,7 +40,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         object : FpsMonitor.OnFpsMonitorListener {
             override fun onFpsMonitor(fps: Int) {
 //                Logger.i("fps: $fps")
-                tv_fps.text = "FPS:$fps"
+//                tv_fps.text = "FPS:$fps"
             }
         }
     }
@@ -64,7 +70,31 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
 //            Log.e("MainActivity", "onCreate: $main")
         }
 
-        setFlickerProgressBar()
+//        setFlickerProgressBar()
+
+        flow_layout.adapter = object : FlowLayout.Adapter<String, FlowLayout.ViewHolder>() {
+
+            override fun onCreateViewHolder(position: Int, parent: ViewGroup): FlowLayout.ViewHolder? {
+                val view = layoutInflater.inflate(R.layout.item_flow_layout, parent, false)
+                return FlowLayout.ViewHolder(view)
+            }
+
+            override fun onBindViewHolder(holder: FlowLayout.ViewHolder, position: Int) {
+                (holder.itemView as? TextView)?.let {  tv ->
+                    tv.text = getItem(position)
+                    tv.setOnClickListener {
+                        remove(position)
+                        ToastUtil.showToast(message = tv.text.toString())
+                    }
+                }
+            }
+
+        }.also {
+            val random = Random(1)
+            for (index in 0..100) {
+                it.add("${random.nextInt(0, 100000)}")
+            }
+        }
     }
 
     private inline fun setFlickerProgressBar() {
