@@ -34,7 +34,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/tv_text"/>
+            app:layout_constraintBottom_toTopOf="@+id/tv_text"
+            android:visibility="gone"/>
 
         <com.xsw.ui.widget.FlickerProgressBar
             android:id="@+id/flicker_progress_bar"
@@ -63,7 +64,8 @@
             app:installedTextColor="#FFFFFF"
             app:installedBackgroundColor="@color/_3FB4FF"
             app:pauseBorderWidth="1dp"
-            app:pauseBorderColor="@color/_3FB4FF"/>
+            app:pauseBorderColor="@color/_3FB4FF"
+            android:visibility="gone"/>
 
         <com.xsw.ui.widget.fold.FoldTextLayout
             android:layout_width="match_parent"
@@ -83,13 +85,15 @@
             app:tipDrawableRight="@mipmap/ic_unfold"
             app:tipDrawableAnimEnable="true"
             app:foldAnim="@anim/anim_fold"
-            app:unfoldAnim="@anim/anim_unfold"/>
+            app:unfoldAnim="@anim/anim_unfold"
+            android:visibility="gone"/>
 
         <HorizontalScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#00f"
-            android:fillViewport="true">
+            android:fillViewport="true"
+            android:visibility="gone">
 
             <com.xsw.ui.widget.FlowLayout
                 android:id="@+id/flow_layout"

@@ -3,7 +3,6 @@ package com.xiaosw.simple
 import android.content.*
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -13,10 +12,10 @@ import com.xiaosw.api.annotation.AutoAdjustDensity
 import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.manager.ActivityLifeManager
 import com.xiaosw.api.manager.DensityManager
-import com.xiaosw.api.reflect.ReflectCompat
 import com.xiaosw.api.util.FpsMonitor
 import com.xiaosw.api.util.ToastUtil
 import com.xsw.compat.start.StartManager
+import com.xsw.ui.anim.path.PathAnimator
 import com.xsw.ui.widget.FlickerProgressBar
 import com.xsw.ui.widget.FlowLayout
 import kotlinx.android.synthetic.main.activity_main.*
@@ -24,7 +23,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
-import kotlin.random.nextUInt
 
 /**
  * @ClassName: [MainActivity]
@@ -94,6 +92,13 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
             for (index in 0..100) {
                 it.add("${random.nextInt(0, 100000)}")
             }
+        }
+        with(PathAnimator(tv_text)) {
+            duration = 6000
+            lineTo(300f, 0f)
+                .quadTo(450f, 0f, 300f, 300f)
+                .cubicTo(450f, 250f, 150f, 750f, 300f, 900f)
+            start()
         }
     }
 
