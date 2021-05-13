@@ -105,6 +105,37 @@
 
         </HorizontalScrollView>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <com.xsw.ui.widget.SwitchView
+                android:id="@+id/switch_view"
+                android:layout_width="86dp"
+                android:layout_height="58dp"
+                android:radius="15.5dp"
+                android:background="#E9E9EB"
+                android:checked="false"
+                android:thumbOffset="3dp"
+                android:duration="520"
+                android:padding="15dp"
+                app:thumbColor="#ffffff"
+                app:slidingEnable="true"
+                app:slidingEffectEnable="true"
+                app:checkedBackgroundColor="#FF6883"/>
+
+            <TextView
+                android:id="@+id/tv_switch_view_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/_14191E"
+                android:textSize="@dimen/sp_16"
+                android:layout_marginLeft="20dp"
+                android:text="关"/>
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

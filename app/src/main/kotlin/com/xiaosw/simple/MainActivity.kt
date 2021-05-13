@@ -18,6 +18,7 @@ import com.xsw.compat.start.StartManager
 import com.xsw.ui.anim.path.PathAnimator
 import com.xsw.ui.widget.FlickerProgressBar
 import com.xsw.ui.widget.FlowLayout
+import com.xsw.ui.widget.SwitchView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -100,6 +101,24 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
                 .cubicTo(450f, 250f, 150f, 750f, 300f, 900f)
             start()
         }
+        switch_view.interceptOnClick = object : SwitchView.InterceptOnClick {
+            override fun interceptOnClick(switchView: SwitchView): Boolean {
+                return false
+            }
+        }
+        switch_view.onCheckedChangedListener = object : SwitchView.OnCheckedChangedListener {
+
+            override fun onCheckedChanged(switchView: SwitchView, isChecked: Boolean) {
+//                Logger.e("isChecked = $isChecked")
+                displaySwitchViewState(switchView)
+            }
+
+        }
+        displaySwitchViewState(switch_view)
+    }
+
+    private fun displaySwitchViewState(switchView: SwitchView) {
+        tv_switch_view_state.text = if (switchView.isChecked) "开" else "关"
     }
 
     private inline fun setFlickerProgressBar() {

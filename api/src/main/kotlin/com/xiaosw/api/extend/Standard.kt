@@ -1,10 +1,13 @@
 package com.xiaosw.api.extend
 
 import android.content.res.TypedArray
+import android.graphics.Canvas
+import android.view.View
 import com.xiaosw.api.exception.TryCatchException
 import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.logger.report.ReportManager
 import com.xiaosw.api.util.EnvironmentUtil
+import com.xiaosw.api.util.ScreenUtil
 import java.io.File
 import java.lang.Exception
 import kotlin.contracts.ExperimentalContracts
@@ -145,3 +148,23 @@ inline fun <T : TypedArray?> T?.use(block: T.() -> Unit) {
         }
     }
 }
+
+inline fun <T : Canvas?> T?.save(block: T.() -> Unit) {
+    this?.run {
+        try {
+            save()
+            block(this)
+        } finally {
+            tryCatch(showException = false) {
+                restore()
+            }
+        }
+    }
+}
+
+inline fun View.dp2px(dp: Float) = ScreenUtil.dp2px(context, dp)
+inline fun View.dp2sp(dp: Float) = ScreenUtil.dp2sp(context, dp)
+inline fun View.px2dp(px: Float) = ScreenUtil.px2dp(context, px)
+inline fun View.sp2px(sp: Float) = ScreenUtil.sp2px(context, sp)
+inline fun View.sp2dp(sp: Float) = ScreenUtil.sp2dp(context, sp)
+inline fun View.px2sp(px: Float) = ScreenUtil.px2sp(context, px)

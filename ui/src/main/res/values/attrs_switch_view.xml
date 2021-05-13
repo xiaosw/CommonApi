@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SwitchView">
+        <attr name="android:radius" />
+        <attr name="android:thumb" />
+        <attr name="android:thumbOffset" />
+        <attr name="android:checked" />
+        <attr name="android:duration" />
+        <attr name="thumbColor" format="color|reference" />
+        <attr name="checkedBackgroundColor" format="color|reference" />
+        <attr name="slidingEffectEnable" format="boolean|reference" />
+        <attr name="slidingEnable" format="boolean|reference" />
+    </declare-styleable>
+</resources>
