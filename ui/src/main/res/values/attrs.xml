@@ -3,4 +3,14 @@
     <declare-styleable name="AppCompatViewPager">
         <attr name="disableScroll" format="boolean|reference" />
     </declare-styleable>
+
+    <declare-styleable name="RoundImageView">
+        <attr name="android:radius"/>
+        <attr name="android:topLeftRadius" />
+        <attr name="android:topRightRadius" />
+        <attr name="android:bottomLeftRadius" />
+        <attr name="android:bottomRightRadius" />
+        <attr name="forceCircle" format="boolean|reference"/>
+        <attr name="roundBackgroundEnable" format="boolean|reference"/>
+    </declare-styleable>
 </resources>

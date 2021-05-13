@@ -136,6 +136,21 @@
 
         </LinearLayout>
 
+        <com.xsw.ui.widget.RoundImageView
+            android:layout_width="80dp"
+            android:layout_height="180dp"
+            android:src="@mipmap/test"
+            android:scaleType="fitXY"
+            app:roundBackgroundEnable="true"
+            app:forceCircle="true"
+            android:radius="0dp"
+            android:background="#f00"
+            android:topLeftRadius="8dp"
+            android:topRightRadius="16dp"
+            android:bottomRightRadius="24dp"
+            android:bottomLeftRadius="32dp"
+            android:layout_marginTop="20dp"/>
+
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>
