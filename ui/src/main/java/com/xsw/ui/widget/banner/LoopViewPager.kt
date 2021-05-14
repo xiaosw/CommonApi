@@ -7,6 +7,7 @@ import androidx.viewpager.widget.PagerAdapter
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.use
 import com.xiaosw.api.logger.Logger
+import com.xiaosw.api.manager.WeakRegisterManager
 import com.xsw.ui.R
 import com.xsw.ui.widget.AppCompatViewPager
 import com.xsw.ui.widget.banner.adapter.BannerAdapter
@@ -28,6 +29,38 @@ class LoopViewPager @JvmOverloads constructor (
                 removeCallbacks(this)
                 postDelayed(this, periodMillis)
             }
+        }
+    }
+
+    private val mOnPageChangeListeners by lazy {
+        WeakRegisterManager<OnPageChangeListener>()
+    }
+
+    private val mPageChangeListener by lazy {
+        object : OnPageChangeListener {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+                val realPosition = toRealItem(position)
+                mOnPageChangeListeners.forEach {
+                    it.onPageScrolled(realPosition, positionOffset, positionOffsetPixels)
+                }
+            }
+
+            override fun onPageSelected(position: Int) {
+                mOnPageChangeListeners.forEach {
+                    it.onPageSelected(toRealItem(position))
+                }
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                mOnPageChangeListeners.forEach {
+                    it.onPageScrollStateChanged(state)
+                }
+            }
+
         }
     }
 
@@ -53,6 +86,7 @@ class LoopViewPager @JvmOverloads constructor (
 
     init {
         parseAttrs(context, attrs)
+        super.addOnPageChangeListener(mPageChangeListener)
     }
 
     private fun parseAttrs(context: Context, attrs: AttributeSet? = null) {
@@ -61,6 +95,11 @@ class LoopViewPager @JvmOverloads constructor (
             delayMillis = getInt(R.styleable.LoopViewPager_delayMillis, delayMillis.toInt()).toLong()
             periodMillis = getInt(R.styleable.LoopViewPager_periodMillis, periodMillis.toInt()).toLong()
         }
+    }
+
+    private inline fun toRealItem(item: Int) : Int {
+        val realCount = mBannerAdapter?.getRealCount() ?: 0
+        return if (realCount > 0) item % realCount else item
     }
 
     override fun setCurrentItem(item: Int) {
@@ -171,9 +210,15 @@ class LoopViewPager @JvmOverloads constructor (
         return super.dispatchTouchEvent(ev)
     }
 
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        if (mBannerAdapter?.getRealCount() ?: 0 <= 1) {
+            return false
+        }
+        return super.onInterceptTouchEvent(ev)
+    }
+
     private var isFirstDataSetChange = true
     override fun onDataSetChanged() {
-        Logger.e("onDataSetChanged")
         super.onDataSetChanged()
         mBannerAdapter?.run {
             if (isFirstDataSetChange) {
@@ -188,4 +233,23 @@ class LoopViewPager @JvmOverloads constructor (
         checkLoop()
     }
 
+    override fun setOnPageChangeListener(listener: OnPageChangeListener?) {
+        listener?.run {
+            addOnPageChangeListener(this)
+        }
+    }
+
+    override fun addOnPageChangeListener(listener: OnPageChangeListener) {
+        register(listener)
+    }
+
+    override fun removeOnPageChangeListener(listener: OnPageChangeListener) {
+        unregister(listener)
+    }
+
+    fun register(t: OnPageChangeListener) = mOnPageChangeListeners.register(t)
+
+    fun unregister(t: OnPageChangeListener) = mOnPageChangeListeners.unregister(t)
+
+    override fun clear() = mOnPageChangeListeners.clear()
 }

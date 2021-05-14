@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <attr name="autoLoop" format="boolean|reference"/>
+    <attr name="delayMillis" format="integer|reference"/>
+    <attr name="periodMillis" format="integer|reference"/>
+    <attr name="checkedColor" format="color|reference"/>
+    <attr name="uncheckedColor" format="color|reference"/>
+
     <declare-styleable name="AppCompatViewPager">
         <attr name="disableScroll" format="boolean|reference" />
     </declare-styleable>
@@ -15,8 +22,29 @@
     </declare-styleable>
 
     <declare-styleable name="LoopViewPager">
-        <attr name="autoLoop" format="boolean|reference"/>
-        <attr name="delayMillis" format="integer|reference"/>
-        <attr name="periodMillis" format="integer|reference"/>
+        <attr name="autoLoop" />
+        <attr name="delayMillis" />
+        <attr name="periodMillis" />
+    </declare-styleable>
+
+    <declare-styleable name="BannerView">
+        <attr name="autoLoop" />
+        <attr name="delayMillis" />
+        <attr name="periodMillis" />
+        <attr name="touchToScroll" format="boolean|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="BaseBannerIndicator">
+        <attr name="android:radius"/>
+        <attr name="forceCycle" format="boolean|reference"/>
+        <attr name="checkedColor"/>
+        <attr name="uncheckedColor"/>
+        <attr name="indicatorWidth" format="dimension|reference"/>
+        <attr name="indicatorHeight" format="dimension|reference"/>
+        <attr name="indicatorDividerWidth" format="dimension|reference"/>
+        <attr name="scrollEffect">
+            <enum name="none" value="0"/>
+            <enum name="slide" value="1"/>
+        </attr>
     </declare-styleable>
 </resources>

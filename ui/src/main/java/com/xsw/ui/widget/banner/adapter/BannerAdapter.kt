@@ -34,7 +34,7 @@ abstract class BannerAdapter<Source> @JvmOverloads constructor (
         }
     }
 
-    override fun getCount() = Int.MAX_VALUE
+    override fun getCount() = if (getRealCount() > 0) Int.MAX_VALUE else 0
 
     override fun isViewFromObject(view: View, obj: Any) = view == obj
 
@@ -42,7 +42,8 @@ abstract class BannerAdapter<Source> @JvmOverloads constructor (
         val child = inflateChild(container).also {
             container.addView(it)
         }
-        bindData(container, child, sources[getRealPosition(position)])
+        val realPosition = getRealPosition(position)
+        bindData(container, child, realPosition, sources[realPosition])
         return child
     }
 
@@ -92,7 +93,13 @@ abstract class BannerAdapter<Source> @JvmOverloads constructor (
 
     fun getRealCount() = sources.size
 
-    fun getRealPosition(position: Int) = position % getRealCount()
+    fun getRealPosition(position: Int) : Int {
+        val realCount = getRealCount()
+        if (realCount === 0) {
+            return position
+        }
+        return position % realCount
+    }
 
-    abstract fun bindData(parent: ViewGroup, item: View, source: Source)
+    abstract fun bindData(parent: ViewGroup, item: View, position: Int,source: Source)
 }

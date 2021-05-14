@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.xiaosw.api.annotation.AutoAdjustDensity
+import com.xiaosw.api.extend.dp2px
 import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.manager.ActivityLifeManager
 import com.xiaosw.api.manager.DensityManager
@@ -19,7 +20,9 @@ import com.xsw.ui.anim.path.PathAnimator
 import com.xsw.ui.widget.FlickerProgressBar
 import com.xsw.ui.widget.FlowLayout
 import com.xsw.ui.widget.SwitchView
+import com.xsw.ui.widget.banner.BaseBannerIndicator
 import com.xsw.ui.widget.banner.adapter.BannerAdapter
+import com.xsw.ui.widget.banner.tranforme.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -121,6 +124,15 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         bannerAdapter.add("https://c-ssl.duitang.com/uploads/item/201908/26/20190826014644_haefl.thumb.1000_0.jpeg")
         bannerAdapter.add("https://c-ssl.duitang.com/uploads/item/201905/16/20190516100859_mknsy.thumb.1000_0.jpg")
         banner_view.setAdapter(bannerAdapter)
+        banner_view.setTransform(DepthTransformer())
+        banner_view.bindIndicator(BaseBannerIndicator(this).also {
+            val p = dp2px(8f).toInt()
+            it.setPadding(p, p, p, p)
+            it.forceCircle = false
+            it.scrollEffect = BaseBannerIndicator.ScrollEffect.SLIDE
+            it.indicatorHeight = 20f
+            it.indicatorWidth = 80f
+        })
     }
 
     private fun displaySwitchViewState(switchView: SwitchView) {

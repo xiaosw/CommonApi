@@ -15,6 +15,10 @@ class WeakRegisterManager<T> {
         WeakHashMap<T?, Any?>()
     }
 
+    var size = 0
+        get() = mCallbacks.size
+        private set
+
     fun register(t: T?) = register(t) {
         true
     }

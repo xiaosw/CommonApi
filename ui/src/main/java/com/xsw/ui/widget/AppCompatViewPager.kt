@@ -6,10 +6,11 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.xiaosw.api.extend.tryCatch
 import com.xiaosw.api.extend.use
 import com.xiaosw.api.logger.Logger
+import com.xiaosw.api.manager.WeakRegisterManager
 import com.xsw.ui.R
+import com.xsw.ui.widget.listener.OnDataSetChangeListener
 
 /**
  * ClassName: [AppCompatViewPager]
@@ -20,20 +21,26 @@ import com.xsw.ui.R
 open class AppCompatViewPager @JvmOverloads constructor(
     context: Context
     , attrs: AttributeSet? = null
-) : ViewPager(context, attrs) {
+) : ViewPager(context, attrs)
+    , WeakRegisterManager.IRegisterManager<OnDataSetChangeListener>
+    , OnDataSetChangeListener {
 
     private val mDataSetObserver by lazy {
         object : DataSetObserver() {
             override fun onChanged() {
                 super.onChanged()
-                onDataSetChanged()
+                dispatchDataSetChanged()
             }
 
             override fun onInvalidated() {
                 super.onInvalidated()
-                onDataSetChanged()
+                dispatchDataSetChanged()
             }
         }
+    }
+
+    private val mWeakRegisterManager by lazy {
+        WeakRegisterManager<OnDataSetChangeListener>()
     }
 
     var scrollEnable = true
@@ -43,6 +50,7 @@ open class AppCompatViewPager @JvmOverloads constructor(
         addOnAdapterChangeListener { _, oldAdapter, newAdapter ->
             oldAdapter?.unregisterDataSetObserver(mDataSetObserver)
             newAdapter?.registerDataSetObserver(mDataSetObserver)
+            register(this)
         }
     }
 
@@ -70,11 +78,26 @@ open class AppCompatViewPager @JvmOverloads constructor(
 
     override fun setAdapter(adapter: PagerAdapter?) {
         super.setAdapter(adapter)
-        onDataSetChanged()
+        dispatchDataSetChanged()
     }
 
-    internal open fun onDataSetChanged() {
-        // nothing
+    private fun dispatchDataSetChanged() {
+        mWeakRegisterManager?.forEach {
+            it.onDataSetChanged()
+        }
+    }
+
+    override fun register(t: OnDataSetChangeListener) {
+        mWeakRegisterManager.register(t)
+    }
+
+    override fun unregister(t: OnDataSetChangeListener) = mWeakRegisterManager.unregister(t)
+
+    override fun clear() = mWeakRegisterManager.clear().also {
+        register(this)
+    }
+
+    override fun onDataSetChanged() {
     }
 
 }
