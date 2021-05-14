@@ -56,18 +56,18 @@ class RoundImageView @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val size = measuredWidth.coerceAtMost(measuredHeight)
-        setMeasuredDimension(size, size)
-        mDrawRectF.set(paddingLeft.toFloat()
-            , paddingTop.toFloat()
-            , size - paddingRight.toFloat()
-            , size - paddingBottom.toFloat())
         mClipPath.reset()
         val r = if (forceCircle) {
+            val size = measuredWidth.coerceAtMost(measuredHeight)
+            setMeasuredDimension(size, size)
             size / 1f
         } else {
             radius
         }
+        mDrawRectF.set(paddingLeft.toFloat()
+            , paddingTop.toFloat()
+            , measuredWidth - paddingRight.toFloat()
+            , measuredHeight - paddingBottom.toFloat())
         with(mClipPath) {
             reset()
             val tlr: Float

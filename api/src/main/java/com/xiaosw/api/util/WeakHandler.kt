@@ -18,7 +18,10 @@ import java.util.concurrent.locks.ReentrantLock
  * Created by admin at 2020-12-30
  * @Email xiaosw0802@163.com
  */
-class WeakHandler(looper: Looper?, private val callback: Handler.Callback? = null) {
+class WeakHandler @JvmOverloads constructor (
+    looper: Looper? = null
+    , private val callback: Handler.Callback? = null
+) {
 
     private val h: H
 

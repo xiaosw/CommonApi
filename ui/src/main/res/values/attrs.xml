@@ -13,4 +13,10 @@
         <attr name="forceCircle" format="boolean|reference"/>
         <attr name="roundBackgroundEnable" format="boolean|reference"/>
     </declare-styleable>
+
+    <declare-styleable name="LoopViewPager">
+        <attr name="autoLoop" format="boolean|reference"/>
+        <attr name="delayMillis" format="integer|reference"/>
+        <attr name="periodMillis" format="integer|reference"/>
+    </declare-styleable>
 </resources>

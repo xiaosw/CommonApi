@@ -19,6 +19,7 @@ import com.xsw.ui.anim.path.PathAnimator
 import com.xsw.ui.widget.FlickerProgressBar
 import com.xsw.ui.widget.FlowLayout
 import com.xsw.ui.widget.SwitchView
+import com.xsw.ui.widget.banner.adapter.BannerAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -115,6 +116,11 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
 
         }
         displaySwitchViewState(switch_view)
+        val bannerAdapter = AppBannerAdapter()
+        bannerAdapter.add("https://c-ssl.duitang.com/uploads/item/201410/31/20141031050718_AGxJy.thumb.1000_0.jpeg")
+        bannerAdapter.add("https://c-ssl.duitang.com/uploads/item/201908/26/20190826014644_haefl.thumb.1000_0.jpeg")
+        bannerAdapter.add("https://c-ssl.duitang.com/uploads/item/201905/16/20190516100859_mknsy.thumb.1000_0.jpg")
+        banner_view.setAdapter(bannerAdapter)
     }
 
     private fun displaySwitchViewState(switchView: SwitchView) {
