@@ -36,6 +36,7 @@ class RoundImageView @JvmOverloads constructor(
     var bottomRightRadius = 0f
     var bottomLeftRadius = 0f
     var forceCircle = false
+    var resizeClip = false
     var roundBackgroundEnable = true
 
     init {
@@ -46,6 +47,7 @@ class RoundImageView @JvmOverloads constructor(
         context.obtainStyledAttributes(attrs, R.styleable.RoundImageView).use {
             radius = getDimension(R.styleable.RoundImageView_android_radius, radius)
             forceCircle = getBoolean(R.styleable.RoundImageView_forceCircle, forceCircle)
+            resizeClip = getBoolean(R.styleable.RoundImageView_android_resizeClip, resizeClip)
             roundBackgroundEnable = getBoolean(R.styleable.RoundImageView_roundBackgroundEnable, roundBackgroundEnable)
             topLeftRadius = getDimension(R.styleable.RoundImageView_android_topLeftRadius, topLeftRadius)
             topRightRadius = getDimension(R.styleable.RoundImageView_android_topRightRadius, topRightRadius)
@@ -58,16 +60,33 @@ class RoundImageView @JvmOverloads constructor(
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         mClipPath.reset()
         val r = if (forceCircle) {
-            val size = measuredWidth.coerceAtMost(measuredHeight)
-            setMeasuredDimension(size, size)
+            val drawWidth = measuredWidth - paddingLeft - paddingRight
+            val drawHeight = measuredHeight - paddingTop - paddingBottom
+            val size = drawWidth.coerceAtMost(drawHeight)
+            if (resizeClip) {
+                setMeasuredDimension(size, size)
+                mDrawRectF.set(paddingLeft.toFloat()
+                    , paddingTop.toFloat()
+                    , measuredWidth - paddingRight.toFloat()
+                    , measuredHeight - paddingBottom.toFloat())
+            } else {
+                val sizeHalf = size / 2
+                val cx = drawWidth / 2f
+                val cy = drawHeight / 2f
+                mDrawRectF.set(cx - sizeHalf
+                    , cy - sizeHalf
+                    , cx + sizeHalf
+                    , cy + sizeHalf)
+            }
+
             size / 1f
         } else {
+            mDrawRectF.set(paddingLeft.toFloat()
+                , paddingTop.toFloat()
+                , measuredWidth - paddingRight.toFloat()
+                , measuredHeight - paddingBottom.toFloat())
             radius
         }
-        mDrawRectF.set(paddingLeft.toFloat()
-            , paddingTop.toFloat()
-            , measuredWidth - paddingRight.toFloat()
-            , measuredHeight - paddingBottom.toFloat())
         with(mClipPath) {
             reset()
             val tlr: Float

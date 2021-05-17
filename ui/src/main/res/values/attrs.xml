@@ -17,6 +17,7 @@
         <attr name="android:topRightRadius" />
         <attr name="android:bottomLeftRadius" />
         <attr name="android:bottomRightRadius" />
+        <attr name="android:resizeClip"/>
         <attr name="forceCircle" format="boolean|reference"/>
         <attr name="roundBackgroundEnable" format="boolean|reference"/>
     </declare-styleable>
