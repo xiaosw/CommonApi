@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.DataSetObserver
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.widget.LinearLayout
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.xiaosw.api.extend.use
@@ -43,6 +44,8 @@ open class AppCompatViewPager @JvmOverloads constructor(
         WeakRegisterManager<OnDataSetChangeListener>()
     }
 
+    private var mOrientationPageTransformer: OrientationPageTransformer? = null
+
     var scrollEnable = true
 
     init {
@@ -62,19 +65,63 @@ open class AppCompatViewPager @JvmOverloads constructor(
         }
     }
 
+    override fun setPageTransformer(reverseDrawingOrder: Boolean, transformer: PageTransformer?) {
+        mOrientationPageTransformer = transformer as? OrientationPageTransformer
+        super.setPageTransformer(reverseDrawingOrder, transformer)
+    }
+
+    override fun setPageTransformer(
+        reverseDrawingOrder: Boolean,
+        transformer: PageTransformer?,
+        pageLayerType: Int
+    ) {
+        mOrientationPageTransformer = transformer as? OrientationPageTransformer
+        super.setPageTransformer(reverseDrawingOrder, transformer, pageLayerType)
+    }
+
+    private var isSwapCoordinate = false
+
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
         if (!scrollEnable) {
             return false
         }
-        return super.onInterceptTouchEvent(ev)
+        isSwapCoordinate = swapXYIfNeeded(ev)
+        val intercept = super.onInterceptTouchEvent(ev)
+        if (isSwapCoordinate) {
+            requestDisallowInterceptTouchEvent(true)
+            swapXYIfNeeded(ev)
+        }
+        Logger.e("$intercept, ${ev?.action}, ${MotionEvent.ACTION_DOWN}, ${MotionEvent.ACTION_MOVE}")
+        return intercept
     }
 
     override fun onTouchEvent(ev: MotionEvent?): Boolean {
         if (!scrollEnable) {
             return false
         }
+        if (isSwapCoordinate) {
+           swapXYIfNeeded(ev)
+        }
+        Logger.e("${ev?.action}")
         return super.onTouchEvent(ev)
     }
+
+    private inline fun swapXYIfNeeded(ev: MotionEvent?) : Boolean {
+        ev?.apply {
+            val isVertical = mOrientationPageTransformer?.orientation === OrientationPageTransformer.VERTICAL
+            if (!isVertical) {
+                return false
+            }
+            val w = measuredWidth
+            val h = measuredHeight
+            val newX = y / h * w
+            val newY = x / w * h
+            setLocation(newX, newY)
+            return true
+        }
+        return false
+    }
+
 
     override fun setAdapter(adapter: PagerAdapter?) {
         super.setAdapter(adapter)
@@ -98,6 +145,18 @@ open class AppCompatViewPager @JvmOverloads constructor(
     }
 
     override fun onDataSetChanged() {
+    }
+
+    interface OrientationPageTransformer : PageTransformer {
+
+        val orientation: Int
+            get() = HORIZONTAL
+
+        companion object {
+            const val HORIZONTAL = LinearLayout.HORIZONTAL
+            const val VERTICAL = LinearLayout.VERTICAL
+        }
+
     }
 
 }

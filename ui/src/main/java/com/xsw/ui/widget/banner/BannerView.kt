@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.viewpager.widget.ViewPager
 import com.xiaosw.api.extend.use
-import com.xiaosw.api.logger.Logger
 import com.xsw.ui.R
 import com.xsw.ui.widget.banner.adapter.BannerAdapter
 import com.xsw.ui.widget.listener.OnDataSetChangeListener

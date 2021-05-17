@@ -108,7 +108,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:visibility="gone">
 
             <com.xsw.ui.widget.SwitchView
                 android:id="@+id/switch_view"
@@ -141,6 +142,7 @@
             android:layout_height="180dp"
             android:src="@mipmap/test"
             android:scaleType="fitXY"
+            android:resizeClip="true"
             app:roundBackgroundEnable="true"
             app:forceCircle="true"
             android:radius="0dp"
@@ -149,14 +151,17 @@
             android:topRightRadius="16dp"
             android:bottomRightRadius="24dp"
             android:bottomLeftRadius="32dp"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="20dp"
+            android:visibility="gone"/>
 
         <com.xsw.ui.widget.banner.BannerView
             android:id="@+id/banner_view"
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:layout_marginTop="20dp"
-            app:autoLoop="false"/>
+            app:delayMillis="3000"
+            app:periodMillis="3000"
+            app:autoLoop="true"/>
 
     </LinearLayout>
 

@@ -2,7 +2,6 @@ package com.xsw.ui.widget.banner.tranforme
 
 import android.view.View
 import androidx.viewpager.widget.ViewPager
-import kotlin.math.abs
 
 /**
  * ClassName: [DepthTransformer]
@@ -12,25 +11,38 @@ import kotlin.math.abs
  */
 class DepthTransformer : ViewPager.PageTransformer {
     override fun transformPage(page: View, position: Float) {
-        val toAlpha: Float
-        val toScale: Float
-        val toTranslationX: Float
-        if (position > 0 && position < 1) {
-            // moving to the right
-            toAlpha = 1 - position
-            toScale = MIN_SCALE_DEPTH + (1 - MIN_SCALE_DEPTH) * (1 - abs(position))
-            toTranslationX = page.width * -position
-        } else {
-            // use default for all other cases
-            toAlpha = 1f
-            toScale = 1f
-            toTranslationX = 0f
-        }
         with(page) {
-            alpha = toAlpha
-            translationX = toTranslationX
-            scaleX = toScale
-            scaleY = toScale
+            when {
+                position < -1 -> { // [-Infinity,-1)
+                    // This page is way off-screen to the left.
+                    alpha = 0f
+                }
+
+                position <= 0 -> { // [-1,0]
+                    // Use the default slide transition when
+                    // moving to the left page
+                    alpha = 1f
+                    translationX = 0f
+                    scaleX = 1f
+                    scaleY = 1f
+                }
+
+                position <= 1 -> { // (0,1]
+                    // Fade the page out.
+                    alpha = 1 - position
+                    // Counteract the default slide transition
+                    translationX = width * -position
+                    // Scale the page down (between MIN_SCALE and 1)
+                    val scaleFactor: Float = MIN_SCALE_DEPTH + (1 - MIN_SCALE_DEPTH) * 1 - Math.abs(position)
+                    scaleX = scaleFactor
+                    scaleY = scaleFactor
+                }
+
+                else -> { // (1,+Infinity]
+                    // This page is way off-screen to the right.
+                    alpha = 0f
+                }
+            }
         }
     }
 

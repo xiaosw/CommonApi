@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         bannerAdapter.add("https://c-ssl.duitang.com/uploads/item/201908/26/20190826014644_haefl.thumb.1000_0.jpeg")
         bannerAdapter.add("https://c-ssl.duitang.com/uploads/item/201905/16/20190516100859_mknsy.thumb.1000_0.jpg")
         banner_view.setAdapter(bannerAdapter)
-        banner_view.setTransform(DepthTransformer())
+        banner_view.setTransform(VerticalPageTransformer())
         banner_view.bindIndicator(BaseBannerIndicator(this).also {
             val p = dp2px(8f).toInt()
             it.setPadding(p, p, p, p)
