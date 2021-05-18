@@ -44,8 +44,8 @@ class BannerView @JvmOverloads constructor(
     }
 
     private val mViewPager = LoopViewPager(context).also {
-        addView(it, LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
-            , ViewGroup.LayoutParams.MATCH_PARENT))
+        addView(it, LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT
+            , ViewGroup.LayoutParams.WRAP_CONTENT))
         it.addOnPageChangeListener(mOnPageChangeListener)
         it.register(this)
     }

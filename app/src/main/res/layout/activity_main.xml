@@ -161,6 +161,16 @@
             android:layout_marginTop="20dp"
             app:delayMillis="3000"
             app:periodMillis="3000"
+            app:autoLoop="false"/>
+
+        <com.xsw.ui.widget.banner.BannerView
+            android:id="@+id/vertical_banner_view"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginTop="20dp"
+            android:background="#f00"
+            app:delayMillis="3000"
+            app:periodMillis="3000"
             app:autoLoop="true"/>
 
     </LinearLayout>

@@ -12,6 +12,7 @@ import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.manager.WeakRegisterManager
 import com.xsw.ui.R
 import com.xsw.ui.widget.listener.OnDataSetChangeListener
+import kotlin.math.abs
 
 /**
  * ClassName: [AppCompatViewPager]
@@ -44,8 +45,7 @@ open class AppCompatViewPager @JvmOverloads constructor(
         WeakRegisterManager<OnDataSetChangeListener>()
     }
 
-    private var mOrientationPageTransformer: OrientationPageTransformer? = null
-
+    private var isVertical = false
     var scrollEnable = true
 
     init {
@@ -66,7 +66,8 @@ open class AppCompatViewPager @JvmOverloads constructor(
     }
 
     override fun setPageTransformer(reverseDrawingOrder: Boolean, transformer: PageTransformer?) {
-        mOrientationPageTransformer = transformer as? OrientationPageTransformer
+        isVertical = ((transformer as? OrientationPageTransformer)?.orientation
+                === OrientationPageTransformer.VERTICAL)
         super.setPageTransformer(reverseDrawingOrder, transformer)
     }
 
@@ -75,51 +76,76 @@ open class AppCompatViewPager @JvmOverloads constructor(
         transformer: PageTransformer?,
         pageLayerType: Int
     ) {
-        mOrientationPageTransformer = transformer as? OrientationPageTransformer
+        isVertical = ((transformer as? OrientationPageTransformer)?.orientation
+                === OrientationPageTransformer.VERTICAL)
         super.setPageTransformer(reverseDrawingOrder, transformer, pageLayerType)
     }
 
-    private var isSwapCoordinate = false
+    private var isScroll = false
+    private var mLastY = 0f
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (isVertical) {
+            onTouchEvent(ev)
+            if (isScroll && ev?.action === MotionEvent.ACTION_UP) {
+                ev?.run {
+                    action = MotionEvent.ACTION_CANCEL
+                    return super.dispatchTouchEvent(ev)
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        if (!scrollEnable) {
-            return false
-        }
-        isSwapCoordinate = swapXYIfNeeded(ev)
-        val intercept = super.onInterceptTouchEvent(ev)
-        if (isSwapCoordinate) {
+        if (isVertical) {
             requestDisallowInterceptTouchEvent(true)
-            swapXYIfNeeded(ev)
         }
-        Logger.e("$intercept, ${ev?.action}, ${MotionEvent.ACTION_DOWN}, ${MotionEvent.ACTION_MOVE}")
-        return intercept
+        return super.onInterceptTouchEvent(ev)
     }
 
     override fun onTouchEvent(ev: MotionEvent?): Boolean {
         if (!scrollEnable) {
             return false
         }
-        if (isSwapCoordinate) {
-           swapXYIfNeeded(ev)
+        ev?.run {
+            if (isVertical) {
+                when(action and MotionEvent.ACTION_MASK) {
+                    MotionEvent.ACTION_DOWN -> {
+                        isScroll = false
+                    }
+
+                    MotionEvent.ACTION_MOVE -> {
+                        if (abs(y - mLastY) > 3) {
+                            isScroll = true
+                        }
+                        mLastY = y
+                    }
+                }
+                return useSwapXYIfNeeded(this) {
+                    super.onTouchEvent(this)
+                }
+            }
         }
-        Logger.e("${ev?.action}")
         return super.onTouchEvent(ev)
     }
 
-    private inline fun swapXYIfNeeded(ev: MotionEvent?) : Boolean {
-        ev?.apply {
-            val isVertical = mOrientationPageTransformer?.orientation === OrientationPageTransformer.VERTICAL
+    private inline fun useSwapXYIfNeeded(ev: MotionEvent, action: MotionEvent.() -> Boolean) : Boolean {
+        Logger.e("isVertical: $isVertical")
+        return ev?.run {
             if (!isVertical) {
                 return false
             }
             val w = measuredWidth
             val h = measuredHeight
+            val originalX = x
+            val originalY= y
             val newX = y / h * w
             val newY = x / w * h
             setLocation(newX, newY)
-            return true
+            return action.invoke(this).also {
+                setLocation(originalX, originalY)
+            }
         }
-        return false
     }
 
 
