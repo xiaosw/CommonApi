@@ -9,8 +9,26 @@ import androidx.viewpager.widget.ViewPager
  *
  * Create by X at 2021/05/18 16:18.
  */
-class FlowTransformer : ViewPager.PageTransformer {
-    override fun transformPage(page: View, position: Float) {
+class FlowTransformer : BaseTransformer() {
+
+    override fun onHorizontalTransformPageIn(
+        page: View,
+        position: Float,
+        alpha: Float,
+        scaleX: Float,
+        scaleY: Float
+    ) {
         page.rotationY = position * -30f
     }
+
+    override fun onHorizontalTransformPageOut(
+        page: View,
+        position: Float,
+        alpha: Float,
+        scaleX: Float,
+        scaleY: Float
+    ) {
+        page.rotationY = position * -30f
+    }
+
 }

@@ -9,15 +9,33 @@ import androidx.viewpager.widget.ViewPager
  *
  * Create by X at 2021/05/18 16:18.
  */
-class RotateDownTransformer : ViewPager.PageTransformer {
-    override fun transformPage(page: View, position: Float) {
+class RotateDownTransformer : BaseTransformer() {
+
+    override fun onHorizontalTransformPageIn(
+        page: View,
+        position: Float,
+        alpha: Float,
+        scaleX: Float,
+        scaleY: Float
+    ) {
         with(page) {
-            val width = width.toFloat()
-            val height = height.toFloat()
-            val toRotation = ROT_MOD * position * -1.25f
-            pivotX = width * 0.5f
-            pivotY = height
-            rotation = toRotation
+            pivotX = width.toFloat() * 0.5f
+            pivotY = height.toFloat()
+            rotation = ROT_MOD * position * -1.25f
+        }
+    }
+
+    override fun onHorizontalTransformPageOut(
+        page: View,
+        position: Float,
+        alpha: Float,
+        scaleX: Float,
+        scaleY: Float
+    ) {
+        with(page) {
+            pivotX = width.toFloat() * 0.5f
+            pivotY = height.toFloat()
+            rotation = ROT_MOD * position * -1.25f
         }
     }
 

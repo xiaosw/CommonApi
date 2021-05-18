@@ -81,15 +81,15 @@ open class AppCompatViewPager @JvmOverloads constructor(
         super.setPageTransformer(reverseDrawingOrder, transformer, pageLayerType)
     }
 
-    private var isScroll = false
-    private var mLastY = 0f
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (isVertical) {
             onTouchEvent(ev)
             if (isScroll && ev?.action === MotionEvent.ACTION_UP) {
                 ev?.run {
                     action = MotionEvent.ACTION_CANCEL
-                    return super.dispatchTouchEvent(ev)
+                    return useSwapXYIfNeeded(ev) {
+                        super.dispatchTouchEvent(this)
+                    }
                 }
             }
         }
@@ -99,10 +99,16 @@ open class AppCompatViewPager @JvmOverloads constructor(
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
         if (isVertical) {
             requestDisallowInterceptTouchEvent(true)
+            return useSwapXYIfNeeded(ev!!) {
+                super.onInterceptTouchEvent(this)
+            }
         }
         return super.onInterceptTouchEvent(ev)
     }
 
+    private var isScroll = false
+    private var mLastX = 0f
+    private var mLastY = 0f
     override fun onTouchEvent(ev: MotionEvent?): Boolean {
         if (!scrollEnable) {
             return false
@@ -112,12 +118,20 @@ open class AppCompatViewPager @JvmOverloads constructor(
                 when(action and MotionEvent.ACTION_MASK) {
                     MotionEvent.ACTION_DOWN -> {
                         isScroll = false
+                        mLastX = x
+                        mLastY = y
                     }
 
                     MotionEvent.ACTION_MOVE -> {
-                        if (abs(y - mLastY) > 3) {
+                        val dx = abs(x - mLastX)
+                        val dy = abs(y - mLastY)
+                        if (dx > 3 || dy > 3) {
                             isScroll = true
                         }
+                        if (dx > dy) {
+                            return false
+                        }
+                        mLastX = x
                         mLastY = y
                     }
                 }
@@ -130,7 +144,6 @@ open class AppCompatViewPager @JvmOverloads constructor(
     }
 
     private inline fun useSwapXYIfNeeded(ev: MotionEvent, action: MotionEvent.() -> Boolean) : Boolean {
-        Logger.e("isVertical: $isVertical")
         return ev?.run {
             if (!isVertical) {
                 return false
