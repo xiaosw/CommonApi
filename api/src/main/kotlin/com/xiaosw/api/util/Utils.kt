@@ -1,5 +1,6 @@
 package com.xiaosw.api.util
 
+import android.util.SparseArray
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.tryCatch
 import java.io.Closeable
@@ -33,6 +34,9 @@ object Utils {
 
     @JvmStatic
     fun isEmpty(array: Array<*>?) = (array?.size ?: 0) > 0
+
+    @JvmStatic
+    fun isEmpty(array: SparseArray<*>?) = (array?.size() ?: 0) > 0
 
     @JvmStatic
     fun isEmpty(any: Any?) = any.isNull()

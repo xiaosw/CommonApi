@@ -5,9 +5,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.BaseViewHolder
 import com.xiaosw.api.annotation.AutoAdjustDensity
 import com.xiaosw.api.extend.dp2px
 import com.xiaosw.api.logger.Logger
@@ -21,7 +27,6 @@ import com.xsw.ui.widget.FlickerProgressBar
 import com.xsw.ui.widget.FlowLayout
 import com.xsw.ui.widget.SwitchView
 import com.xsw.ui.widget.banner.BaseBannerIndicator
-import com.xsw.ui.widget.banner.adapter.BannerAdapter
 import com.xsw.ui.widget.banner.tranforme.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
@@ -64,7 +69,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
             it.addAction(Intent.ACTION_SCREEN_OFF)
         })
 
-        FpsMonitor.start(mFpsCallback)
+//        FpsMonitor.start(mFpsCallback)
 
         tv_text.setOnClickListener {
             //startActivity(Intent(this, NotRegisterActivity::class.java))
@@ -103,7 +108,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
             lineTo(300f, 0f)
                 .quadTo(450f, 0f, 300f, 300f)
                 .cubicTo(450f, 250f, 150f, 750f, 300f, 900f)
-            start()
+//            start()
         }
         switch_view.interceptOnClick = object : SwitchView.InterceptOnClick {
             override fun interceptOnClick(switchView: SwitchView): Boolean {
@@ -140,6 +145,22 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         verticalBannerAdapter.add("Banner3")
         vertical_banner_view.setAdapter(verticalBannerAdapter)
         vertical_banner_view.setTransform(VerticalPageTransformer())
+
+        cover_flow.adapter = object : BaseQuickAdapter<String, BaseViewHolder>(R.layout.item_cover_flow, ArrayList<String>().also {
+            it.add("https://c-ssl.duitang.com/uploads/item/201410/31/20141031050718_AGxJy.thumb.1000_0.jpeg")
+            it.add("https://c-ssl.duitang.com/uploads/item/201905/16/20190516100859_mknsy.thumb.1000_0.jpg")
+            it.add("https://c-ssl.duitang.com/uploads/item/201908/26/20190826014644_haefl.thumb.1000_0.jpeg")
+            it.add("https://c-ssl.duitang.com/uploads/item/201410/31/20141031050718_AGxJy.thumb.1000_0.jpeg")
+            it.add("https://c-ssl.duitang.com/uploads/item/201905/16/20190516100859_mknsy.thumb.1000_0.jpg")
+            it.add("https://c-ssl.duitang.com/uploads/item/201908/26/20190826014644_haefl.thumb.1000_0.jpeg")
+        }) {
+            override fun convert(holder: BaseViewHolder?, url: String?) {
+                holder?.getView<ImageView>(R.id.item)?.run {
+                    Glide.with(this@MainActivity).load(url).into(this)
+                }
+            }
+
+        }
     }
 
     private fun displaySwitchViewState(switchView: SwitchView) {

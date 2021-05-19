@@ -34,6 +34,7 @@ dependencies {
     implementation rootProject.ext.core_ktx
     implementation rootProject.ext.kotlin
     implementation rootProject.ext.constraint_layout
+    implementation rootProject.ext.material
 
     implementation project(":api")
 }
