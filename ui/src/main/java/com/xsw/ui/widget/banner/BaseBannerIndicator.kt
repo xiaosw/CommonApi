@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.xiaosw.api.extend.dp2px
+import com.xiaosw.api.extend.save
 import com.xiaosw.api.extend.use
 import com.xiaosw.api.logger.Logger
 import com.xsw.ui.R
@@ -201,28 +202,52 @@ open class BaseBannerIndicator @JvmOverloads constructor(
         position: Int,
         positionOffset: Float
     ) {
-        if (position >= mCount - 1) {
-            return
-        }
+        var isEdge = position == mCount - 1
         if (scrollEffect != ScrollEffect.SLIDE) {
             return
         }
         // Logger.e("position = $position, toLeft = $toLeft, toRight = $toRight")
+        val l: Float
+        val t: Float
+        val r: Float
+        val b: Float
         if (toLeft && !isPositionChanged) {
-            val current = mIndicatorRectF[position + 1]
-            val next = mIndicatorRectF[position]
-            val w = current.left - next.left
-            val l = current.left - w * (1 - positionOffset)
-            val r = l + current.width()
-            mScrollIndicatorRectF.set(l, current.top, r, current.bottom)
+            if (isEdge) {
+                val next = mIndicatorRectF[mCount - 1]
+                val w = next.width()
+                t = next.top
+                r = next.right
+                l = r - w * (1 - positionOffset)
+                b = next.bottom
+            } else {
+                val current = mIndicatorRectF[position + 1]
+                val next = mIndicatorRectF[position]
+                val w = current.left - next.left
+                l = current.left - w * (1 - positionOffset)
+                t = current.top
+                r = l + current.width()
+                b = current.bottom
+            }
+            mScrollIndicatorRectF.set(l, t, r, b)
             invalidate()
         } else if (toRight && !isPositionChanged) {
-            val current = mIndicatorRectF[position]
-            val next = mIndicatorRectF[position + 1]
-            val w = next.left - current.left
-            val l = current.left + w * positionOffset
-            val r = l + current.width()
-            mScrollIndicatorRectF.set(l, current.top, r, current.bottom)
+            if (isEdge) {
+                val next = mIndicatorRectF[0]
+                val w = next.width()
+                l = next.left
+                t = next.top
+                r = l + w * positionOffset
+                b = next.bottom
+            } else {
+                val current = mIndicatorRectF[position]
+                val next = mIndicatorRectF[position + 1]
+                val w = next.left - current.left
+                l = current.left + w * positionOffset
+                t = current.top
+                r = l + current.width()
+                b = current.bottom
+            }
+            mScrollIndicatorRectF.set(l, t, r, b)
             invalidate()
         }
     }

@@ -173,11 +173,23 @@
             app:periodMillis="3000"
             app:autoLoop="true"/>
 
+        <com.xsw.ui.widget.marquee.MarqueeFrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="#00f"
+            android:radius="12dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            app:clipBackground="true"
+            app:marqueeMode="border"/>
+
         <com.xsw.ui.widget.recycler.CoverFlowRecyclerView
             android:id="@+id/cover_flow"
             android:layout_width="match_parent"
-            android:layout_height="360dp"
-            android:layout_marginTop="20dp"/>
+            android:layout_height="260dp"
+            android:layout_marginTop="20dp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

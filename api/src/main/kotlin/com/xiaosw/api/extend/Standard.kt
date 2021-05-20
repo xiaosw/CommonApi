@@ -1,7 +1,9 @@
 package com.xiaosw.api.extend
 
+import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Canvas
+import android.util.AttributeSet
 import android.view.View
 import com.xiaosw.api.exception.TryCatchException
 import com.xiaosw.api.logger.Logger
@@ -146,6 +148,12 @@ inline fun <T : TypedArray?> T?.use(block: T.() -> Unit) {
                 recycle()
             }
         }
+    }
+}
+
+inline fun AttributeSet?.parseAttrs(context: Context, attrs: IntArray, block: TypedArray.() -> Unit) {
+    context.obtainStyledAttributes(this, attrs).use {
+        block(this)
     }
 }
 

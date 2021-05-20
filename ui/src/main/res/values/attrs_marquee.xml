@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MarqueeFrameLayout">
+        <attr name="android:radius" />
+        <attr name="borderWidth" format="dimension|reference" />
+        <attr name="clipBackground" format="boolean|reference" />
+        <attr name="stepPercent" format="float|reference" />
+        <attr name="marqueeMode">
+            <enum name="border" value="0"/>
+        </attr>
+    </declare-styleable>
+</resources>
