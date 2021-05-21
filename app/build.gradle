@@ -53,12 +53,3 @@ dependencies {
 trackConfig {
     isDebug = true
 }
-
-buildscript {
-    repositories {
-        maven { url '../repo' }
-    }
-    dependencies {
-        classpath "com.xsw.track:track:1.0.0"
-    }
-}

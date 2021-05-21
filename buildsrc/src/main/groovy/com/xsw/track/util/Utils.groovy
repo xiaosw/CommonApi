@@ -2,6 +2,10 @@ package com.xsw.track.util
 
 class Utils {
 
+    static boolean isNull(Object obj) {
+        return obj == null
+    }
+
     static boolean hasNull(Object... args) {
         if (null == args) {
             return true
@@ -12,6 +16,15 @@ class Utils {
             }
         }
         return false
+    }
+
+    static void close(Closeable closeable) {
+        if (isNull(closeable)) {
+            return
+        }
+        try {
+            closeable.close()
+        } catch(Exception e) { }
     }
 
 }

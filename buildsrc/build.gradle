@@ -1,0 +1,40 @@
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: "com.gradle.plugin-publish"
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:0.11.0"
+    }
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation 'commons-io:commons-io:2.6'
+    implementation 'org.ow2.asm:asm:5.0'
+    implementation "com.android.tools.build:gradle:3.6.3"
+}
+
+repositories {
+    google()
+    jcenter()
+    mavenCentral()
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            def repoPath = "../repo"
+            pom.groupId = 'com.xsw.track'
+            pom.artifactId = 'track'
+            pom.version = '1.0.0'
+            repository(url: uri(repoPath))
+        }
+    }
+}

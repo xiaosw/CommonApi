@@ -1,6 +1,7 @@
 package com.xsw.track
 
 import com.xsw.track.config.TrackConfig
+import com.xsw.track.util.Log
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -13,6 +14,7 @@ class TrackPlugin implements Plugin<Project> {
             boolean isDebug = target.trackConfig.isDebug
             println("------------------- xsw plugin $isDebug --------------------")
             TrackConfig.setDebug(isDebug)
+            Log.help()
         }
     }
 

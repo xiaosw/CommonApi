@@ -1,5 +1,2 @@
-include ':plugin'
-include ':ui'
-include ':app', ':api'
-include ':compat'
+include ':api', ':compat', ':ui', ':app'
 rootProject.name='CommonApi'
