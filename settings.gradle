@@ -1,2 +1,3 @@
+include ':track'
 include ':api', ':compat', ':ui', ':app'
 rootProject.name='CommonApi'

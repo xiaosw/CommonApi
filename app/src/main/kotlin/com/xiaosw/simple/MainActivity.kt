@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.xiaosw.api.annotation.AutoAdjustDensity
+import com.xiaosw.api.annotation.MeasureTimeMillis
 import com.xiaosw.api.extend.dp2px
 import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.manager.ActivityLifeManager
@@ -42,11 +43,11 @@ import kotlin.random.Random
  * @Email xiaosw0802@163.com
  */
 @AutoAdjustDensity(baseDp = 360f, baseDpByWidth = true)
-class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListener {
+class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListener, View.OnClickListener {
 
     private val mFpsCallback by lazy {
         object : FpsMonitor.OnFpsMonitorListener {
-            override fun onFpsMonitor(fps: Int) {
+            override fun onFpsMonitor(fps: Int) {Boolean
 //                Logger.i("fps: $fps")
 //                tv_fps.text = "FPS:$fps"
             }
@@ -139,6 +140,8 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
             it.indicatorWidth = 80f
         })
 
+        marquee.setOnClickListener(this)
+
         val verticalBannerAdapter = VerticalBannerAdapter()
         verticalBannerAdapter.add("Banner1")
         verticalBannerAdapter.add("Banner2")
@@ -190,6 +193,10 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
 
     override fun onAppBackground(activeTime: Long) {
         Logger.i("onAppBackground：activeTime = $activeTime")
+    }
+
+    override fun onClick(v: View?) {
+        Logger.e("onClick: v = $v")
     }
 
 }

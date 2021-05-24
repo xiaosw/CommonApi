@@ -1,27 +1,67 @@
 package com.xsw.track.util
 
 import com.xsw.track.config.TrackConfig
+import com.xsw.track.global.TrackGlobal
+
+import java.lang.reflect.Array
 
 class Log {
 
-    static void i(String text) {
-        if (!TrackConfig.isDebug()) {
+    static void i(Object... args) {
+        if (!TrackConfig.debug) {
             return
         }
-        if (Utils.hasNull(text)) {
+        if (args == null || args.length < 1) {
             return
         }
-        println(text)
+        args.each {
+            if (null != it) {
+                if (it.class.isArray()) {
+                    print "["
+                    final def length = Array.getLength(it)
+                    if (length > 0) {
+                        for (int i = 0; i < length; i++) {
+                            def value = Array.get(it, i)
+                            if (value != null) {
+                                print "${value}\t"
+                            } else {
+                                print "null\t"
+                            }
+                        }
+                    }
+                    print "]\t"
+                } else {
+                    println("$it")
+                }
+            } else {
+                print("null\t")
+            }
+        }
+        println("")
+    }
+
+    static void e(String text) {
+        if (!TrackConfig.debug || Utils.hasNull(text)) {
+            return
+        }
+        java.lang.System.err.println(text)
+    }
+
+    static void e(Throwable tr) {
+        if (!TrackConfig.debug || Utils.hasNull(tr)) {
+            return
+        }
+        tr.printStackTrace()
     }
 
     static void help() {
-        if (!TrackConfig.isDebug()) {
+        if (!TrackConfig.debug) {
             return
         }
         def is = Log.class.getClassLoader().getResourceAsStream("help.groovy")
         def baos = null
         try {
-            baos = new ByteArrayOutputStream();
+            baos = new ByteArrayOutputStream()
             int len
             byte[] buffer = new byte[1024];
             while((len = is.read(buffer)) != -1){
@@ -35,6 +75,14 @@ class Log {
             Utils.close(is)
             Utils.close(baos)
         }
+    }
+
+    static String getAccCodeName(int access) {
+        return TrackGlobal.sAccCodeMap.get(access)
+    }
+
+    static String getOpName(int opCode) {
+        return TrackGlobal.sOpCodeMap.get(opCode)
     }
 
 }

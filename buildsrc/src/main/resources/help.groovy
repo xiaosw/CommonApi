@@ -3,6 +3,8 @@
 //
 //trackConfig {
 //    isDebug = true
+//    isTrack = true
+//    isAddBuildTaskListener = true
 //}
 //
 ///////////////////// - Help END - /////////////////////////////

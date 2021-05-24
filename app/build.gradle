@@ -44,6 +44,7 @@ dependencies {
     implementation project(":api")
     implementation project(":compat")
     implementation project(":ui")
+    implementation project(":track")
 
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
@@ -52,4 +53,5 @@ dependencies {
 
 trackConfig {
     isDebug = true
+    isTrack = true
 }

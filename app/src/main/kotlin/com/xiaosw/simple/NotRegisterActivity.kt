@@ -2,8 +2,10 @@ package com.xiaosw.simple
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.xiaosw.api.annotation.MeasureTimeMillis
 import com.xiaosw.api.extend.onClick
 import com.xiaosw.api.hook.annotation.NotRegister
 import com.xiaosw.api.logger.Logger
@@ -16,14 +18,18 @@ import com.xiaosw.api.logger.Logger
  * @Email xiaosw0802@163.com
  */
 @NotRegister
-class NotRegisterActivity : AppCompatActivity() {
+class NotRegisterActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(TextView(this).also {
             it.text = "Start"
             it.onClick {
                 startActivity(Intent(this, NotRegisterActivity::class.java))
+            }
+            it.setOnClickListener {
+
             }
         })
         Logger.e("onCreate")
@@ -32,6 +38,15 @@ class NotRegisterActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Logger.e("onDestroy")
+    }
+
+    @MeasureTimeMillis
+    fun measureTimeInMillis() {
+
+    }
+
+    override fun onClick(v: View?) {
+        Logger.e("------------ onClick --------------")
     }
 
 }
