@@ -3,19 +3,16 @@ package com.xsw.track.visitor
 import com.xsw.track.util.Log
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.Opcodes;
 
 class MethodVisitorWrapper extends MethodVisitor {
-    private static final TAG_PREFIX = "************"
-    private static final TAG_SUFFIX = "************\n"
+    private static final TAG_PREFIX = ""
+    private static final TAG_SUFFIX = ":"
     private static final TAG = MethodVisitorWrapper.class.getSimpleName()
 
-    MethodVisitorWrapper(int code) {
-        super(code)
-    }
-
-    MethodVisitorWrapper(int code, MethodVisitor methodVisitor) {
-        super(code, methodVisitor)
+    MethodVisitorWrapper(MethodVisitor methodVisitor) {
+        super(Opcodes.ASM9, methodVisitor)
     }
 
     @Override

@@ -22,21 +22,21 @@ class ModifyClassUtil {
         return srcByteCode
     }
 
-    private static byte[] internalModifyClass(byte[] srcClass) {
-        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        ClassVisitor methodFilterCV = new ClassVisitorWrapper(Opcodes.ASM5, classWriter)
-        ClassReader cr = new ClassReader(srcClass);
-        cr.accept(methodFilterCV, ClassReader.SKIP_DEBUG);
-        return classWriter.toByteArray();
+    private static byte[] internalModifyClass(byte[] srcClassByteCode) {
+        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS)
+        ClassVisitor cv = new ClassVisitorWrapper(classWriter)
+        ClassReader cr = new ClassReader(srcClassByteCode)
+        cr.accept(cv, ClassReader.SKIP_DEBUG)
+        return classWriter.toByteArray()
     }
 
-    private static void onlyVisitClassMethod(byte[] srcClass) throws IOException {
-        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        ClassVisitorWrapper methodFilterCV = new ClassVisitorWrapper(Opcodes.ASM5,
+    private static void onlyVisitClassMethod(byte[] srcClassCode) throws IOException {
+        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS)
+        ClassVisitorWrapper cvw = new ClassVisitorWrapper(
                 classWriter)
-        methodFilterCV.onlyVisit = true
-        ClassReader cr = new ClassReader(srcClass);
-        cr.accept(methodFilterCV, ClassReader.SKIP_DEBUG);
+        cvw.onlyVisit = true
+        ClassReader cr = new ClassReader(srcClassCode)
+        cr.accept(cvw, ClassReader.SKIP_DEBUG)
     }
 
 }

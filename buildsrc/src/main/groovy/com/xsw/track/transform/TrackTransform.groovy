@@ -136,22 +136,23 @@ class TrackTransform extends Transform {
                         def modifyFile = modifyClassFileIfNeeded(classDir, classFile, context.getTemporaryDir())
                         if (null != modifyFile) {
                             Log.i("modifyFile: ${modifyFile.absolutePath}")
-                            modifyMap.put(file2FullClassName(classDir, classFile), modifyFile)
+                            modifyMap.put(classFile.absolutePath.replace(classDir.absolutePath, ""), modifyFile)
                         }
                     }
-                    final def toFile = outputProvider.getContentLocation(directoryInput.name,
+                    final def distDir = outputProvider.getContentLocation(directoryInput.name,
                             directoryInput.getContentTypes(),
                             directoryInput.getScopes(),
                             Format.DIRECTORY)
-                    Log.i("directoryInput toFile: ${toFile.absolutePath}")
-                    FileUtils.copyDirectory(directoryInput.file, toFile)
+                    Log.i("directoryInput distDir: ${distDir.absolutePath}")
+                    FileUtils.copyDirectory(directoryInput.file, distDir)
                     modifyMap.entrySet().each {
-                        File target = new File(toFile.absolutePath + File.separator + it.getKey())
+                        File target = new File(distDir.absolutePath + it.getKey())
                         if (target.exists()) {
                             target.delete()
                         }
                         final def src = it.getValue()
                         // Log.e("src = $src, target = $target")
+                        Log.e("target----------------> $target")
                         FileUtils.copyFile(src, target)
                         saveModifiedJarForCheck(src)
                         src.delete()
@@ -211,18 +212,19 @@ class TrackTransform extends Transform {
         def modifiedClassBytes = ModifyClassUtil.modifyClass(fullClassName, sourceClassBytes)
         if (null != modifiedClassBytes) {
             File modifyFile = new File(tempDir,
-                    fullClassName.concat(CLASS_SUFFIX))
+                    fullClassName.replace(".", "").concat(CLASS_SUFFIX))
             if (modifyFile.exists()) {
                 modifyFile.delete()
             }
             modifyFile.createNewFile()
             FileOutputStream fos = new FileOutputStream(modifyFile)
             try {
-                fos.write(sourceClassBytes)
-                fos.flush()
+                fos.write(modifiedClassBytes)
                 return modifyFile
             } catch(Exception e) {
                 Log.e(e)
+            } finally {
+                fos.close()
             }
         }
         return null
@@ -259,7 +261,7 @@ class TrackTransform extends Transform {
 
     private boolean whetherClassNeedModify(String fullClassName) {
         if (null == fullClassName
-                || fullClassName.endsWith("BuildConfig")
+                || fullClassName.endsWith(".BuildConfig")
                 || fullClassName.endsWith(".R")
                 || fullClassName.contains(".R\$")) {
             return false

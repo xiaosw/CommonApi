@@ -14,12 +14,8 @@ class ClassVisitorWrapper extends ClassVisitor {
     private String superName
     private String[] interfaces
 
-    ClassVisitorWrapper(int code) {
-        super(code)
-    }
-
-    ClassVisitorWrapper(int code, ClassVisitor classVisitor) {
-        super(code, classVisitor)
+    ClassVisitorWrapper(ClassVisitor classVisitor) {
+        super(Opcodes.ASM9, classVisitor)
     }
 
     @Override
@@ -94,8 +90,7 @@ class ClassVisitorWrapper extends ClassVisitor {
      * @param paramOpcodes 参数类型对应的ASM指令
      *
      */
-    private
-    static void visitMethodWithLoadedParams(MethodVisitor methodVisitor,
+    private static void visitMethodWithLoadedParams(MethodVisitor methodVisitor,
                                             int opcode, String owner,
                                             String methodName,
                                             String methodDesc,
@@ -103,9 +98,9 @@ class ClassVisitorWrapper extends ClassVisitor {
                                             int count,
                                             List<Integer> paramOpcodes) {
         for (int i = start; i < start + count; i++) {
-            methodVisitor.visitVarInsn(paramOpcodes[i - start], i);
+            methodVisitor.visitVarInsn(paramOpcodes[i - start], i)
         }
-        methodVisitor.visitMethodInsn(opcode, owner, methodName, methodDesc, false);
+        methodVisitor.visitMethodInsn(opcode, owner, methodName, methodDesc, false)
     }
 
     @Override
@@ -119,10 +114,8 @@ class ClassVisitorWrapper extends ClassVisitor {
                 // Log.e("method: $methodDesc, onlyVisit = $onlyVisit")
                 if (!onlyVisit) {
                     def mv = cv.visitMethod(access, name, desc, signature, exceptions)
-                    Log.e("mv = $mv")
                     if (null != mv) {
-                        Log.e("methodVisitor: $mv")
-                        methodVisitor = new MethodVisitorWrapper(Opcodes.ASM5, mv) {
+                        methodVisitor = new MethodVisitorWrapper(mv) {
                             @Override
                             void visitCode() {
                                 super.visitCode()

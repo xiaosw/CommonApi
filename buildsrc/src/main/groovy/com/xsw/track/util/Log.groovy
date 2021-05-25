@@ -31,7 +31,7 @@ class Log {
                     }
                     print "]\t"
                 } else {
-                    println("$it")
+                    print "$it\t"
                 }
             } else {
                 print("null\t")
