@@ -26,7 +26,7 @@ class ModifyClassUtil {
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS)
         ClassVisitor cv = new ClassVisitorWrapper(classWriter)
         ClassReader cr = new ClassReader(srcClassByteCode)
-        cr.accept(cv, ClassReader.SKIP_DEBUG)
+        cr.accept(cv, ClassReader.EXPAND_FRAMES)
         return classWriter.toByteArray()
     }
 
@@ -36,7 +36,7 @@ class ModifyClassUtil {
                 classWriter)
         cvw.onlyVisit = true
         ClassReader cr = new ClassReader(srcClassCode)
-        cr.accept(cvw, ClassReader.SKIP_DEBUG)
+        cr.accept(cvw, ClassReader.EXPAND_FRAMES)
     }
 
 }

@@ -18,8 +18,11 @@ class MethodDesc {
     // 参数类型对应的ASM指令，加载不同类型的参数需要不同的指令
     List<Integer> opcodes
 
+    private String mTrackDesc
+    private String mKey = ""
+
     MethodDesc(String name, String desc, String parent, String agentName, String agentDesc,
-               int paramsStart, int paramsCount, List<Integer> opcodes) {
+               int paramsStart, int paramsCount, List<Integer> opcodes, String trackDesc) {
         this.name = name
         this.desc = desc
         this.parent = parent
@@ -28,8 +31,17 @@ class MethodDesc {
         this.paramsStart = paramsStart
         this.paramsCount = paramsCount
         this.opcodes = opcodes
+        this.mTrackDesc = trackDesc
+        this.mKey = name + desc
     }
 
+    String getKey() {
+        return mKey
+    }
+
+    String getTrackDesc() {
+        return mTrackDesc
+    }
 
     @Override
     public String toString() {
@@ -42,6 +54,8 @@ class MethodDesc {
                 ", paramsStart=" + paramsStart +
                 ", paramsCount=" + paramsCount +
                 ", opcodes=" + opcodes +
+                ", trackDesc=" + mTrackDesc +
+                ", key=" + mKey +
                 '}';
     }
 }

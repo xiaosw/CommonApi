@@ -143,7 +143,6 @@ class TrackTransform extends Transform {
                             directoryInput.getContentTypes(),
                             directoryInput.getScopes(),
                             Format.DIRECTORY)
-                    Log.i("directoryInput distDir: ${distDir.absolutePath}")
                     FileUtils.copyDirectory(directoryInput.file, distDir)
                     modifyMap.entrySet().each {
                         File target = new File(distDir.absolutePath + it.getKey())
@@ -152,7 +151,6 @@ class TrackTransform extends Transform {
                         }
                         final def src = it.getValue()
                         // Log.e("src = $src, target = $target")
-                        Log.e("target----------------> $target")
                         FileUtils.copyFile(src, target)
                         saveModifiedJarForCheck(src)
                         src.delete()
@@ -211,8 +209,7 @@ class TrackTransform extends Transform {
         byte[] sourceClassBytes = IOUtils.toByteArray(new FileInputStream(classFile))
         def modifiedClassBytes = ModifyClassUtil.modifyClass(fullClassName, sourceClassBytes)
         if (null != modifiedClassBytes) {
-            File modifyFile = new File(tempDir,
-                    fullClassName.replace(".", "").concat(CLASS_SUFFIX))
+            File modifyFile = new File(tempDir, fullClassName.concat(CLASS_SUFFIX))
             if (modifyFile.exists()) {
                 modifyFile.delete()
             }

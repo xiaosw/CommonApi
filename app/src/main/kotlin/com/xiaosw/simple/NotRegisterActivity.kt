@@ -2,7 +2,6 @@ package com.xiaosw.simple
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.xiaosw.api.annotation.MeasureTimeMillis
@@ -18,7 +17,7 @@ import com.xiaosw.api.logger.Logger
  * @Email xiaosw0802@163.com
  */
 @NotRegister
-class NotRegisterActivity : AppCompatActivity(), View.OnClickListener {
+class NotRegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,10 +42,6 @@ class NotRegisterActivity : AppCompatActivity(), View.OnClickListener {
     @MeasureTimeMillis
     fun measureTimeInMillis() {
 
-    }
-
-    override fun onClick(v: View?) {
-        Logger.e("------------ onClick --------------")
     }
 
 }

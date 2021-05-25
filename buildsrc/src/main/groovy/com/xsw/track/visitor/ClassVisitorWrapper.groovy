@@ -118,15 +118,21 @@ class ClassVisitorWrapper extends ClassVisitor {
                         methodVisitor = new MethodVisitorWrapper(mv) {
                             @Override
                             void visitCode() {
-                                super.visitCode()
                                 visitMethodWithLoadedParams(mv,
                                         Opcodes.INVOKESTATIC,
                                         TrackConfig.TRACK_MANAGER_NAME,
                                         methodDesc.agentName,
-                                        methodDesc.agentDesc,
+                                        methodDesc.trackDesc,
                                         methodDesc.paramsStart,
                                         methodDesc.paramsCount,
                                         methodDesc.opcodes)
+                                if (methodDesc.key == TrackGlobal.KEY_ON_CLICK) {
+                                    Label l1 = new Label()
+                                    mv.visitJumpInsn(Opcodes.IFEQ, l1)
+                                    mv.visitInsn(Opcodes.RETURN)
+                                    mv.visitLabel(l1)
+                                }
+                                super.visitCode()
                             }
                         }
                     }

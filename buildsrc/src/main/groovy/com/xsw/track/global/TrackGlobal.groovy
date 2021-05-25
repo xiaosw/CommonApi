@@ -9,14 +9,18 @@ class TrackGlobal {
     static final def sAccCodeMap = new HashMap<String, Integer>()
     static final def sOpCodeMap = new HashMap<String, Integer>()
     private static final Map<String, MethodDesc> sVisitMethod = new HashMap<>()
+    static final def KEY_ON_CLICK
     static {
-        setMethodDesc(new MethodDesc('onClick',
+        def onClickMethodDesc = new MethodDesc('onClick',
                 '(Landroid/view/View;)V',
                 'android/view/View$OnClickListener',
                 'onClick',
                 '(Landroid/view/View;)V',
                 1, 1,
-                [Opcodes.ALOAD]))
+                [Opcodes.ALOAD],
+                "(Landroid/view/View;)Z")
+        KEY_ON_CLICK = onClickMethodDesc.key
+        setMethodDesc(onClickMethodDesc)
 
         sAccCodeMap.put(1, "ACC_PUBLIC")
         sAccCodeMap.put(2, "ACC_PRIVATE")
