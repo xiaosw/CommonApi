@@ -1,5 +1,7 @@
 package com.xsw.track
 
+import android.content.Context
+import android.util.AttributeSet
 import android.view.View
 import com.xiaosw.api.logger.Logger
 import com.xsw.track.intercept.OnClickIntercept
@@ -33,6 +35,11 @@ object TrackManager {
         }
         mLastClickTime = System.currentTimeMillis()
         return onClickIntercept?.onClick(view) ?: false
+    }
+
+    @JvmStatic
+    fun onCreateView(parent: View?, name: String?, context: Context?, attrs: AttributeSet?) {
+        Logger.e("onCreateView: parent = $parent, name = $name, context = $context, attrs = $attrs")
     }
 
 }

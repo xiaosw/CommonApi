@@ -12,6 +12,7 @@ import com.xsw.track.config.TrackConfig
 import com.xsw.track.global.TrackGlobal
 import com.xsw.track.util.Log
 import com.xsw.track.util.ModifyClassUtil
+import com.xsw.track.util.Utils
 import groovy.io.FileType
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
@@ -108,24 +109,23 @@ class TrackTransform extends Transform {
                 if (jarName.endsWith(".jar")) {
                     jarName = jarName.substring(0, jarName.length() - 4)
                 }
-                final def newJarName = "${jarName}_$_suffix"
-                // Log.i("newJarName = $newJarName")
+                final def newJarName = "${jarName}_${_suffix}"
                 // dest output file
-                final def toFile = outputProvider.getContentLocation(newJarName,
+                final def distDir = outputProvider.getContentLocation(newJarName,
                         jarInput.getContentTypes(),
                         jarInput.getScopes(),
                         Format.JAR)
-                def from
+                def modifyJar
                 if (checkJarWhetherNeedModify(jarInput)) {
-                    from = modifyJarFile(jarInput.file, context.getTemporaryDir())
+                    modifyJar = modifyJarFile(jarInput.file, context.getTemporaryDir())
                 }
-                if (null == from) {
-                    from = jarInput.file
+                if (null == modifyJar) {
+                    modifyJar = jarInput.file
                 } else {
-                    saveModifiedJarForCheck(from)
+                    saveModifiedJarForCheck(modifyJar)
                 }
                 // Log.i("copy from [${fromFile.absolutePath}] to [${toFile.absolutePath}]")
-                FileUtils.copyFile(from, toFile)
+                FileUtils.copyFile(modifyJar, distDir)
             }
 
             input.directoryInputs.each { directoryInput ->
@@ -190,7 +190,7 @@ class TrackTransform extends Transform {
                 if (null == classFullName) {
                     continue
                 }
-                if (whetherClassNeedModify(classFullName)) {
+                if (whetherClassNeedModify(classFullName, "jar")) {
                     return true
                 }
             }
@@ -202,7 +202,7 @@ class TrackTransform extends Transform {
 
     private File modifyClassFileIfNeeded(File classDir, File classFile, File tempDir) {
         final def fullClassName = file2FullClassName(classDir, classFile)
-        final def whetherClassNeedModify = whetherClassNeedModify(fullClassName)
+        final def whetherClassNeedModify = whetherClassNeedModify(fullClassName, "dir")
         if (!whetherClassNeedModify) {
             return null
         }
@@ -253,15 +253,20 @@ class TrackTransform extends Transform {
             absolutePath = absolutePath.replace(ignoreParent, "")
         }
         return absolutePath.replace(File.separator, ".")
+                .replace("/", ".")
                 .substring(0, absolutePath.length() - CLASS_SUFFIX.length())
     }
 
-    private boolean whetherClassNeedModify(String fullClassName) {
+    private boolean whetherClassNeedModify(String fullClassName, String from) {
         if (null == fullClassName
                 || fullClassName.endsWith(".BuildConfig")
                 || fullClassName.endsWith(".R")
                 || fullClassName.contains(".R\$")) {
             return false
+        }
+        // LayoutFactory
+        if ("androidx.appcompat.app.AppCompatDelegateImpl" == fullClassName) {
+            return true
         }
         def trackTargetPackages = TrackConfig.trackTargetPackages
         if (trackTargetPackages.isEmpty()) {
@@ -276,48 +281,54 @@ class TrackTransform extends Transform {
     }
 
     private File modifyJarFile(File jarFile, File tempDir) {
+        // Log.e("---------> jarFile = $jarFile, tempDir = $tempDir")
         if (null == jarFile) {
             return null
         }
         /** 设置输出到的jar */
-        def hexName = DigestUtils.md5Hex(jarFile.absolutePath)
-        def optJar = new File(tempDir, hexName + jarFile.name)
-        JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(optJar))
+        def final hexName = DigestUtils.md5Hex(jarFile.absolutePath)
+        def final optJar = new File(tempDir, hexName.concat("_").concat(jarFile.name))
+        def final jarOutputStream = new JarOutputStream(new FileOutputStream(optJar))
         /**
          * 读取原jar
          */
-        def file = new JarFile(jarFile)
-        Enumeration enumeration = file.entries()
-        while (enumeration.hasMoreElements()) {
-            JarEntry jarEntry = (JarEntry) enumeration.nextElement()
-            InputStream inputStream = file.getInputStream(jarEntry)
+        def final file = new JarFile(jarFile)
+        try {
+            def final enumeration = file.entries()
+            while (enumeration.hasMoreElements()) {
+                def final jarEntry = (JarEntry) enumeration.nextElement()
+                def final inputStream = file.getInputStream(jarEntry)
+                def final entryName = jarEntry.getName()
+                def final zipEntry = new ZipEntry(entryName)
+                jarOutputStream.putNextEntry(zipEntry)
 
-            String entryName = jarEntry.getName()
-            String className
-
-            ZipEntry zipEntry = new ZipEntry(entryName)
-
-            jarOutputStream.putNextEntry(zipEntry)
-
-            byte[] modifiedClassBytes = null
-            byte[] sourceClassBytes = IOUtils.toByteArray(inputStream)
-            if (entryName.endsWith(CLASS_SUFFIX)) {
-                className = absolutePath2FullClassName("", entryName)
-                if (whetherClassNeedModify(className)) {
-                    modifiedClassBytes = ModifyClassUtil.modifyClass(className,
-                            sourceClassBytes)
+                byte[] modifiedClassBytes = null
+                final def sourceClassBytes = IOUtils.toByteArray(inputStream)
+                def final className = absolutePath2FullClassName("", entryName)
+                if (entryName.endsWith(CLASS_SUFFIX)) {
+                    if (whetherClassNeedModify(className, "jar file")) {
+                        modifiedClassBytes = ModifyClassUtil.modifyClass(className,
+                                sourceClassBytes)
+                    }
                 }
+                if (modifiedClassBytes == null) {
+                    jarOutputStream.write(sourceClassBytes)
+                } else {
+                    jarOutputStream.write(modifiedClassBytes)
+                }
+                jarOutputStream.closeEntry()
             }
-            if (modifiedClassBytes == null) {
-                jarOutputStream.write(sourceClassBytes);
-            } else {
-                jarOutputStream.write(modifiedClassBytes);
+            Log.e("------- ${optJar.absolutePath} ------- is modified");
+        } catch (Exception e) {
+            Log.e(e)
+        } finally {
+            if (!Utils.isNull(file)) {
+                file.close()
             }
-            jarOutputStream.closeEntry();
+            if (!Utils.isNull(jarOutputStream)) {
+                jarOutputStream.close()
+            }
         }
-        Log.i("${hexName} is modified");
-        jarOutputStream.close()
-        file.close()
         return optJar
     }
 

@@ -3,6 +3,7 @@ package com.xsw.track.visitor
 import com.xsw.track.config.TrackConfig
 import com.xsw.track.global.TrackGlobal
 import com.xsw.track.util.Log
+import com.xsw.track.util.Utils
 import org.objectweb.asm.*
 
 class ClassVisitorWrapper extends ClassVisitor {
@@ -110,11 +111,10 @@ class ClassVisitorWrapper extends ClassVisitor {
         MethodVisitor methodVisitor = null
         if (null != interfaces && interfaces.length > 0) {
             final def methodDesc = TrackGlobal.getMethodDesc(name, desc)
-            if (null != methodDesc && interfaces.contains(methodDesc.parent)) {
-                // Log.e("method: $methodDesc, onlyVisit = $onlyVisit")
-                if (!onlyVisit) {
-                    def mv = cv.visitMethod(access, name, desc, signature, exceptions)
-                    if (null != mv) {
+            if (!Utils.isNull(methodDesc) && !onlyVisit) {
+                final def mv = cv.visitMethod(access, name, desc, signature, exceptions)
+                if (null != mv) {
+                    if (interfaces.contains(methodDesc.parent)) {
                         methodVisitor = new MethodVisitorWrapper(mv) {
                             @Override
                             void visitCode() {

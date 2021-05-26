@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
             //startActivity(Intent(this, NotRegisterActivity::class.java))
             startActivity(Intent(this, MaterialDesignActivity::class.java))
 //            val main = ReflectCompat.forName(MainActivity::class.java.name)
-//            Log.e("MainActivity", "onCreate: $main")
+            Logger.e("MainActivity#onCreate:")
         }
 
 //        setFlickerProgressBar()

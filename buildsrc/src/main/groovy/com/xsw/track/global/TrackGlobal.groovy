@@ -10,6 +10,7 @@ class TrackGlobal {
     static final def sOpCodeMap = new HashMap<String, Integer>()
     private static final Map<String, MethodDesc> sVisitMethod = new HashMap<>()
     static final def KEY_ON_CLICK
+    static final def KEY_ON_CREATE_VIEW
     static {
         def onClickMethodDesc = new MethodDesc('onClick',
                 '(Landroid/view/View;)V',
@@ -20,7 +21,19 @@ class TrackGlobal {
                 [Opcodes.ALOAD],
                 "(Landroid/view/View;)Z")
         KEY_ON_CLICK = onClickMethodDesc.key
-        setMethodDesc(onClickMethodDesc)
+        addMethodDesc(onClickMethodDesc)
+
+        def onCreateViewMethodDesc = new MethodDesc('onCreateView',
+                '(Landroid/view/View;Ljava/lang/String;Landroid/content/Context;Landroid/util/AttributeSet;)Landroid/view/View;',
+                'android/view/LayoutInflater$Factory2',
+                'onCreateView',
+                '(Landroid/view/View;Ljava/lang/String;Landroid/content/Context;Landroid/util/AttributeSet;)Landroid/view/View;',
+                1, 4,
+                [Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ALOAD],
+                "(Landroid/view/View;Ljava/lang/String;Landroid/content/Context;Landroid/util/AttributeSet;)V")
+        KEY_ON_CREATE_VIEW = onCreateViewMethodDesc.key
+        addMethodDesc(onCreateViewMethodDesc)
+
 
         sAccCodeMap.put(1, "ACC_PUBLIC")
         sAccCodeMap.put(2, "ACC_PRIVATE")
@@ -209,7 +222,7 @@ class TrackGlobal {
         return sGlobal
     }
 
-    static void setMethodDesc(MethodDesc methodDesc) {
+    static void addMethodDesc(MethodDesc methodDesc) {
         if (null == methodDesc) {
             return
         }
