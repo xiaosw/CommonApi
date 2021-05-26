@@ -28,9 +28,10 @@ class TrackGlobal {
                 'android/view/LayoutInflater$Factory2',
                 'onCreateView',
                 '(Landroid/view/View;Ljava/lang/String;Landroid/content/Context;Landroid/util/AttributeSet;)Landroid/view/View;',
-                1, 4,
-                [Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ALOAD],
-                "(Landroid/view/View;Ljava/lang/String;Landroid/content/Context;Landroid/util/AttributeSet;)V")
+                1,
+                4,
+                [Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ALOAD, Opcodes.ALOAD],
+                "(Landroid/view/View;Ljava/lang/String;Landroid/content/Context;Landroid/util/AttributeSet;Landroid/view/View;)V")
         KEY_ON_CREATE_VIEW = onCreateViewMethodDesc.key
         addMethodDesc(onCreateViewMethodDesc)
 

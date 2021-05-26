@@ -314,6 +314,14 @@ class TrackTransform extends Transform {
                 if (modifiedClassBytes == null) {
                     jarOutputStream.write(sourceClassBytes)
                 } else {
+//                    def tempFile = new File("C:\\Users\\admin\\Desktop\\temp", className.concat(CLASS_SUFFIX))
+//                    if (tempFile.exists()) {
+//                        tempFile.delete()
+//                    }
+//                    tempFile.createNewFile()
+//                    def os = new FileOutputStream(tempFile)
+//                    os.write(modifiedClassBytes)
+//                    os.close()
                     jarOutputStream.write(modifiedClassBytes)
                 }
                 jarOutputStream.closeEntry()

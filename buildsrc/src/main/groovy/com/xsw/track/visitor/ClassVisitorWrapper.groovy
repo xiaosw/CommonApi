@@ -6,6 +6,9 @@ import com.xsw.track.util.Log
 import com.xsw.track.util.Utils
 import org.objectweb.asm.*
 
+/**
+ * https://www.bilibili.com/read/cv10794772/
+ */
 class ClassVisitorWrapper extends ClassVisitor {
     private static final TAG_PREFIX = "************"
     private static final TAG_SUFFIX = "************\n"
@@ -114,19 +117,51 @@ class ClassVisitorWrapper extends ClassVisitor {
             if (!Utils.isNull(methodDesc) && !onlyVisit) {
                 final def mv = cv.visitMethod(access, name, desc, signature, exceptions)
                 if (null != mv) {
-                    if (interfaces.contains(methodDesc.parent)) {
+                    if (interfaces.contains(methodDesc.parent) || true) {
                         methodVisitor = new MethodVisitorWrapper(mv) {
                             @Override
                             void visitCode() {
-                                visitMethodWithLoadedParams(mv,
-                                        Opcodes.INVOKESTATIC,
-                                        TrackConfig.TRACK_MANAGER_NAME,
-                                        methodDesc.agentName,
-                                        methodDesc.trackDesc,
-                                        methodDesc.paramsStart,
-                                        methodDesc.paramsCount,
-                                        methodDesc.opcodes)
-                                if (methodDesc.key == TrackGlobal.KEY_ON_CLICK) {
+                                def key = methodDesc.key
+                                if (key != TrackGlobal.KEY_ON_CREATE_VIEW) {
+                                    visitMethodWithLoadedParams(mv,
+                                            Opcodes.INVOKESTATIC,
+                                            TrackConfig.TRACK_MANAGER_NAME,
+                                            methodDesc.agentName,
+                                            methodDesc.trackDesc,
+                                            methodDesc.paramsStart,
+                                            methodDesc.paramsCount,
+                                            methodDesc.opcodes)
+                                } else {
+                                    mv.visitVarInsn(Opcodes.ALOAD, 0)
+                                    visitMethodWithLoadedParams(mv,
+                                            Opcodes.INVOKEVIRTUAL,
+                                            "androidx/appcompat/app/AppCompatDelegateImpl",
+                                            "createView",
+                                            methodDesc.desc,
+                                            methodDesc.paramsStart,
+                                            methodDesc.paramsCount,
+                                            methodDesc.opcodes)
+                                    mv.visitVarInsn(Opcodes.ASTORE, 5)
+                                    Label l1 = new Label()
+                                    mv.visitInsn(Opcodes.ACONST_NULL)
+                                    mv.visitVarInsn(Opcodes.ALOAD, 5)
+                                    mv.visitJumpInsn(Opcodes.IF_ACMPEQ, l1)
+
+                                    // track manager
+                                    visitMethodWithLoadedParams(mv,
+                                            Opcodes.INVOKESTATIC,
+                                            TrackConfig.TRACK_MANAGER_NAME,
+                                            methodDesc.agentName,
+                                            methodDesc.trackDesc,
+                                            methodDesc.paramsStart,
+                                            methodDesc.opcodes.size(),
+                                            methodDesc.opcodes)
+
+                                    mv.visitVarInsn(Opcodes.ALOAD, 5)
+                                    mv.visitInsn(Opcodes.ARETURN)
+                                    mv.visitLabel(l1)
+                                }
+                                if (key == TrackGlobal.KEY_ON_CLICK) {
                                     Label l1 = new Label()
                                     mv.visitJumpInsn(Opcodes.IFEQ, l1)
                                     mv.visitInsn(Opcodes.RETURN)

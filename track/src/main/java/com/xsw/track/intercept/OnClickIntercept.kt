@@ -10,6 +10,6 @@ import android.view.View
  */
 interface OnClickIntercept {
 
-    fun onClick(view: View?) : Boolean
+    fun onInterceptClick(view: View?) : Boolean
 
 }
