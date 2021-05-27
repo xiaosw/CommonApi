@@ -41,6 +41,9 @@ class TrackTransform extends Transform {
         if (applicationId != null) {
             TrackConfig.addTrackTargetPackage(applicationId)
         }
+        // LayoutFactory
+        TrackConfig.addTrackTargetPackage("androidx.appcompat.app.AppCompatDelegateImpl")
+        TrackConfig.addTrackTargetPackage("android.support.v7.app.AppCompatDelegateImplV9")
     }
 
     @Override
@@ -263,10 +266,6 @@ class TrackTransform extends Transform {
                 || fullClassName.endsWith(".R")
                 || fullClassName.contains(".R\$")) {
             return false
-        }
-        // LayoutFactory
-        if ("androidx.appcompat.app.AppCompatDelegateImpl" == fullClassName) {
-            return true
         }
         def trackTargetPackages = TrackConfig.trackTargetPackages
         if (trackTargetPackages.isEmpty()) {

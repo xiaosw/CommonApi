@@ -17,9 +17,11 @@ class ClassVisitorWrapper extends ClassVisitor {
     private boolean onlyVisit = false
     private String superName
     private String[] interfaces
+    private String mOwner
 
-    ClassVisitorWrapper(ClassVisitor classVisitor) {
+    ClassVisitorWrapper(ClassVisitor classVisitor, String owner) {
         super(Opcodes.ASM9, classVisitor)
+        this.mOwner = owner
     }
 
     @Override
@@ -133,18 +135,51 @@ class ClassVisitorWrapper extends ClassVisitor {
                                             methodDesc.opcodes)
                                 } else {
                                     mv.visitVarInsn(Opcodes.ALOAD, 0)
+
+                                    def varIndex = 5
+                                    if (mOwner.concat("AppCompatDelegateImplV9")) {
+                                        visitMethodWithLoadedParams(mv,
+                                                Opcodes.INVOKEVIRTUAL,
+                                                mOwner.replace(".", "/"),
+                                                "callActivityOnCreateView",
+                                                methodDesc.desc,
+                                                methodDesc.paramsStart,
+                                                methodDesc.paramsCount,
+                                                methodDesc.opcodes)
+                                        mv.visitVarInsn(Opcodes.ASTORE, varIndex)
+                                        Label l1 = new Label()
+                                        mv.visitInsn(Opcodes.ACONST_NULL)
+                                        mv.visitVarInsn(Opcodes.ALOAD, varIndex)
+                                        mv.visitJumpInsn(Opcodes.IF_ACMPEQ, l1)
+
+                                        // track manager
+                                        visitMethodWithLoadedParams(mv,
+                                                Opcodes.INVOKESTATIC,
+                                                TrackConfig.TRACK_MANAGER_NAME,
+                                                methodDesc.agentName,
+                                                methodDesc.trackDesc,
+                                                methodDesc.paramsStart,
+                                                methodDesc.opcodes.size(),
+                                                methodDesc.opcodes)
+
+                                        mv.visitVarInsn(Opcodes.ALOAD, varIndex)
+                                        mv.visitInsn(Opcodes.ARETURN)
+                                        mv.visitLabel(l1)
+                                        varIndex++
+                                    }
+
                                     visitMethodWithLoadedParams(mv,
                                             Opcodes.INVOKEVIRTUAL,
-                                            "androidx/appcompat/app/AppCompatDelegateImpl",
+                                            mOwner.replace(".", "/"),
                                             "createView",
                                             methodDesc.desc,
                                             methodDesc.paramsStart,
                                             methodDesc.paramsCount,
                                             methodDesc.opcodes)
-                                    mv.visitVarInsn(Opcodes.ASTORE, 5)
+                                    mv.visitVarInsn(Opcodes.ASTORE, varIndex)
                                     Label l1 = new Label()
                                     mv.visitInsn(Opcodes.ACONST_NULL)
-                                    mv.visitVarInsn(Opcodes.ALOAD, 5)
+                                    mv.visitVarInsn(Opcodes.ALOAD, varIndex)
                                     mv.visitJumpInsn(Opcodes.IF_ACMPEQ, l1)
 
                                     // track manager
@@ -157,7 +192,7 @@ class ClassVisitorWrapper extends ClassVisitor {
                                             methodDesc.opcodes.size(),
                                             methodDesc.opcodes)
 
-                                    mv.visitVarInsn(Opcodes.ALOAD, 5)
+                                    mv.visitVarInsn(Opcodes.ALOAD, varIndex)
                                     mv.visitInsn(Opcodes.ARETURN)
                                     mv.visitLabel(l1)
                                 }
