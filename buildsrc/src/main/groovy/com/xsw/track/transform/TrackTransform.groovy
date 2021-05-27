@@ -78,9 +78,6 @@ class TrackTransform extends Transform {
         TrackConfig.trackTargetPackages.forEach() {
             Log.i("track target package: $it")
         }
-        if (!isTrack) {
-            return
-        }
         final def context = transformInvocation.context
         final def inputs = transformInvocation.inputs
         final def outputProvider = transformInvocation.outputProvider
@@ -261,6 +258,9 @@ class TrackTransform extends Transform {
     }
 
     private boolean whetherClassNeedModify(String fullClassName, String from) {
+        if (!TrackConfig.track) {
+            return false
+        }
         if (null == fullClassName
                 || fullClassName.endsWith(".BuildConfig")
                 || fullClassName.endsWith(".R")

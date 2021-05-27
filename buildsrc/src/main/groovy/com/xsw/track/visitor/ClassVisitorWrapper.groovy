@@ -137,7 +137,7 @@ class ClassVisitorWrapper extends ClassVisitor {
                                     mv.visitVarInsn(Opcodes.ALOAD, 0)
 
                                     def varIndex = 5
-                                    if (mOwner.concat("AppCompatDelegateImplV9")) {
+                                    if (mOwner.contains("AppCompatDelegateImplV9")) {
                                         visitMethodWithLoadedParams(mv,
                                                 Opcodes.INVOKEVIRTUAL,
                                                 mOwner.replace(".", "/"),
