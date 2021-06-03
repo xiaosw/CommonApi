@@ -2,6 +2,7 @@ package com.xiaosw.simple
 
 import android.app.Application
 import com.xiaosw.api.logger.Logger
+import com.xsw.track.jvmti.JVMTIManager
 
 /**
  * @ClassName: [App]
@@ -15,6 +16,8 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         Logger.init(if (BuildConfig.DEBUG) Logger.LogLevel.VERBOSE else Logger.LogLevel.NONE)
+        val isAttachJVMTI = JVMTIManager.attachJVMTI(this, true)
+        Logger.e("isAttachJVMTI = $isAttachJVMTI")
     }
 
 }

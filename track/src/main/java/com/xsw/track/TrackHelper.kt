@@ -8,12 +8,12 @@ import com.xsw.track.intercept.OnClickIntercept
 import com.xsw.track.intercept.OnCreateViewWrapperIntercept
 
 /**
- * ClassName: [TrackManager]
+ * ClassName: [TrackHelper]
  * Description:
  *
  * Create by X at 2021/05/25 10:13.
  */
-object TrackManager {
+object TrackHelper {
 
     private const val SINGLE_CLICK_DISABLE_DURATION = 1_000
     private var mLastClickTime = 0L

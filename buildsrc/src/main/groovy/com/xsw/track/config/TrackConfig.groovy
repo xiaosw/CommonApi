@@ -5,7 +5,7 @@ import com.xsw.track.util.Log
 class TrackConfig {
 
     def static final TAG_PREFIX = "Track-"
-    def static final TRACK_MANAGER_NAME = "com/xsw/track/TrackManager"
+    def static final TRACK_MANAGER_NAME = "com/xsw/track/TrackHelper"
 
     private def static isDebug = false
     private def static isTrack = false
