@@ -2,9 +2,14 @@ package com.xiaosw.api.extend
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.PixelFormat
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
+import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.exception.TryCatchException
 import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.logger.report.ReportManager
@@ -176,3 +181,30 @@ inline fun View.px2dp(px: Float) = ScreenUtil.px2dp(context, px)
 inline fun View.sp2px(sp: Float) = ScreenUtil.sp2px(context, sp)
 inline fun View.sp2dp(sp: Float) = ScreenUtil.sp2dp(context, sp)
 inline fun View.px2sp(px: Float) = ScreenUtil.px2sp(context, px)
+
+inline fun Bitmap.toDrawable(
+    context: Context? = AndroidContext.get()
+) : Drawable? {
+    return this?.let { bitmap ->
+        context?.let {
+            BitmapDrawable(it.resources, bitmap)
+        } ?: BitmapDrawable(bitmap)
+    } ?: null
+}
+
+inline fun Drawable.toBitmap() : Bitmap? {
+    if (this is BitmapDrawable) {
+        return bitmap
+    }
+    return this?.let {
+        val config = if (opacity != PixelFormat.OPAQUE) {
+            Bitmap.Config.ARGB_8888
+        } else {
+            Bitmap.Config.RGB_565
+        }
+        Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, config)?.also {
+            setBounds(0, 0, intrinsicWidth, intrinsicHeight)
+            draw(Canvas(it))
+        }
+    } ?: null
+}
