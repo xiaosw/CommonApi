@@ -208,3 +208,154 @@ inline fun Drawable.toBitmap() : Bitmap? {
         }
     } ?: null
 }
+
+inline fun CharSequence?.safe2Int(def: Int = 0) : Int {
+    return try {
+        if (!isNullOrEmpty()) {
+            Integer.parseInt(toString())
+        } else {
+            def
+        }
+    } catch (e: Exception) {
+        Logger.e(e)
+        def
+    }
+}
+inline fun Number?.safe2Int(def: Int = 0) : Int {
+    return try {
+        this?.toInt() ?: def
+    } catch (e: Exception) {
+        Logger.e(e)
+        def
+    }
+}
+
+inline fun CharSequence?.safe2Long(def: Long = 0L) : Long {
+    return try {
+        if (!isNullOrEmpty()) {
+            java.lang.Long.parseLong(toString())
+        } else {
+            def
+        }
+    } catch (e: Exception) {
+        Logger.e(e)
+        def
+    }
+}
+
+inline fun Number?.safe2Long(def: Long = 0) : Long {
+    return try {
+        this?.toLong() ?: def
+    } catch (e: Exception) {
+        Logger.e(e)
+        def
+    }
+}
+
+inline fun CharSequence?.safe2Short(def: Short = 0) : Short {
+    return try {
+        if (!isNullOrEmpty()) {
+            java.lang.Short.parseShort(toString())
+        } else {
+            def
+        }
+    } catch (e: Exception) {
+        Logger.e(e)
+        def
+    }
+}
+
+inline fun Number?.safe2Short(def: Short = 0) : Short {
+    return try {
+        this?.toShort() ?: def
+    } catch (e: Exception) {
+        Logger.e(e)
+        def
+    }
+}
+
+inline fun CharSequence?.safe2Byte(def: Byte = 0) : Byte {
+    return try {
+        if (!isNullOrEmpty()) {
+            java.lang.Byte.parseByte(toString())
+        } else {
+            def
+        }
+    } catch (e: Exception) {
+        Logger.e(e)
+        def
+    }
+}
+
+inline fun Number?.safe2Byte(def: Byte = 0) : Byte {
+    return try {
+        this?.toByte() ?: def
+    } catch (e: Exception) {
+        Logger.e(e)
+        def
+    }
+}
+
+inline fun CharSequence?.safe2Float(def: Float = 0f) : Float {
+    return try {
+        if (!isNullOrEmpty()) {
+            java.lang.Float.parseFloat(toString())
+        } else {
+            def
+        }
+    } catch (e: Exception) {
+        Logger.e(e)
+        def
+    }
+}
+
+inline fun Number?.safe2Float(def: Float = 0f) : Float {
+    return try {
+        this?.toFloat() ?: def
+    } catch (e: Exception) {
+        Logger.e(e)
+        def
+    }
+}
+
+inline fun CharSequence?.safe2Double(def: Double = 0.0) : Double {
+    return try {
+        if (!isNullOrEmpty()) {
+            java.lang.Double.parseDouble(toString())
+        } else {
+            def
+        }
+    } catch (e: Exception) {
+        Logger.e(e)
+        def
+    }
+}
+
+inline fun Number?.safe2Double(def: Double = 0.0) : Double {
+    return try {
+        this?.toDouble() ?: def
+    } catch (e: Exception) {
+        Logger.e(e)
+        def
+    }
+}
+
+inline fun CharSequence?.safe2Boolean(def: Boolean = false) : Boolean {
+    return try {
+        if (!isNullOrEmpty()) {
+            java.lang.Boolean.parseBoolean(toString())
+        } else {
+            def
+        }
+    } catch (e: Exception) {
+        Logger.e(e)
+        def
+    }
+}
+
+fun CharSequence?.trimEmptyOrNullChar(): Boolean {
+    return this?.let {
+        val t = it.trim()
+        t.isEmpty() || t.toString().toLowerCase() == "null"
+    } ?: true
+}

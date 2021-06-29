@@ -3,6 +3,7 @@ package com.xiaosw.api
 import android.app.Application
 import android.content.Context
 import androidx.annotation.Keep
+import com.xiaosw.api.extend.isMainProcess
 import com.xiaosw.api.manager.ActivityLifeManager
 
 /**
@@ -14,6 +15,10 @@ import com.xiaosw.api.manager.ActivityLifeManager
  */
 @Keep
 object AndroidContext {
+
+    val isMainProcess by lazy {
+        get().isMainProcess()
+    }
 
     private var mApp: Application? = null
 
