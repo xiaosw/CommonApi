@@ -1,0 +1,4 @@
+#!/bin/bash
+cmd="git pull --rebase"
+echo "execute 【 $cmd 】"
+eval $cmd

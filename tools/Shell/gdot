@@ -1,0 +1,4 @@
+#!/bin/bash
+command="git push origin :refs/tags/$1"
+echo "execute 【 $command 】"
+eval $command

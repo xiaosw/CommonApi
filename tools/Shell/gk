@@ -1,0 +1,8 @@
+#!/bin/bash
+branch=""
+if [[ -n $1 ]]; then
+	branch=$1
+fi
+cmd="gitk $branch&"
+echo "execute 【 $cmd 】"
+eval $cmd

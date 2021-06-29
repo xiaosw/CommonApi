@@ -1,0 +1,4 @@
+#!/bin/bash
+cmd="git stash list"
+echo "execute 【 $cmd 】"
+eval $cmd

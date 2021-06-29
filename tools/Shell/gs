@@ -1,0 +1,7 @@
+#!/bin/bash
+cmd="git stash"
+if [[ -n $1 ]]; then
+	cmd="git stash -m $1"
+fi
+echo "execute 【 $cmd 】"
+eval $cmd

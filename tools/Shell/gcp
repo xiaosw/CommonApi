@@ -1,0 +1,8 @@
+#!/bin/bash
+file_name="."
+if [[ -n $1 ]]; then
+	file_name=$1
+fi
+cmd="git cherry-pick $file_name"
+echo "execute 【 $cmd 】"
+eval $cmd

@@ -1,0 +1,4 @@
+#!/bin/bash
+cmd="git tag"
+echo "execute 【 $cmd 】"
+eval $cmd

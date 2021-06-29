@@ -1,0 +1,4 @@
+#!/bin/bash
+cmd="git status"
+echo "execute 【 $cmd 】"
+eval $cmd

@@ -1,0 +1,9 @@
+#!/bin/bash
+num=0
+if [[ -n "$1" ]]; then
+	num=$1
+fi
+
+cmd="git stash drop $num"
+echo "execute 【 $cmd 】"
+eval $cmd

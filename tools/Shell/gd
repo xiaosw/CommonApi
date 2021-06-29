@@ -1,0 +1,8 @@
+#!/bin/bash
+name="."
+if [[ -n $1 ]]; then
+	name=$1
+fi
+cmd="git diff $name"
+echo "execute 【 $cmd 】"
+eval $cmd

@@ -1,0 +1,4 @@
+#!/bin/bash
+command="clear"
+eval $command
+echo "execute 【 $command 】"

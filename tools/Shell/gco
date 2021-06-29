@@ -1,0 +1,8 @@
+#!/bin/bash
+dir="."
+if [[ -n $1 ]]; then
+	dir=$1
+fi
+cmd="git checkout $dir"
+echo "execute 【 $cmd 】"
+eval $cmd

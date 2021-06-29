@@ -1,0 +1,4 @@
+#!/bin/bash
+cmd="git commit --amend"
+echo "execute 【 $cmd 】"
+eval $cmd
