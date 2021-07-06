@@ -24,4 +24,7 @@ ext {
 
     google_gson = "com.google.code.gson:gson:${GSON_VERSION}"
 
+    // okhttp
+    ok_http="com.squareup.okhttp3:okhttp:${OK_HTTP_VERSION}"
+
 }

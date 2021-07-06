@@ -5,12 +5,12 @@ import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
-import androidx.annotation.Keep
 import com.xiaosw.api.AndroidContext
+import com.xiaosw.api.extend.isDestroyed
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.showToast
+import com.xiaosw.api.init.Initializer1Delegate
 import com.xiaosw.api.logger.Logger
-import com.xiaosw.api.util.AppUtils
 import java.lang.ref.WeakReference
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.atomic.AtomicBoolean
@@ -23,7 +23,8 @@ import kotlin.system.exitProcess
  * @Date 2019-08-22.
  * @Author xiaosw<xiaosw0802@163.com>.
  */
-object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
+object ActivityLifeManager : Application.ActivityLifecycleCallbacks,
+    Initializer1Delegate<Application>() {
 
      private val mActivityList by lazy {
         mutableListOf<WeakReference<Activity?>>()
@@ -37,8 +38,10 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
 
     private var mLastClickExitTime = 0L
 
-    var topActivity: Activity? = null
-        get() = mCurrentActivityRef?.get()
+    fun topActivity(): Activity? {
+        val activity = mCurrentActivityRef?.get()
+        return if (activity.isDestroyed()) null else activity
+    }
 
     private var mActiveStartTime = 0L
 
@@ -53,13 +56,11 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
     private var mStartCount = 0
     private var mResumeCount = 0
 
-    internal fun init(app: Application?) {
-        app?.let {
-            it.unregisterActivityLifecycleCallbacks(this)
-            it.registerActivityLifecycleCallbacks(this)
-        }
-
-    }
+    override fun onInit(app: Application?) = app?.let {
+        it.unregisterActivityLifecycleCallbacks(this)
+        it.registerActivityLifecycleCallbacks(this)
+        true
+    } ?: false
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         mActivityList.add(WeakReference(activity))
@@ -72,7 +73,7 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityResumed(activity: Activity) {
-        Logger.d("onActivityResumed: activity = $activity, top activity = $topActivity")
+        Logger.d("onActivityResumed: activity = $activity, top activity = ${topActivity()}")
         mResumeCount++
         notifyAppForegroundIfNeeded()
         if (mCurrentActivityRef == null
@@ -163,7 +164,7 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks {
     fun doubleClickExitApp(prompt: String) {
         with(System.currentTimeMillis()) {
             if ((this - mLastClickExitTime) > 2000) {
-                topActivity?.showToast(prompt)
+                topActivity()?.showToast(prompt)
                 mLastClickExitTime = this
             } else {
                 exitApp()

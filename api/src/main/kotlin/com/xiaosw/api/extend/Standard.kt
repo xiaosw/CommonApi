@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.graphics.PixelFormat
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
 import com.xiaosw.api.AndroidContext
@@ -17,6 +18,8 @@ import com.xiaosw.api.util.EnvironmentUtil
 import com.xiaosw.api.util.ScreenUtil
 import java.io.File
 import java.lang.Exception
+import java.lang.reflect.InvocationHandler
+import java.lang.reflect.Proxy
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 import kotlin.jvm.internal.Intrinsics
@@ -358,4 +361,37 @@ fun CharSequence?.trimEmptyOrNullChar(): Boolean {
         val t = it.trim()
         t.isEmpty() || t.toString().toLowerCase() == "null"
     } ?: true
+}
+
+inline fun measureTimeMillis(
+    ownerClazz: Class<*>? = null,
+    tag: String? = null,
+    showLog: Boolean = true,
+    block: () -> Unit
+): Long {
+    val start = System.currentTimeMillis()
+    block()
+    return (System.currentTimeMillis() - start).also { time ->
+        if (showLog && Logger.isEnable()) {
+            val owner = ownerClazz?.let { clazz ->
+                tag?.let {
+                    "${clazz.simpleName}#$tag "
+                } ?: "${clazz.simpleName}# "
+            } ?: (tag ?: "")
+            Logger.i("${owner}use【${time}ms】in【${Thread.currentThread().name}】thread.")
+        }
+    }
+}
+
+inline fun isMainThread() = Looper.getMainLooper().thread == Thread.currentThread()
+
+inline fun <reified T : Any> Any.optionalImpl() : T {
+    val clazz = T::class.java
+    val interfaces = if (clazz.isInterface) {
+        arrayOf(clazz)
+    } else {
+        clazz.interfaces
+    }
+    val handler = InvocationHandler { _, _, _ -> }
+    return Proxy.newProxyInstance(javaClass.classLoader, interfaces, handler) as T
 }

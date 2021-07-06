@@ -141,8 +141,8 @@ JNICALL void objectAlloc
     jvmtiThreadInfo threadInfo;
     jvmti_env->GetThreadInfo(thread, &threadInfo);
 
-    char* stackInfo = createStackInfo(jvmti_env, jni_env, thread, 10);
-
+//    char* stackInfo = createStackInfo(jvmti_env, jni_env, thread, 10);
+    char* stackInfo = "null";
     char *allocInfo;
     asprintf(&allocInfo, "time = %lld, obj count: %lld, tag = %lld, class = %s, thread = %s, size = %d\n stack: \n %s \n"
             , millis

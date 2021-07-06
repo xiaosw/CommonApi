@@ -23,7 +23,9 @@ class WeakHandler @JvmOverloads constructor (
     , private val callback: Handler.Callback? = null
 ) {
 
-    private val h: H
+    private val h = looper?.let {
+        H(it, callback)
+    } ?: H(callback)
 
     private val mLock by lazy {
         ReentrantLock()
@@ -31,12 +33,6 @@ class WeakHandler @JvmOverloads constructor (
 
     private val mChainedRef by lazy {
         ChainedRef(mLock, null)
-    }
-
-    init {
-        h = looper?.let {
-            H(it, callback)
-        } ?: H(callback)
     }
 
     fun post(runnable: Runnable?) {
