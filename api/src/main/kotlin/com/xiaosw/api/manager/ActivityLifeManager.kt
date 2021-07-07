@@ -70,12 +70,12 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks,
     override fun onActivityStarted(activity: Activity) {
         Logger.d("onActivityStarted: activity = $activity")
         mStartCount++
+        notifyAppForegroundIfNeeded()
     }
 
     override fun onActivityResumed(activity: Activity) {
         Logger.d("onActivityResumed: activity = $activity, top activity = ${topActivity()}")
         mResumeCount++
-        notifyAppForegroundIfNeeded()
         if (mCurrentActivityRef == null
             || mCurrentActivityRef?.get() == null
             || mCurrentActivityRef?.get() != activity) {
@@ -94,11 +94,10 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks,
 
     override fun onActivityStopped(activity: Activity) {
         Logger.d("onActivityStopped: $activity")
-        if (mCurrentActivityRef?.get() == activity) {
-            return
-        }
         mStartCount--
-        notifyAppBackgroundIfNeeded(activity)
+        if (mCurrentActivityRef?.get() == activity) {
+            notifyAppBackgroundIfNeeded(activity)
+        }
     }
 
     override fun onActivityDestroyed(activity: Activity) {

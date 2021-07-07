@@ -11,7 +11,6 @@ import com.xiaosw.api.wrapper.GsonWrapper
  * @Date 2019-08-09.
  * @Author xiaosw<xiaosw0802@163.com>.
  */
-@Keep
 object Logger {
 
     /**
@@ -19,25 +18,29 @@ object Logger {
      */
     private const val MAX_MESSAGE_LEN = 3000
 
-    /** 日志 tag 格式 */
-    const val TAG_FORMAT = "%s.%s:L%d"
-    val LOG_UTILS_CLASS: String by lazy {
+    private const val MAX_TAG_LEN = 84
+
+    private val LOG_UTILS_CLASS: String by lazy {
         Logger::class.java.name
     }
 
-    var mPreTag = ""
+    var mPreTag = "doudou >> "
         private set
     private var mLogLevel = LogLevel.DEBUG
 
     @JvmStatic
     @JvmOverloads
-    fun init(logLevel: LogLevel, preTag: String = "xsw-") {
+    fun init(logLevel: LogLevel, preTag: String = "doudou-") {
         mLogLevel = logLevel
         mPreTag = preTag
     }
 
     @JvmStatic
-    fun findTag() : String {
+    @JvmOverloads
+    fun findTag(level: Int = LogLevel.NONE.value, enable: Boolean = isEnable()) : String {
+        if (!enable) {
+            return ""
+        }
         with(Thread.currentThread().stackTrace) {
             var traceOffset = -1
             var lastClassIsLogUtils= false
@@ -59,7 +62,19 @@ object Logger {
                 var tag = "%s.%s%s"
                 var callerClazzName: String = className
                 callerClazzName = callerClazzName.substring(callerClazzName.lastIndexOf(".") + 1)
-                return String.format(tag, "$mPreTag$callerClazzName", methodName, stackTrace)
+                return String.format(tag, "$mPreTag$callerClazzName", methodName, stackTrace).let { originalTag ->
+                    if (originalTag.length > MAX_TAG_LEN) {
+                        val t = "original full tag"
+                        when(level) {
+                            Log.VERBOSE -> Log.v(t, originalTag)
+                            Log.DEBUG -> Log.d(t, originalTag)
+                            Log.INFO -> Log.i(t, originalTag)
+                            Log.WARN -> Log.w(t, originalTag)
+                            Log.ERROR -> Log.e(t, originalTag)
+                        }
+                        originalTag.substring(0, MAX_TAG_LEN)
+                    } else originalTag
+                }
             }
         }
         return mPreTag
@@ -100,7 +115,7 @@ object Logger {
 
     @JvmStatic
     @JvmOverloads
-    fun v(message: String?, tag: String = findTag(), throwable: Throwable? = null) {
+    fun v(message: String?, tag: String = findTag(Log.VERBOSE), throwable: Throwable? = null) {
         if (mLogLevel.value <= Log.VERBOSE) {
             splitMessageIfNeeded(message).forEach {
                 throwable?.run {
@@ -112,7 +127,7 @@ object Logger {
 
     @JvmStatic
     @JvmOverloads
-    fun d(message: String?, tag: String = findTag(), throwable: Throwable? = null) {
+    fun d(message: String?, tag: String = findTag(Log.DEBUG), throwable: Throwable? = null) {
         if (mLogLevel.value <= Log.DEBUG) {
             splitMessageIfNeeded(message).forEach {
                 throwable?.run {
@@ -124,7 +139,7 @@ object Logger {
 
     @JvmStatic
     @JvmOverloads
-    fun i(message: String?, tag: String = findTag(), throwable: Throwable? = null) {
+    fun i(message: String?, tag: String = findTag(Log.INFO), throwable: Throwable? = null) {
         if (mLogLevel.value <= Log.INFO) {
             splitMessageIfNeeded(message).forEach {
                 throwable?.run {
@@ -136,7 +151,7 @@ object Logger {
 
     @JvmStatic
     @JvmOverloads
-    fun w(message: String?, tag: String = findTag(), throwable: Throwable? = null) {
+    fun w(message: String?, tag: String = findTag(Log.WARN), throwable: Throwable? = null) {
         if (mLogLevel.value <= Log.WARN) {
             splitMessageIfNeeded(message).forEach {
                 throwable?.run {
@@ -148,7 +163,7 @@ object Logger {
 
     @JvmStatic
     @JvmOverloads
-    fun e(message: String? = "", tag: String = findTag(), throwable: Throwable? = null) {
+    fun e(message: String? = "", tag: String = findTag(Log.ERROR), throwable: Throwable? = null) {
         message?.let {
             if (mLogLevel.value <= Log.ERROR) {
                 splitMessageIfNeeded(message).forEach {
@@ -164,7 +179,7 @@ object Logger {
     fun e(throwable: Throwable? = null) {
         if (mLogLevel.value <= Log.ERROR) {
             throwable?.run {
-                Log.e(findTag(), "", this)
+                Log.e(findTag(Log.ERROR), "", this)
             }
         }
     }
@@ -177,5 +192,4 @@ object Logger {
         WARN(Log.WARN),
         ERROR(Log.ERROR)
     }
-
 }
