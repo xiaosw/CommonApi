@@ -79,12 +79,8 @@ inline fun <T, R> T.tryCatchAndReport(
 @JvmOverloads
 inline fun Any?.isNull() = null == this
 
-
-@ExperimentalContracts
+@JvmOverloads
 inline fun Any?.isNotNull() : Boolean {
-    contract {
-        returns(true) implies (null != this@isNotNull)
-    }
     return !isNull()
 }
 

@@ -5,8 +5,7 @@ import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.extend.tryCatch
 import com.xiaosw.api.hook.invocation.InvocationHandlerIntercept
 import com.xiaosw.api.hook.invocation.ProxyInvocationHandler
-import com.xiaosw.api.logger.Logger
-import com.xiaosw.api.manager.WeakRegisterManager
+import com.xiaosw.api.manager.WeakRegisterDelegate
 import java.lang.reflect.Field
 import java.lang.reflect.Proxy
 import java.util.concurrent.atomic.AtomicBoolean
@@ -19,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @Email xiaosw0802@163.com
  */
 internal abstract class BaseHook :
-    WeakRegisterManager.IRegisterManager<InvocationHandlerIntercept> {
+    WeakRegisterDelegate.RegisterDelegate<InvocationHandlerIntercept> {
 
     private val isHooked = AtomicBoolean(false)
     private val mHookResult = AtomicBoolean(false)

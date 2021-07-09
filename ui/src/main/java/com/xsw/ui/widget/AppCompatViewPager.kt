@@ -8,8 +8,7 @@ import android.widget.LinearLayout
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.xiaosw.api.extend.use
-import com.xiaosw.api.logger.Logger
-import com.xiaosw.api.manager.WeakRegisterManager
+import com.xiaosw.api.manager.WeakRegisterDelegate
 import com.xsw.ui.R
 import com.xsw.ui.widget.listener.OnDataSetChangeListener
 import kotlin.math.abs
@@ -24,7 +23,7 @@ open class AppCompatViewPager @JvmOverloads constructor(
     context: Context
     , attrs: AttributeSet? = null
 ) : ViewPager(context, attrs)
-    , WeakRegisterManager.IRegisterManager<OnDataSetChangeListener>
+    , WeakRegisterDelegate.RegisterDelegate<OnDataSetChangeListener>
     , OnDataSetChangeListener {
 
     private val mDataSetObserver by lazy {
@@ -42,7 +41,7 @@ open class AppCompatViewPager @JvmOverloads constructor(
     }
 
     private val mWeakRegisterManager by lazy {
-        WeakRegisterManager<OnDataSetChangeListener>()
+        WeakRegisterDelegate<OnDataSetChangeListener>()
     }
 
     private var isVertical = false

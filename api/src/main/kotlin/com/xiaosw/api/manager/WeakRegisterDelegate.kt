@@ -3,13 +3,13 @@ package com.xiaosw.api.manager
 import java.util.*
 
 /**
- * @ClassName: [WeakRegisterManager]
+ * @ClassName: [WeakRegisterDelegate]
  * @Description: 注意：使用时，请保证 t 至少被一个对象引用。
  *
  * Created by admin at 2020-12-31
  * @Email xiaosw0802@163.com
  */
-class WeakRegisterManager<T> {
+class WeakRegisterDelegate<T> {
 
     private val mCallbacks by lazy {
         WeakHashMap<T?, Any?>()
@@ -19,11 +19,11 @@ class WeakRegisterManager<T> {
         get() = mCallbacks.size
         private set
 
-    fun register(t: T?) = register(t) {
+    fun register(t: T) = register(t) {
         true
     }
 
-    fun register(t: T?, filter: (T?) -> Boolean) {
+    fun register(t: T, filter: (T?) -> Boolean) {
         if (mCallbacks.contains(t)) {
             return
         }
@@ -32,7 +32,7 @@ class WeakRegisterManager<T> {
         }
     }
 
-    fun unregister(t: T?) {
+    fun unregister(t: T) {
         if (!mCallbacks.contains(t)) {
             return
         }
@@ -54,7 +54,11 @@ class WeakRegisterManager<T> {
         }
     }
 
-    interface IRegisterManager<T> {
+    companion object {
+        fun <T> create() = WeakRegisterDelegate<T>()
+    }
+
+    interface RegisterDelegate<T> {
 
         fun register(t: T)
 

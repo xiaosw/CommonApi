@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.annotation.Keep
 import com.xiaosw.api.extend.isMainProcess
+import com.xiaosw.api.init.Initializer1Delegate
 import com.xiaosw.api.manager.ActivityLifeManager
 
 /**
@@ -14,7 +15,7 @@ import com.xiaosw.api.manager.ActivityLifeManager
  * @Author xiaosw<xiaosw0802@163.com>.
  */
 @Keep
-object AndroidContext {
+object AndroidContext : Initializer1Delegate<Context>() {
 
     val isMainProcess by lazy {
         get().isMainProcess()
@@ -22,14 +23,16 @@ object AndroidContext {
 
     private var mApp: Application? = null
 
-    internal fun init(context: Context) {
-        mApp = context as? Application ?: context.applicationContext as? Application
-        ActivityLifeManager.init(mApp)
-    }
+    override fun onInit(context: Context?) =
+        (context as? Application ?: context?.applicationContext as? Application)?.let {
+            mApp = it
+            ActivityLifeManager.init(it)
+            true
+        } ?: false
 
     @JvmStatic
     fun get() = mApp?.let {
         it
-    } ?: throw NullPointerException("app is null, must call AndroidContext#init()!")
+    } ?: throw UninitializedPropertyAccessException("app is null, must call AndroidContext#init(Context)!")
 
 }
