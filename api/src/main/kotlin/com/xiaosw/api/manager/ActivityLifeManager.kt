@@ -12,26 +12,26 @@ import com.xiaosw.api.extend.showToast
 import com.xiaosw.api.init.Initializer1Delegate
 import com.xiaosw.api.logger.Logger
 import java.lang.ref.WeakReference
-import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.system.exitProcess
 
 /**
- * @ClassName {@link ActivityLifeManager}
+ * @ClassName [ActivityLifeManager]
  * @Description
  *
  * @Date 2019-08-22.
  * @Author xiaosw<xiaosw0802@163.com>.
  */
 object ActivityLifeManager : Application.ActivityLifecycleCallbacks,
-    Initializer1Delegate<Application>() {
+    Initializer1Delegate<Application>(),
+    WeakRegisterDelegate.RegisterDelegate<ActivityLifeManager.AppLifecycleListener> {
 
-     private val mActivityList by lazy {
+    private val mActivityList by lazy {
         mutableListOf<WeakReference<Activity?>>()
     }
 
-    private val mAppLifecycleListeners by lazy {
-        CopyOnWriteArraySet<WeakReference<AppLifecycleListener>>()
+    private val mRegisterDelegate by lazy {
+        WeakRegisterDelegate.create<AppLifecycleListener>()
     }
 
     private var mCurrentActivityRef: WeakReference<Activity?>? = null
@@ -111,32 +111,11 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks,
         }
     }
 
-    fun registerAppLifecycleListener(listener: AppLifecycleListener?) {
-        listener?.let { newElement ->
-            mAppLifecycleListeners.indexOfFirst { old ->
-                newElement == old?.get()
-            }.also {
-                if (it < 0) {
-                    mAppLifecycleListeners.add(WeakReference(newElement))
-                }
-            }
-        }
-    }
+    override fun register(listener: AppLifecycleListener) = mRegisterDelegate.register(listener)
 
-    fun unregisterAppLifecycleListener(listener: AppLifecycleListener?) {
-        mAppLifecycleListeners.forEach {
-            if (it?.get() == listener) {
-                mAppLifecycleListeners.remove(it)
-            }
-        }
-    }
+    override fun unregister(listener: AppLifecycleListener) = mRegisterDelegate.unregister(listener)
 
-    fun clearAppLifecycleListener(listener: AppLifecycleListener?) {
-        if (mAppLifecycleListeners.isNull(false)) {
-            return
-        }
-        mAppLifecycleListeners?.clear()
-    }
+    override fun clear() = mRegisterDelegate.clear()
 
     @JvmOverloads
     @JvmStatic
@@ -175,10 +154,8 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks,
         if (mIsAppForeground.get()) {
             return
         }
-        mAppLifecycleListeners?.forEach {
-            it?.get()?.run {
-                onAppForeground(isFirstLauncher.get())
-            }
+        mRegisterDelegate.forEach {
+            it.onAppForeground(isFirstLauncher.get())
         }
         mActiveStartTime = SystemClock.elapsedRealtime()
         mIsAppForeground.compareAndSet(false, true)
@@ -195,8 +172,8 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks,
         }
         if (mStartCount === 0) {
             val activeTime = SystemClock.elapsedRealtime() - mActiveStartTime
-            mAppLifecycleListeners?.forEach {
-                it?.get()?.onAppBackground(activeTime)
+            mRegisterDelegate.forEach {
+                it.onAppBackground(activeTime)
             }
             mActiveStartTime = 0L
             mIsAppForeground.compareAndSet(true, false)

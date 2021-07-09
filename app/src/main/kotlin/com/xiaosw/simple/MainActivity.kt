@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         DensityManager.addThirdAutoAdjustPage(javaClass)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        ActivityLifeManager.registerAppLifecycleListener(this)
+        ActivityLifeManager.register(this)
 
         registerReceiver(object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {

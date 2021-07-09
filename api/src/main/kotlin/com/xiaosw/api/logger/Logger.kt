@@ -2,7 +2,10 @@ package com.xiaosw.api.logger
 
 import android.util.Log
 import androidx.annotation.Keep
+import com.xiaosw.api.extend.isNotNull
+import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.wrapper.GsonWrapper
+import kotlin.contracts.ExperimentalContracts
 
 /**
  * @ClassName [Logger]
@@ -11,6 +14,7 @@ import com.xiaosw.api.wrapper.GsonWrapper
  * @Date 2019-08-09.
  * @Author xiaosw<xiaosw0802@163.com>.
  */
+@Keep
 object Logger {
 
     /**
@@ -19,6 +23,8 @@ object Logger {
     private const val MAX_MESSAGE_LEN = 3000
 
     private const val MAX_TAG_LEN = 84
+
+    private const val TRANSFORM_TAG_TO_MESSAGE = "~"
 
     private val LOG_UTILS_CLASS: String by lazy {
         Logger::class.java.name
@@ -37,7 +43,7 @@ object Logger {
 
     @JvmStatic
     @JvmOverloads
-    fun findTag(level: Int = LogLevel.NONE.value, enable: Boolean = isEnable()) : String {
+    fun findTag(enable: Boolean = isEnable()) : String {
         if (!enable) {
             return ""
         }
@@ -62,38 +68,26 @@ object Logger {
                 var tag = "%s.%s%s"
                 var callerClazzName: String = className
                 callerClazzName = callerClazzName.substring(callerClazzName.lastIndexOf(".") + 1)
-                return String.format(tag, "$mPreTag$callerClazzName", methodName, stackTrace).let { originalTag ->
-                    if (originalTag.length > MAX_TAG_LEN) {
-                        val t = "original full tag"
-                        when(level) {
-                            Log.VERBOSE -> Log.v(t, originalTag)
-                            Log.DEBUG -> Log.d(t, originalTag)
-                            Log.INFO -> Log.i(t, originalTag)
-                            Log.WARN -> Log.w(t, originalTag)
-                            Log.ERROR -> Log.e(t, originalTag)
-                        }
-                        originalTag.substring(0, MAX_TAG_LEN)
-                    } else originalTag
-                }
+                return String.format(tag, "$mPreTag$callerClazzName", methodName, stackTrace)
             }
         }
         return mPreTag
     }
 
 
-    private inline fun splitMessageIfNeeded(message: String?) : MutableList<String> {
-        val messages = mutableListOf<String>()
+    private fun splitMessageIfNeeded(message: String?, block: (message: String) -> Unit) {
         message?.let {
             var msg = it
+            var isSplit = false
             while (msg.length > MAX_MESSAGE_LEN) {
-                messages.add(msg.substring(0, MAX_MESSAGE_LEN))
+                block(msg.substring(0, MAX_MESSAGE_LEN))
                 msg = msg.substring(MAX_MESSAGE_LEN)
+                isSplit = true
             }
-            if (msg.isNotEmpty()) {
-                messages.add(msg)
+            if (!isSplit || msg.isNotEmpty()) {
+                block(msg)
             }
         }
-        return messages
     }
 
     @JvmStatic
@@ -103,7 +97,7 @@ object Logger {
     @JvmOverloads
     fun println(message: String?, isError: Boolean = false) {
         if (mLogLevel.value <= Log.VERBOSE) {
-            splitMessageIfNeeded(message).forEach {
+            splitMessageIfNeeded(message) {
                 if (isError) {
                     System.err.println(GsonWrapper.formatJsonToLog(it))
                 } else {
@@ -113,64 +107,107 @@ object Logger {
         }
     }
 
+    private fun printLog(level: Int, tag: String, message: String?, tr: Throwable?) {
+        val hasTr = tr.isNotNull()
+        if (message.isNull() && !hasTr) {
+            return
+        }
+        var message = message
+        val tag = if (tag.length > MAX_TAG_LEN) {
+            message = "$tag: $message"
+            TRANSFORM_TAG_TO_MESSAGE
+        } else tag
+        when(level) {
+            Log.VERBOSE -> {
+                splitMessageIfNeeded(message) {
+                    if (hasTr) {
+                        Log.v(tag, GsonWrapper.formatJsonToLog(it), tr)
+                        return@splitMessageIfNeeded
+                    }
+                    Log.v(tag, GsonWrapper.formatJsonToLog(it))
+                }
+            }
+
+            Log.DEBUG -> {
+                splitMessageIfNeeded(message) {
+                    if (hasTr) {
+                        Log.d(tag, GsonWrapper.formatJsonToLog(it), tr)
+                        return@splitMessageIfNeeded
+                    }
+                    Log.d(tag, GsonWrapper.formatJsonToLog(it))
+                }
+            }
+
+            Log.INFO -> {
+                splitMessageIfNeeded(message) {
+                    if (hasTr) {
+                        Log.i(tag, GsonWrapper.formatJsonToLog(it), tr)
+                        return@splitMessageIfNeeded
+                    }
+                    Log.i(tag, GsonWrapper.formatJsonToLog(it))
+                }
+            }
+
+            Log.WARN -> {
+                splitMessageIfNeeded(message) {
+                    if (hasTr) {
+                        Log.w(tag, GsonWrapper.formatJsonToLog(it), tr)
+                        return@splitMessageIfNeeded
+                    }
+                    Log.w(tag, GsonWrapper.formatJsonToLog(it))
+                }
+            }
+
+            Log.ERROR -> {
+                splitMessageIfNeeded(message) {
+                    if (hasTr) {
+                        Log.e(tag, GsonWrapper.formatJsonToLog(it), tr)
+                        return@splitMessageIfNeeded
+                    }
+                    Log.e(tag, GsonWrapper.formatJsonToLog(it))
+                }
+            }
+        }
+    }
+
     @JvmStatic
     @JvmOverloads
-    fun v(message: String?, tag: String = findTag(Log.VERBOSE), throwable: Throwable? = null) {
+    fun v(message: String?, tag: String = findTag(), throwable: Throwable? = null) {
         if (mLogLevel.value <= Log.VERBOSE) {
-            splitMessageIfNeeded(message).forEach {
-                throwable?.run {
-                    Log.v(tag, GsonWrapper.formatJsonToLog(it), this)
-                } ?: Log.v(tag, GsonWrapper.formatJsonToLog(it))
-            }
+            printLog(Log.VERBOSE, tag, message, throwable)
         }
     }
 
     @JvmStatic
     @JvmOverloads
-    fun d(message: String?, tag: String = findTag(Log.DEBUG), throwable: Throwable? = null) {
+    fun d(message: String?, tag: String = findTag(), throwable: Throwable? = null) {
         if (mLogLevel.value <= Log.DEBUG) {
-            splitMessageIfNeeded(message).forEach {
-                throwable?.run {
-                    Log.d(tag, GsonWrapper.formatJsonToLog(it), this)
-                } ?: Log.d(tag, GsonWrapper.formatJsonToLog(it))
-            }
+            printLog(Log.DEBUG, tag, message, throwable)
         }
     }
 
     @JvmStatic
     @JvmOverloads
-    fun i(message: String?, tag: String = findTag(Log.INFO), throwable: Throwable? = null) {
+    fun i(message: String?, tag: String = findTag(), throwable: Throwable? = null) {
         if (mLogLevel.value <= Log.INFO) {
-            splitMessageIfNeeded(message).forEach {
-                throwable?.run {
-                    Log.i(tag, GsonWrapper.formatJsonToLog(it), this)
-                } ?: Log.i(tag, GsonWrapper.formatJsonToLog(it))
-            }
+            printLog(Log.INFO, tag, message, throwable)
         }
     }
 
     @JvmStatic
     @JvmOverloads
-    fun w(message: String?, tag: String = findTag(Log.WARN), throwable: Throwable? = null) {
+    fun w(message: String?, tag: String = findTag(), throwable: Throwable? = null) {
         if (mLogLevel.value <= Log.WARN) {
-            splitMessageIfNeeded(message).forEach {
-                throwable?.run {
-                    Log.w(tag, GsonWrapper.formatJsonToLog(it), this)
-                } ?: Log.w(tag, GsonWrapper.formatJsonToLog(it))
-            }
+            printLog(Log.WARN, tag, message, throwable)
         }
     }
 
     @JvmStatic
     @JvmOverloads
-    fun e(message: String? = "", tag: String = findTag(Log.ERROR), throwable: Throwable? = null) {
+    fun e(message: String? = "", tag: String = findTag(), throwable: Throwable? = null) {
         message?.let {
             if (mLogLevel.value <= Log.ERROR) {
-                splitMessageIfNeeded(message).forEach {
-                    throwable?.run {
-                        Log.e(tag, GsonWrapper.formatJsonToLog(it), this)
-                    } ?: Log.e(tag, GsonWrapper.formatJsonToLog(it))
-                }
+                printLog(Log.ERROR, tag, message, throwable)
             }
         }
     }
@@ -178,9 +215,7 @@ object Logger {
     @JvmStatic
     fun e(throwable: Throwable? = null) {
         if (mLogLevel.value <= Log.ERROR) {
-            throwable?.run {
-                Log.e(findTag(Log.ERROR), "", this)
-            }
+            printLog(Log.ERROR, findTag(), "", throwable)
         }
     }
 
@@ -192,4 +227,5 @@ object Logger {
         WARN(Log.WARN),
         ERROR(Log.ERROR)
     }
+
 }

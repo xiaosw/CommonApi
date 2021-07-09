@@ -3,7 +3,7 @@ package com.xiaosw.api.util
 import android.view.Choreographer
 import androidx.annotation.Keep
 import com.xiaosw.api.global.GlobalWeakHandler
-import com.xiaosw.api.manager.WeakRegisterManager
+import com.xiaosw.api.manager.WeakRegisterDelegate
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @Email xiaosw0802@163.com
  */
 @Keep
-object FpsMonitor {
+object FpsMonitor : WeakRegisterDelegate.RegisterDelegate<FpsMonitor.OnFpsMonitorListener> {
 
     private const val FPS_INTERVAL_TIME = 1_000L
 
@@ -24,15 +24,15 @@ object FpsMonitor {
         FpsTask()
     }
 
-    private val mOnFpsMonitorListenerManager by lazy {
-        WeakRegisterManager<OnFpsMonitorListener>()
+    private val mOnFpsMonitorDelegate by lazy {
+        WeakRegisterDelegate.create<OnFpsMonitorListener>()
     }
 
     @Volatile
     private var mFpsCount = 0
 
-    fun start(listener: OnFpsMonitorListener? = null) {
-        mOnFpsMonitorListenerManager.register(listener)
+    fun start(listener: OnFpsMonitorListener) {
+        mOnFpsMonitorDelegate.register(listener)
         if (isStarted.get()) {
             return
         }
@@ -51,21 +51,11 @@ object FpsMonitor {
         GlobalWeakHandler.mainHandler.removeCallbacks(mFpsTask)
     }
 
-    fun registerOnFpsMonitorListener(listener: OnFpsMonitorListener?) {
-        listener?.let {
-            mOnFpsMonitorListenerManager.register(it)
-        }
-    }
+    override fun register(listener: OnFpsMonitorListener) = mOnFpsMonitorDelegate.register(listener)
 
-    fun unregisterOnFpsMonitorListener(listener: OnFpsMonitorListener?) {
-        listener?.let {
-            mOnFpsMonitorListenerManager.unregister(it)
-        }
-    }
+    override fun unregister(listener: OnFpsMonitorListener) = mOnFpsMonitorDelegate.unregister(listener)
 
-    fun clear() {
-        mOnFpsMonitorListenerManager.clear()
-    }
+    override fun clear() = mOnFpsMonitorDelegate.clear()
 
     private class FpsTask : Choreographer.FrameCallback, Runnable {
         override fun doFrame(frameTimeNanos: Long) {
@@ -75,7 +65,7 @@ object FpsMonitor {
         }
 
         override fun run() {
-            mOnFpsMonitorListenerManager?.forEach {
+            mOnFpsMonitorDelegate?.forEach {
                 it.onFpsMonitor(mFpsCount)
             }
             mFpsCount = 0
