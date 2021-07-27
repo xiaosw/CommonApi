@@ -30,7 +30,7 @@
         <activity android:name=".MaterialDesignActivity"
             android:theme="@style/AppTheme.Material.Light">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAINs" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>

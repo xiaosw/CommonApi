@@ -128,7 +128,7 @@ inline fun String?.isNull(useTrim: Boolean = false, ignoreNull: Boolean = true) 
         if (!ignoreNull) {
             return false
         }
-        arg.equals("null", true)
+        return arg.equals("null", true)
     }
     return true
 }

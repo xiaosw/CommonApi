@@ -4,7 +4,6 @@ import android.os.Build
 import com.xiaosw.api.hook.intercept.ActivityNotRegisterInvocationIntercept
 import com.xiaosw.api.hook.intercept.ActivityTaskManagerInvocationIntercept
 import com.xiaosw.api.hook.intercept.AMSInvocationIntercept
-import com.xiaosw.api.logger.Logger
 
 /**
  * @ClassName: [HookManager]

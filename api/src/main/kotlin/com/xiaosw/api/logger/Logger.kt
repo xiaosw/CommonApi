@@ -101,7 +101,7 @@ object Logger {
                 if (isError) {
                     System.err.println(GsonWrapper.formatJsonToLog(it))
                 } else {
-                    println(GsonWrapper.formatJsonToLog(it))
+                    kotlin.io.println(GsonWrapper.formatJsonToLog(it))
                 }
             }
         }
@@ -229,3 +229,26 @@ object Logger {
     }
 
 }
+
+///////////////////////////////////////////////////////////////////////////
+// ext
+///////////////////////////////////////////////////////////////////////////
+inline fun Any.logp(message: String?, isError: Boolean = false) = Logger.println(message, isError)
+
+
+inline fun Any.logv(message: String?, tag: String = Logger.findTag(), throwable: Throwable? = null) =
+    Logger.v(message, tag, throwable)
+
+inline fun Any.logd(message: String?, tag: String = Logger.findTag(), throwable: Throwable? = null) =
+    Logger.d(message, tag, throwable)
+
+inline fun Any.logi(message: String?, tag: String = Logger.findTag(), throwable: Throwable? = null) =
+    Logger.i(message, tag, throwable)
+
+inline fun Any.logw(message: String?, tag: String = Logger.findTag(), throwable: Throwable? = null) =
+    Logger.w(message, tag, throwable)
+
+inline fun Any.loge(message: String? = "", tag: String = Logger.findTag(), throwable: Throwable? = null) =
+    Logger.e(message, tag, throwable)
+
+inline fun Any.loge(throwable: Throwable? = null) = Logger.e(throwable)
