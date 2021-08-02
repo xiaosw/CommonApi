@@ -3,6 +3,7 @@ package com.xsw.ui.widget
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.widget.Checkable
 import androidx.appcompat.widget.AppCompatImageView
 import com.xiaosw.api.extend.use
 import com.xsw.ui.R
@@ -16,7 +17,7 @@ import com.xsw.ui.R
  */
 class RoundImageView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : AppCompatImageView(context, attrs, defStyleAttr) {
+) : AppCompatImageView(context, attrs, defStyleAttr), Checkable {
 
     private val mDrawRectF by lazy {
         RectF()
@@ -38,6 +39,7 @@ class RoundImageView @JvmOverloads constructor(
     var forceCircle = false
     var resizeClip = false
     var roundBackgroundEnable = true
+    private var _checked = false
 
     init {
         parseAttrs(context, attrs)
@@ -48,11 +50,26 @@ class RoundImageView @JvmOverloads constructor(
             radius = getDimension(R.styleable.RoundImageView_android_radius, radius)
             forceCircle = getBoolean(R.styleable.RoundImageView_forceCircle, forceCircle)
             resizeClip = getBoolean(R.styleable.RoundImageView_android_resizeClip, resizeClip)
-            roundBackgroundEnable = getBoolean(R.styleable.RoundImageView_roundBackgroundEnable, roundBackgroundEnable)
-            topLeftRadius = getDimension(R.styleable.RoundImageView_android_topLeftRadius, topLeftRadius)
-            topRightRadius = getDimension(R.styleable.RoundImageView_android_topRightRadius, topRightRadius)
-            bottomRightRadius = getDimension(R.styleable.RoundImageView_android_bottomRightRadius, bottomRightRadius)
-            bottomLeftRadius = getDimension(R.styleable.RoundImageView_android_bottomLeftRadius, bottomLeftRadius)
+            roundBackgroundEnable = getBoolean(
+                R.styleable.RoundImageView_roundBackgroundEnable,
+                roundBackgroundEnable
+            )
+            topLeftRadius = getDimension(
+                R.styleable.RoundImageView_android_topLeftRadius,
+                topLeftRadius
+            )
+            topRightRadius = getDimension(
+                R.styleable.RoundImageView_android_topRightRadius,
+                topRightRadius
+            )
+            bottomRightRadius = getDimension(
+                R.styleable.RoundImageView_android_bottomRightRadius,
+                bottomRightRadius
+            )
+            bottomLeftRadius = getDimension(
+                R.styleable.RoundImageView_android_bottomLeftRadius,
+                bottomLeftRadius
+            )
         }
     }
 
@@ -65,26 +82,29 @@ class RoundImageView @JvmOverloads constructor(
             val size = drawWidth.coerceAtMost(drawHeight)
             if (resizeClip) {
                 setMeasuredDimension(size, size)
-                mDrawRectF.set(paddingLeft.toFloat()
-                    , paddingTop.toFloat()
-                    , measuredWidth - paddingRight.toFloat()
-                    , measuredHeight - paddingBottom.toFloat())
+                mDrawRectF.set(
+                    paddingLeft.toFloat(),
+                    paddingTop.toFloat(),
+                    measuredWidth - paddingRight.toFloat(),
+                    measuredHeight - paddingBottom.toFloat()
+                )
             } else {
                 val sizeHalf = size / 2
                 val cx = drawWidth / 2f
                 val cy = drawHeight / 2f
-                mDrawRectF.set(cx - sizeHalf
-                    , cy - sizeHalf
-                    , cx + sizeHalf
-                    , cy + sizeHalf)
+                mDrawRectF.set(
+                    cx - sizeHalf, cy - sizeHalf, cx + sizeHalf, cy + sizeHalf
+                )
             }
 
             size / 1f
         } else {
-            mDrawRectF.set(paddingLeft.toFloat()
-                , paddingTop.toFloat()
-                , measuredWidth - paddingRight.toFloat()
-                , measuredHeight - paddingBottom.toFloat())
+            mDrawRectF.set(
+                paddingLeft.toFloat(),
+                paddingTop.toFloat(),
+                measuredWidth - paddingRight.toFloat(),
+                measuredHeight - paddingBottom.toFloat()
+            )
             radius
         }
         with(mClipPath) {
@@ -154,4 +174,36 @@ class RoundImageView @JvmOverloads constructor(
         }
     }
 
+    override fun drawableStateChanged() {
+        super.drawableStateChanged()
+        val buttonDrawable = drawable
+        if (buttonDrawable != null && buttonDrawable.isStateful
+            && buttonDrawable.setState(drawableState)
+        ) {
+            invalidateDrawable(buttonDrawable)
+        }
+    }
+
+    private var _checkableDelegate: CheckableDelegate? = null
+
+    private fun checkableDelegate() : CheckableDelegate {
+        if (_checkableDelegate == null) {
+            _checkableDelegate = CheckableDelegate(this)
+        }
+        return _checkableDelegate as CheckableDelegate
+    }
+
+    override fun onCreateDrawableState(extraSpace: Int): IntArray? {
+        val drawableState = super.onCreateDrawableState(extraSpace + 1)
+        checkableDelegate().mergeDrawableStates(drawableState)
+        return drawableState
+    }
+
+    override fun setChecked(checked: Boolean) {
+        checkableDelegate().isChecked = checked
+    }
+
+    override fun isChecked() = checkableDelegate().isChecked
+
+    override fun toggle() = checkableDelegate().toggle()
 }

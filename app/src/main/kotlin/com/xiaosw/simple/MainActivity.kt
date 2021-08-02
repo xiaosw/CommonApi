@@ -18,15 +18,14 @@ import com.xiaosw.api.annotation.AutoAdjustDensity
 import com.xiaosw.api.annotation.MeasureTimeMillis
 import com.xiaosw.api.extend.dp2px
 import com.xiaosw.api.logger.Logger
+import com.xiaosw.api.logger.loge
 import com.xiaosw.api.manager.ActivityLifeManager
 import com.xiaosw.api.manager.DensityManager
 import com.xiaosw.api.util.FpsMonitor
 import com.xiaosw.api.util.ToastUtil
 import com.xsw.compat.start.StartManager
 import com.xsw.ui.anim.path.PathAnimator
-import com.xsw.ui.widget.FlickerProgressBar
-import com.xsw.ui.widget.FlowLayout
-import com.xsw.ui.widget.SwitchView
+import com.xsw.ui.widget.*
 import com.xsw.ui.widget.banner.BaseBannerIndicator
 import com.xsw.ui.widget.banner.tranforme.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -160,6 +159,26 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
             override fun convert(holder: BaseViewHolder?, url: String?) {
                 holder?.getView<ImageView>(R.id.item)?.run {
                     Glide.with(this@MainActivity).load(url).into(this)
+                }
+            }
+
+        }
+        radio_layout.onCheckedChangeIntercept = object : RadioLayout.OnCheckedChangeIntercept {
+            override fun onCheckedChangeIntercept(from: RadioView?, to: RadioView): Boolean {
+                loge("onCheckedChangeIntercept：$from ---> $to")
+                return false
+            }
+        }
+        radio_layout.onCheckedChangeListener = object : RadioLayout.OnCheckedChangeListener {
+            override fun onCheckedChanged(layout: RadioLayout, radioView: RadioView) {
+                when(radioView.id) {
+                    R.id.tab_home -> {
+                        loge("首页")
+                    }
+
+                    R.id.tab_mine -> {
+                        loge("我的")
+                    }
                 }
             }
 

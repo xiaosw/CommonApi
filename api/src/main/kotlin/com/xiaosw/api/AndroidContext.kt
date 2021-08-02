@@ -6,6 +6,7 @@ import androidx.annotation.Keep
 import com.xiaosw.api.extend.isMainProcess
 import com.xiaosw.api.init.Initializer1Delegate
 import com.xiaosw.api.manager.ActivityLifeManager
+import com.xiaosw.api.manager.UIModeManager
 
 /**
  * @ClassName [AndroidContext]
@@ -27,6 +28,7 @@ object AndroidContext : Initializer1Delegate<Context>() {
         (context as? Application ?: context?.applicationContext as? Application)?.let {
             mApp = it
             ActivityLifeManager.init(it)
+            UIModeManager.init(it)
             true
         } ?: false
 

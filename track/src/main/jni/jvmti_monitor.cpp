@@ -9,6 +9,7 @@
 #include <string>
 #include <string.h>
 
+char DEBUG = JNI_FALSE;
 char *TAG = "jvmti";
 long long currentTimeInMillis() {
     struct timeval _time;
@@ -23,7 +24,9 @@ bool checkJvmTiError(jvmtiEnv *jvmti, jvmtiError error)
     if (error != JVMTI_ERROR_NONE) {
         char *errorName;
         jvmti->GetErrorName(error, &errorName);
-        __android_log_print(ANDROID_LOG_ERROR, TAG, "jvm ti error: %d ---> %s", error, (NULL == errorName) ? "" : errorName);
+        if (DEBUG) {
+            __android_log_print(ANDROID_LOG_ERROR, TAG, "jvm ti error: %d ---> %s", error, (NULL == errorName) ? "" : errorName);
+        }
         return true;
     }
     return false;
@@ -74,13 +77,17 @@ jvmtiEnv *_jvmtiEnv;
 JNIEXPORT jint JNICALL
 Agent_OnLoad(JavaVM *vm, char *options, void *reserved)
 {
-    __android_log_print(ANDROID_LOG_ERROR, TAG, "Agent_OnLoad");
+    if (DEBUG) {
+        __android_log_print(ANDROID_LOG_ERROR, TAG, "Agent_OnLoad");
+    }
 }
 
 JNIEXPORT jint JNICALL
 Agent_OnAttach(JavaVM* vm, char* options, void* reserved)
 {
-    __android_log_print(ANDROID_LOG_ERROR, TAG, "Agent_OnAttach");
+    if (DEBUG) {
+        __android_log_print(ANDROID_LOG_ERROR, TAG, "Agent_OnAttach");
+    }
     // get jvmti env
     vm->GetEnv(reinterpret_cast<void **>(&_jvmtiEnv), JVMTI_VERSION_1_2);
 
@@ -155,7 +162,9 @@ JNICALL void objectAlloc
     jvmti_env->Deallocate(reinterpret_cast<unsigned char *>(classSignature));
 
     free(allocInfo);
-    __android_log_print(ANDROID_LOG_WARN, TAG, "objectAlloc: %s", allocInfo);
+    if (DEBUG) {
+        __android_log_print(ANDROID_LOG_WARN, TAG, "objectAlloc: %s", allocInfo);
+    }
     tag += 1;
 
 }
@@ -165,15 +174,21 @@ JNICALL void objectFree
          jlong tag)
 {
     objCount--;
-    __android_log_print(ANDROID_LOG_ERROR, TAG, "objectFree: obj count: %lld, tag = %lld", objCount, tag);
+    if (DEBUG) {
+        __android_log_print(ANDROID_LOG_ERROR, TAG, "objectFree: obj count: %lld, tag = %lld", objCount, tag);
+    }
 }
 
 extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_xsw_track_jvmti_impl_JVMTIImpl_nativeAttach(JNIEnv *env, jobject thiz) {
-    __android_log_print(ANDROID_LOG_ERROR, TAG, "nativeAttach");
+    if (DEBUG) {
+        __android_log_print(ANDROID_LOG_ERROR, TAG, "nativeAttach");
+    }
     if (NULL == _jvmtiEnv) {
-        __android_log_print(ANDROID_LOG_ERROR, TAG, "jvmti env is null!");
+        if (DEBUG) {
+            __android_log_print(ANDROID_LOG_ERROR, TAG, "jvmti env is null!");
+        }
         return JNI_FALSE;
     }
     jvmtiEventCallbacks eventCallbacks;

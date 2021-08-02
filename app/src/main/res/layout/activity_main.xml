@@ -10,187 +10,267 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:id="@+id/tv_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_fps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="fps"
-            android:textSize="20sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/tv_text"
-            android:visibility="gone"/>
-
-        <com.xsw.ui.widget.FlickerProgressBar
-            android:id="@+id/flicker_progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="44dp"
-            android:radius="12dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_fps"
-            app:downloadText="下载"
-            app:downloadTextColor="#f00"
-            app:downloadBackgroundColor="#CCCCCC"
-            app:downloadingText="已下载 "
-            app:downloadingTextColor="@color/_3FB4FF"
-            app:downloadingClipTextColor="#FFFFFF"
-            app:downloadingBackgroundColor="#CCCCCC"
-            app:downloadProgressColor="@color/_3FB4FF"
-            app:pauseText="继续"
-            app:pauseTextColor="#ff0"
-            app:pauseClipTextColor="#fff"
-            app:pauseProgressColor="#993FB4FF"
-            app:pauseBackgroundColor="#CCCCCC"
-            app:completeText="安装"
-            app:completeTextColor="#f00"
-            app:completeBackgroundColor="#0ff"
-            app:installedText="打开"
-            app:installedTextColor="#FFFFFF"
-            app:installedBackgroundColor="@color/_3FB4FF"
-            app:pauseBorderWidth="1dp"
-            app:pauseBorderColor="@color/_3FB4FF"
-            android:visibility="gone"/>
-
-        <com.xsw.ui.widget.fold.FoldTextLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:textColor="#f00"
-            android:maxLines="3"
-            android:text="
-百度百科是百度公司推出的一部内容开放、自由的网络百科全书。其测试版于2006年4月20日上线，正式版在2008年4月21日发布，截至2020年10月，百度百科已经收录了超2100万个词条，参与词条编辑的网友超过717万人，几乎涵盖了所有已知的知识领域。 [1]
-“世界很复杂，百度更懂你”，百度百科旨在创造一个涵盖各领域知识的中文信息收集平台。百度百科强调用户的参与和奉献精神，充分调动互联网用户的力量，汇聚上亿用户的头脑智慧，积极进行交流和分享。同时，百度百科实现与百度搜索、百度知道的结合，从不同的层次上满足用户对信息的需求。"
-            app:isDefFold="true"
-            app:ellipsizeEnd="......"
-            app:foldTipText="展开"
-            app:unfoldTipText="收起"
-            app:tipDrawableRight="@mipmap/ic_unfold"
-            app:tipDrawableAnimEnable="true"
-            app:foldAnim="@anim/anim_fold"
-            app:unfoldAnim="@anim/anim_unfold"
-            android:visibility="gone"/>
-
-        <HorizontalScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#00f"
-            android:fillViewport="true"
-            android:visibility="gone">
-
-            <com.xsw.ui.widget.FlowLayout
-                android:id="@+id/flow_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:lines="3"
-                android:background="#f00"/>
-
-        </HorizontalScrollView>
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:visibility="gone">
-
-            <com.xsw.ui.widget.SwitchView
-                android:id="@+id/switch_view"
-                android:layout_width="86dp"
-                android:layout_height="58dp"
-                android:radius="15.5dp"
-                android:background="#E9E9EB"
-                android:checked="false"
-                android:thumbOffset="3dp"
-                android:duration="520"
-                android:padding="15dp"
-                app:thumbColor="#ffffff"
-                app:slidingEnable="true"
-                app:slidingEffectEnable="true"
-                app:checkedBackgroundColor="#FF6883"/>
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
             <TextView
-                android:id="@+id/tv_switch_view_state"
+                android:id="@+id/tv_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/_14191E"
-                android:textSize="@dimen/sp_16"
-                android:layout_marginLeft="20dp"
-                android:text="关"/>
+                android:text="Hello World!"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_fps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="fps"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tv_text"
+                android:visibility="gone"/>
+
+            <com.xsw.ui.widget.FlickerProgressBar
+                android:id="@+id/flicker_progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:radius="12dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_fps"
+                app:downloadText="下载"
+                app:downloadTextColor="#f00"
+                app:downloadBackgroundColor="#CCCCCC"
+                app:downloadingText="已下载 "
+                app:downloadingTextColor="@color/_3FB4FF"
+                app:downloadingClipTextColor="#FFFFFF"
+                app:downloadingBackgroundColor="#CCCCCC"
+                app:downloadProgressColor="@color/_3FB4FF"
+                app:pauseText="继续"
+                app:pauseTextColor="#ff0"
+                app:pauseClipTextColor="#fff"
+                app:pauseProgressColor="#993FB4FF"
+                app:pauseBackgroundColor="#CCCCCC"
+                app:completeText="安装"
+                app:completeTextColor="#f00"
+                app:completeBackgroundColor="#0ff"
+                app:installedText="打开"
+                app:installedTextColor="#FFFFFF"
+                app:installedBackgroundColor="@color/_3FB4FF"
+                app:pauseBorderWidth="1dp"
+                app:pauseBorderColor="@color/_3FB4FF"
+                android:visibility="gone"/>
+
+            <com.xsw.ui.widget.fold.FoldTextLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:textColor="#f00"
+                android:maxLines="3"
+                android:text="
+百度百科是百度公司推出的一部内容开放、自由的网络百科全书。其测试版于2006年4月20日上线，正式版在2008年4月21日发布，截至2020年10月，百度百科已经收录了超2100万个词条，参与词条编辑的网友超过717万人，几乎涵盖了所有已知的知识领域。 [1]
+“世界很复杂，百度更懂你”，百度百科旨在创造一个涵盖各领域知识的中文信息收集平台。百度百科强调用户的参与和奉献精神，充分调动互联网用户的力量，汇聚上亿用户的头脑智慧，积极进行交流和分享。同时，百度百科实现与百度搜索、百度知道的结合，从不同的层次上满足用户对信息的需求。"
+                app:isDefFold="true"
+                app:ellipsizeEnd="......"
+                app:foldTipText="展开"
+                app:unfoldTipText="收起"
+                app:tipDrawableRight="@mipmap/ic_unfold"
+                app:tipDrawableAnimEnable="true"
+                app:foldAnim="@anim/anim_fold"
+                app:unfoldAnim="@anim/anim_unfold"
+                android:visibility="gone"/>
+
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00f"
+                android:fillViewport="true"
+                android:visibility="gone">
+
+                <com.xsw.ui.widget.FlowLayout
+                    android:id="@+id/flow_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:lines="3"
+                    android:background="#f00"/>
+
+            </HorizontalScrollView>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <com.xsw.ui.widget.SwitchView
+                    android:id="@+id/switch_view"
+                    android:layout_width="86dp"
+                    android:layout_height="58dp"
+                    android:radius="15.5dp"
+                    android:background="#E9E9EB"
+                    android:checked="false"
+                    android:thumbOffset="3dp"
+                    android:duration="520"
+                    android:padding="15dp"
+                    app:thumbColor="#ffffff"
+                    app:slidingEnable="true"
+                    app:slidingEffectEnable="true"
+                    app:checkedBackgroundColor="#FF6883"/>
+
+                <TextView
+                    android:id="@+id/tv_switch_view_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/_14191E"
+                    android:textSize="@dimen/sp_16"
+                    android:layout_marginLeft="20dp"
+                    android:text="关"/>
+
+            </LinearLayout>
+
+            <com.xsw.ui.widget.RoundImageView
+                android:layout_width="80dp"
+                android:layout_height="180dp"
+                android:src="@mipmap/test"
+                android:scaleType="fitXY"
+                android:resizeClip="true"
+                app:roundBackgroundEnable="true"
+                app:forceCircle="true"
+                android:radius="0dp"
+                android:background="#f00"
+                android:topLeftRadius="8dp"
+                android:topRightRadius="16dp"
+                android:bottomRightRadius="24dp"
+                android:bottomLeftRadius="32dp"
+                android:layout_marginTop="20dp"
+                android:visibility="gone"/>
+
+            <com.xsw.ui.widget.banner.BannerView
+                android:id="@+id/banner_view"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="20dp"
+                app:delayMillis="3000"
+                app:periodMillis="3000"
+                app:autoLoop="false"/>
+
+            <com.xsw.ui.widget.banner.BannerView
+                android:id="@+id/vertical_banner_view"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_marginTop="20dp"
+                android:background="#f00"
+                app:delayMillis="3000"
+                app:periodMillis="3000"
+                app:autoLoop="true"/>
+
+            <com.xsw.ui.widget.marquee.MarqueeFrameLayout
+                android:id="@+id/marquee"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="#00f"
+                android:radius="12dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                app:clipBackground="true"
+                app:marqueeMode="border"/>
+
+            <com.xsw.ui.widget.recycler.CoverFlowRecyclerView
+                android:id="@+id/cover_flow"
+                android:layout_width="match_parent"
+                android:layout_height="260dp"
+                android:layout_marginTop="20dp"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
-        <com.xsw.ui.widget.RoundImageView
-            android:layout_width="80dp"
-            android:layout_height="180dp"
-            android:src="@mipmap/test"
-            android:scaleType="fitXY"
-            android:resizeClip="true"
-            app:roundBackgroundEnable="true"
-            app:forceCircle="true"
-            android:radius="0dp"
-            android:background="#f00"
-            android:topLeftRadius="8dp"
-            android:topRightRadius="16dp"
-            android:bottomRightRadius="24dp"
-            android:bottomLeftRadius="32dp"
-            android:layout_marginTop="20dp"
-            android:visibility="gone"/>
-
-        <com.xsw.ui.widget.banner.BannerView
-            android:id="@+id/banner_view"
+        <com.xsw.ui.widget.RadioLayout
+            android:id="@+id/radio_layout"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:layout_marginTop="20dp"
-            app:delayMillis="3000"
-            app:periodMillis="3000"
-            app:autoLoop="false"/>
+            android:layout_height="?attr/actionBarSize"
+            android:paddingTop="6dp"
+            android:background="#cccccc">
 
-        <com.xsw.ui.widget.banner.BannerView
-            android:id="@+id/vertical_banner_view"
-            android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:layout_marginTop="20dp"
-            android:background="#f00"
-            app:delayMillis="3000"
-            app:periodMillis="3000"
-            app:autoLoop="true"/>
+            <com.xsw.ui.widget.RadioView
+                android:id="@+id/tab_home"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:checked="true"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/tab_mine"
+                app:layout_constraintHorizontal_chainStyle="spread">
 
-        <com.xsw.ui.widget.marquee.MarqueeFrameLayout
-            android:id="@+id/marquee"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="#00f"
-            android:radius="12dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            app:clipBackground="true"
-            app:marqueeMode="border"/>
+                <com.xsw.ui.widget.RoundImageView
+                    android:id="@+id/iv_home"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:src="@drawable/selector_tab_home"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_home"/>
 
-        <com.xsw.ui.widget.recycler.CoverFlowRecyclerView
-            android:id="@+id/cover_flow"
-            android:layout_width="match_parent"
-            android:layout_height="260dp"
-            android:layout_marginTop="20dp"
-            android:visibility="gone"/>
+                <com.xsw.ui.widget.StatusTextView
+                    android:id="@+id/tv_home"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="首页"
+                    android:textColor="@drawable/main_tab"/>
+
+            </com.xsw.ui.widget.RadioView>
+
+            <com.xsw.ui.widget.RadioView
+                android:id="@+id/tab_mine"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:layout_constraintLeft_toRightOf="@+id/tab_home"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintHorizontal_chainStyle="spread">
+
+                <com.xsw.ui.widget.RoundImageView
+                    android:id="@+id/iv_mine"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:src="@drawable/selector_tab_mine"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_mine"/>
+
+                <com.xsw.ui.widget.StatusTextView
+                    android:id="@+id/tv_mine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="我的"
+                    android:textColor="@drawable/main_tab"/>
+
+            </com.xsw.ui.widget.RadioView>
+
+        </com.xsw.ui.widget.RadioLayout>
 
     </LinearLayout>
 
