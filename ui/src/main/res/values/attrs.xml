@@ -48,4 +48,7 @@
             <enum name="slide" value="1"/>
         </attr>
     </declare-styleable>
+    <declare-styleable name="RadioView">
+        <attr name="android:checked"/>
+    </declare-styleable>
 </resources>
