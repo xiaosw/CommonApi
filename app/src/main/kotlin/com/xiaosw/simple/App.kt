@@ -4,6 +4,7 @@ import android.app.Application
 import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.logger.loge
 import com.xiaosw.api.manager.UIModeManager
+import com.xiaosw.api.storage.DataStorageManager
 import com.xsw.track.jvmti.JVMTIManager
 
 /**
@@ -22,6 +23,9 @@ class App : Application(), UIModeManager.OnUIModeChangeListener {
         Logger.e("isAttachJVMTI = $isAttachJVMTI")
         loge("light: ${UIModeManager.isLightMode}, dark: ${UIModeManager.isDarkMode}")
         UIModeManager.register(this)
+        DataStorageManager.init(AppDataStorage(this))
+        DataStorageManager.put("abc", "hello")
+        loge(DataStorageManager.getString("abc"))
     }
 
     override fun onUIModeChange(light: Boolean) {
