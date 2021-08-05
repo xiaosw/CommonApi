@@ -5,7 +5,6 @@ import androidx.annotation.Keep
 import com.xiaosw.api.extend.isNotNull
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.wrapper.GsonWrapper
-import kotlin.contracts.ExperimentalContracts
 
 /**
  * @ClassName [Logger]
@@ -74,18 +73,17 @@ object Logger {
         return mPreTag
     }
 
-
     private fun splitMessageIfNeeded(message: String?, block: (message: String) -> Unit) {
         message?.let {
-            var msg = it
-            var isSplit = false
-            while (msg.length > MAX_MESSAGE_LEN) {
-                block(msg.substring(0, MAX_MESSAGE_LEN))
-                msg = msg.substring(MAX_MESSAGE_LEN)
-                isSplit = true
+            if (it.length <= MAX_MESSAGE_LEN) {
+                block(it)
+                return
             }
-            if (!isSplit || msg.isNotEmpty()) {
-                block(msg)
+            val bytes = it.toByteArray()
+            val size = bytes.size
+            for (offset in bytes.indices step MAX_MESSAGE_LEN) {
+                val length = MAX_MESSAGE_LEN.coerceAtMost(size - offset)
+                block(String(bytes, offset, length))
             }
         }
     }
@@ -117,56 +115,12 @@ object Logger {
             message = "$tag: $message"
             TRANSFORM_TAG_TO_MESSAGE
         } else tag
-        when(level) {
-            Log.VERBOSE -> {
-                splitMessageIfNeeded(message) {
-                    if (hasTr) {
-                        Log.v(tag, GsonWrapper.formatJsonToLog(it), tr)
-                        return@splitMessageIfNeeded
-                    }
-                    Log.v(tag, GsonWrapper.formatJsonToLog(it))
-                }
+        splitMessageIfNeeded(message) {
+            if (hasTr) {
+                Log.v(tag, GsonWrapper.formatJsonToLog(it), tr)
+                return@splitMessageIfNeeded
             }
-
-            Log.DEBUG -> {
-                splitMessageIfNeeded(message) {
-                    if (hasTr) {
-                        Log.d(tag, GsonWrapper.formatJsonToLog(it), tr)
-                        return@splitMessageIfNeeded
-                    }
-                    Log.d(tag, GsonWrapper.formatJsonToLog(it))
-                }
-            }
-
-            Log.INFO -> {
-                splitMessageIfNeeded(message) {
-                    if (hasTr) {
-                        Log.i(tag, GsonWrapper.formatJsonToLog(it), tr)
-                        return@splitMessageIfNeeded
-                    }
-                    Log.i(tag, GsonWrapper.formatJsonToLog(it))
-                }
-            }
-
-            Log.WARN -> {
-                splitMessageIfNeeded(message) {
-                    if (hasTr) {
-                        Log.w(tag, GsonWrapper.formatJsonToLog(it), tr)
-                        return@splitMessageIfNeeded
-                    }
-                    Log.w(tag, GsonWrapper.formatJsonToLog(it))
-                }
-            }
-
-            Log.ERROR -> {
-                splitMessageIfNeeded(message) {
-                    if (hasTr) {
-                        Log.e(tag, GsonWrapper.formatJsonToLog(it), tr)
-                        return@splitMessageIfNeeded
-                    }
-                    Log.e(tag, GsonWrapper.formatJsonToLog(it))
-                }
-            }
+            Log.println(level, tag, GsonWrapper.formatJsonToLog(it))
         }
     }
 
