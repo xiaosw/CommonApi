@@ -6,7 +6,8 @@ import android.content.res.Configuration
 import android.os.Build
 import com.xiaosw.api.extend.optionalImpl
 import com.xiaosw.api.init.Initializer1Delegate
-import com.xiaosw.api.logger.loge
+import com.xiaosw.api.register.Register
+import com.xiaosw.api.register.RegisterDelegate
 import kotlin.properties.Delegates
 
 
@@ -17,11 +18,11 @@ import kotlin.properties.Delegates
  * Create by X at 2021/08/03 11:23.
  */
 object UIModeManager : Initializer1Delegate<Context>(),
-    WeakRegisterDelegate.RegisterDelegate<UIModeManager.OnUIModeChangeListener> {
+    Register<UIModeManager.OnUIModeChangeListener> {
     private var mContext: Context by Delegates.notNull()
     private var mCurrentUiMode: Int = -1
     private val mRegisterDelegate by lazy {
-        WeakRegisterDelegate.create<OnUIModeChangeListener>()
+        RegisterDelegate.createArrayList<OnUIModeChangeListener>()
     }
 
     val isSupportDarkMode by lazy {

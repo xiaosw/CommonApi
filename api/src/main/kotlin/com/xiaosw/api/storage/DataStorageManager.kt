@@ -41,7 +41,7 @@ class DataStorageManager private constructor(): Initializer1Delegate<DataStorage
 
     override fun edit() = mDelegate.edit()
 
-    companion object {
+    companion object : DataStorageDelegate {
 
         private val GLOBAL by lazy {
             DataStorageManager()
@@ -59,17 +59,17 @@ class DataStorageManager private constructor(): Initializer1Delegate<DataStorage
 
         fun put(key: String, value: Boolean) = GLOBAL.put(key, value)
 
-        fun getString(key: String, def: String? = null) = GLOBAL.getString(key, def)
+        override fun getString(key: String, def: String?) = GLOBAL.getString(key, def)
 
-        fun getInt(key: String, def: Int = 0) = GLOBAL.getInt(key, def)
+        override fun getInt(key: String, def: Int) = GLOBAL.getInt(key, def)
 
-        fun getLong(key: String, def: Long = 0) = GLOBAL.getLong(key, def)
+        override fun getLong(key: String, def: Long) = GLOBAL.getLong(key, def)
 
-        fun getFloat(key: String, def: Float = 0F) = GLOBAL.getFloat(key, def)
+        override fun getFloat(key: String, def: Float) = GLOBAL.getFloat(key, def)
 
-        fun getBoolean(key: String, def: Boolean = false) = GLOBAL.getBoolean(key, def)
+        override fun getBoolean(key: String, def: Boolean) = GLOBAL.getBoolean(key, def)
 
-        fun edit() = GLOBAL.edit()
+        override fun edit() = GLOBAL.edit()
 
         fun newInstance(delegate: DataStorageDelegate? = null) = DataStorageManager().also {
             it.init(delegate)

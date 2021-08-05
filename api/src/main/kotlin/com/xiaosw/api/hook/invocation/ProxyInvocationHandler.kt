@@ -2,7 +2,8 @@ package com.xiaosw.api.hook.invocation
 
 import com.xiaosw.api.extend.tryCatch
 import com.xiaosw.api.logger.Logger
-import com.xiaosw.api.manager.WeakRegisterDelegate
+import com.xiaosw.api.register.Register
+import com.xiaosw.api.register.RegisterDelegate
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 /**
@@ -15,9 +16,9 @@ import java.lang.reflect.Method
 internal class ProxyInvocationHandler(
     private val target: Any? = null,
     private val tag: String?
-) : InvocationHandler, WeakRegisterDelegate.RegisterDelegate<InvocationHandlerIntercept> {
+) : InvocationHandler, Register<InvocationHandlerIntercept> {
 
-    private val mIntercepts = WeakRegisterDelegate<InvocationHandlerIntercept>()
+    private val mIntercepts = RegisterDelegate.createWeak<InvocationHandlerIntercept>()
 
     override fun invoke(proxy: Any?, method: Method, args: Array<Any?>?) : Any? {
         val arguments = args ?: emptyArray()

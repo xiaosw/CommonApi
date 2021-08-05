@@ -1,6 +1,7 @@
 package com.xiaosw.simple
 
 import android.content.*
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -174,14 +175,27 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
                 when(radioView.id) {
                     R.id.tab_home -> {
                         loge("首页")
+                        changeIcon(this@MainActivity.javaClass.name)
                     }
 
                     R.id.tab_mine -> {
                         loge("我的")
+                        changeIcon("${packageName}.MainAliasActivity")
                     }
                 }
             }
 
+        }
+    }
+
+    private fun changeIcon(className: String) {
+        with(packageManager) {
+            setComponentEnabledSetting(componentName
+                , PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                , PackageManager.DONT_KILL_APP)
+            setComponentEnabledSetting(ComponentName(this@MainActivity, className)
+                , PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                , PackageManager.DONT_KILL_APP)
         }
     }
 

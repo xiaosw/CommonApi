@@ -11,6 +11,8 @@ import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.showToast
 import com.xiaosw.api.init.Initializer1Delegate
 import com.xiaosw.api.logger.Logger
+import com.xiaosw.api.register.Register
+import com.xiaosw.api.register.RegisterDelegate
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.system.exitProcess
@@ -24,14 +26,14 @@ import kotlin.system.exitProcess
  */
 object ActivityLifeManager : Application.ActivityLifecycleCallbacks,
     Initializer1Delegate<Application>(),
-    WeakRegisterDelegate.RegisterDelegate<ActivityLifeManager.AppLifecycleListener> {
+    Register<ActivityLifeManager.AppLifecycleListener> {
 
     private val mActivityList by lazy {
         mutableListOf<WeakReference<Activity?>>()
     }
 
     private val mRegisterDelegate by lazy {
-        WeakRegisterDelegate.create<AppLifecycleListener>()
+        RegisterDelegate.createWeak<AppLifecycleListener>()
     }
 
     private var mCurrentActivityRef: WeakReference<Activity?>? = null

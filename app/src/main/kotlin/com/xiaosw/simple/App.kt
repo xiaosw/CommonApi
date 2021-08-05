@@ -14,7 +14,7 @@ import com.xsw.track.jvmti.JVMTIManager
  * Created by admin at 2020-09-11
  * @Email xiaosw0802@163.com
  */
-class App : Application(), UIModeManager.OnUIModeChangeListener {
+class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
@@ -22,14 +22,14 @@ class App : Application(), UIModeManager.OnUIModeChangeListener {
         val isAttachJVMTI = JVMTIManager.attachJVMTI(this, true)
         Logger.e("isAttachJVMTI = $isAttachJVMTI")
         loge("light: ${UIModeManager.isLightMode}, dark: ${UIModeManager.isDarkMode}")
-        UIModeManager.register(this)
+        UIModeManager.register(object : UIModeManager.OnUIModeChangeListener {
+            override fun onUIModeChange(light: Boolean) {
+                loge("light: $light")
+            }
+        })
         DataStorageManager.init(AppDataStorage(this))
         DataStorageManager.put("abc", "hello")
         loge(DataStorageManager.getString("abc"))
-    }
-
-    override fun onUIModeChange(light: Boolean) {
-        loge("light: $light")
     }
 
 }

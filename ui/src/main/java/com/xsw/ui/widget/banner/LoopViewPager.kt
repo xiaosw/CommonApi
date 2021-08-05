@@ -6,7 +6,7 @@ import android.view.MotionEvent
 import androidx.viewpager.widget.PagerAdapter
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.use
-import com.xiaosw.api.manager.WeakRegisterDelegate
+import com.xiaosw.api.register.RegisterDelegate
 import com.xsw.ui.R
 import com.xsw.ui.widget.AppCompatViewPager
 import com.xsw.ui.widget.banner.adapter.BannerAdapter
@@ -32,7 +32,7 @@ class LoopViewPager @JvmOverloads constructor (
     }
 
     private val mOnPageChangeListeners by lazy {
-        WeakRegisterDelegate.create<OnPageChangeListener>()
+        RegisterDelegate.createWeak<OnPageChangeListener>()
     }
 
     private val mPageChangeListener by lazy {

@@ -3,7 +3,8 @@ package com.xiaosw.api.util
 import android.view.Choreographer
 import androidx.annotation.Keep
 import com.xiaosw.api.global.GlobalWeakHandler
-import com.xiaosw.api.manager.WeakRegisterDelegate
+import com.xiaosw.api.register.Register
+import com.xiaosw.api.register.RegisterDelegate
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -14,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @Email xiaosw0802@163.com
  */
 @Keep
-object FpsMonitor : WeakRegisterDelegate.RegisterDelegate<FpsMonitor.OnFpsMonitorListener> {
+object FpsMonitor : Register<FpsMonitor.OnFpsMonitorListener> {
 
     private const val FPS_INTERVAL_TIME = 1_000L
 
@@ -25,7 +26,7 @@ object FpsMonitor : WeakRegisterDelegate.RegisterDelegate<FpsMonitor.OnFpsMonito
     }
 
     private val mOnFpsMonitorDelegate by lazy {
-        WeakRegisterDelegate.create<OnFpsMonitorListener>()
+        RegisterDelegate.createWeak<OnFpsMonitorListener>()
     }
 
     @Volatile

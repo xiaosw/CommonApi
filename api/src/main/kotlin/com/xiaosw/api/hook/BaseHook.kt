@@ -5,7 +5,7 @@ import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.extend.tryCatch
 import com.xiaosw.api.hook.invocation.InvocationHandlerIntercept
 import com.xiaosw.api.hook.invocation.ProxyInvocationHandler
-import com.xiaosw.api.manager.WeakRegisterDelegate
+import com.xiaosw.api.register.Register
 import java.lang.reflect.Field
 import java.lang.reflect.Proxy
 import java.util.concurrent.atomic.AtomicBoolean
@@ -17,8 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Created by admin at 2021-01-07
  * @Email xiaosw0802@163.com
  */
-internal abstract class BaseHook :
-    WeakRegisterDelegate.RegisterDelegate<InvocationHandlerIntercept> {
+internal abstract class BaseHook : Register<InvocationHandlerIntercept> {
 
     private val isHooked = AtomicBoolean(false)
     private val mHookResult = AtomicBoolean(false)
@@ -36,14 +35,12 @@ internal abstract class BaseHook :
         return result
     }
 
-    override fun register(intercept: InvocationHandlerIntercept) {
+    override fun register(intercept: InvocationHandlerIntercept) : Boolean {
         hook()
-        mProxyInvocationHandler?.register(intercept)
+        return mProxyInvocationHandler?.register(intercept) ?: false
     }
 
-    override fun unregister(intercept: InvocationHandlerIntercept) {
-        mProxyInvocationHandler?.unregister(intercept)
-    }
+    override fun unregister(intercept: InvocationHandlerIntercept) = mProxyInvocationHandler?.unregister(intercept) ?: false
 
     override fun clear() {
         mProxyInvocationHandler?.clear()
