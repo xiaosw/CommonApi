@@ -115,9 +115,10 @@ object Logger {
             message = "$tag: $message"
             TRANSFORM_TAG_TO_MESSAGE
         } else tag
+
         splitMessageIfNeeded(message) {
             if (hasTr) {
-                Log.v(tag, GsonWrapper.formatJsonToLog(it), tr)
+                Log.println(level, tag, GsonWrapper.formatJsonToLog(it) + "\n" + Log.getStackTraceString(tr))
                 return@splitMessageIfNeeded
             }
             Log.println(level, tag, GsonWrapper.formatJsonToLog(it))

@@ -38,10 +38,7 @@ object GsonWrapper {
     /**
      * 格式化 log
      */
-    fun formatJsonToLog(log: String) = if (!Logger.isEnable()|| !isJson(
-            log
-        )
-    ) {
+    fun formatJsonToLog(log: String) = if (!Logger.isEnable()|| !isJson(log)) {
         log
     } else StringBuilder("\n╔").append(LINE_BORDER)
         .append("\n║").append(log)
