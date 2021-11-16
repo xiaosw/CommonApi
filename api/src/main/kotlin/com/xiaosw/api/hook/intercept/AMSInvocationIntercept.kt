@@ -5,11 +5,11 @@ import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.os.Bundle
+import com.doudou.log.Logger
 import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.extend.tryCatch
 import com.xiaosw.api.hook.HookUtil
 import com.xiaosw.api.hook.invocation.InvocationHandlerIntercept
-import com.xiaosw.api.logger.Logger
 import java.lang.ref.WeakReference
 import java.util.*
 

@@ -5,7 +5,6 @@ import android.hardware.SensorManager
 import android.util.AttributeSet
 import android.view.ViewConfiguration
 import androidx.recyclerview.widget.RecyclerView
-import com.xiaosw.api.logger.Logger
 import com.xsw.ui.widget.recycler.manager.CoverFlowLayoutManager
 import kotlin.math.abs
 import kotlin.math.exp

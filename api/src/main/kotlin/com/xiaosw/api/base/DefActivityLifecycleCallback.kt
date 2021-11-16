@@ -3,7 +3,7 @@ package com.xiaosw.api.base
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import com.xiaosw.api.logger.Logger
+import com.doudou.log.Logger
 
 /**
  * ClassName: [DefActivityLifecycleCallback]

@@ -7,8 +7,8 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.WindowManager
+import com.doudou.log.Logger
 import com.xiaosw.api.extend.tryCatch
-import com.xiaosw.api.logger.Logger
 
 /**
  * @ClassName: [StartBridgeActivity]

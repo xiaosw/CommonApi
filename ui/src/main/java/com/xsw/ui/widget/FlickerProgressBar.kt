@@ -6,9 +6,9 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
+import com.doudou.log.Logger
 import com.xiaosw.api.extend.dp2px
 import com.xiaosw.api.extend.use
-import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.util.Utils.hasNull
 import com.xsw.ui.R
 import kotlin.properties.Delegates

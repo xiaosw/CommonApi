@@ -10,9 +10,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.xiaosw.api.extend.dp2px
-import com.xiaosw.api.extend.save
 import com.xiaosw.api.extend.use
-import com.xiaosw.api.logger.Logger
 import com.xsw.ui.R
 import com.xsw.ui.widget.banner.adapter.BannerAdapter
 

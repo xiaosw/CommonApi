@@ -38,4 +38,6 @@ dependencies {
 
     testImplementation rootProject.ext.junit
     androidTestImplementation rootProject.ext.androidx_test
+
+    api project(":log")
 }

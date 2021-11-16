@@ -10,18 +10,16 @@ import android.graphics.drawable.Drawable
 import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
+import com.doudou.log.Logger
+import com.doudou.log.loge
 import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.exception.TryCatchException
-import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.logger.report.ReportManager
 import com.xiaosw.api.util.EnvironmentUtil
 import com.xiaosw.api.util.ScreenUtil
 import java.io.File
-import java.lang.Exception
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Proxy
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 import kotlin.jvm.internal.Intrinsics
 
 
@@ -47,7 +45,7 @@ inline fun <T, R> T.tryCatch(
         return block(this)
     } catch (e: Throwable) {
         if (showException) {
-            Logger.e("tryCatch: errorMessage = $errorMessage", throwable = e)
+            loge("tryCatch: errorMessage = $errorMessage", tr = e)
         }
     }
     return def
@@ -65,7 +63,7 @@ inline fun <T, R> T.tryCatchAndReport(
     try {
         return block(this)
     } catch (e: Throwable) {
-        Logger.e("tryCatch: errorMessage = $errorMessage", throwable = e)
+        Logger.e("tryCatch: errorMessage = $errorMessage", tr = e)
         ReportManager.reportThrowable(
             TryCatchException(
                 errorMessage,
@@ -181,7 +179,7 @@ inline fun View.sp2px(sp: Float) = ScreenUtil.sp2px(context, sp)
 inline fun View.sp2dp(sp: Float) = ScreenUtil.sp2dp(context, sp)
 inline fun View.px2sp(px: Float) = ScreenUtil.px2sp(context, px)
 
-inline fun Bitmap.toDrawable(
+inline fun Bitmap?.toDrawable(
     context: Context? = AndroidContext.get()
 ) : Drawable? {
     return this?.let { bitmap ->
@@ -209,147 +207,108 @@ inline fun Drawable.toBitmap() : Bitmap? {
 }
 
 inline fun CharSequence?.safe2Int(def: Int = 0) : Int {
-    return try {
+    return tryCatch {
         if (!isNullOrEmpty()) {
             Integer.parseInt(toString())
         } else {
             def
         }
-    } catch (e: Exception) {
-        Logger.e(e)
-        def
-    }
+    } ?: def
 }
 inline fun Number?.safe2Int(def: Int = 0) : Int {
-    return try {
-        this?.toInt() ?: def
-    } catch (e: Exception) {
-        Logger.e(e)
-        def
-    }
+    return tryCatch {
+        this?.toInt()
+    } ?: def
 }
 
 inline fun CharSequence?.safe2Long(def: Long = 0L) : Long {
-    return try {
+    return tryCatch {
         if (!isNullOrEmpty()) {
             java.lang.Long.parseLong(toString())
         } else {
             def
         }
-    } catch (e: Exception) {
-        Logger.e(e)
-        def
-    }
+    } ?: def
 }
 
 inline fun Number?.safe2Long(def: Long = 0) : Long {
-    return try {
-        this?.toLong() ?: def
-    } catch (e: Exception) {
-        Logger.e(e)
-        def
-    }
+    return tryCatch {
+        this?.toLong()
+    } ?: def
 }
 
 inline fun CharSequence?.safe2Short(def: Short = 0) : Short {
-    return try {
+    return tryCatch {
         if (!isNullOrEmpty()) {
             java.lang.Short.parseShort(toString())
         } else {
             def
         }
-    } catch (e: Exception) {
-        Logger.e(e)
-        def
-    }
+    } ?: def
 }
 
 inline fun Number?.safe2Short(def: Short = 0) : Short {
-    return try {
-        this?.toShort() ?: def
-    } catch (e: Exception) {
-        Logger.e(e)
-        def
-    }
+    return tryCatch {
+        this?.toShort()
+    } ?: def
 }
 
 inline fun CharSequence?.safe2Byte(def: Byte = 0) : Byte {
-    return try {
+    return tryCatch {
         if (!isNullOrEmpty()) {
             java.lang.Byte.parseByte(toString())
         } else {
             def
         }
-    } catch (e: Exception) {
-        Logger.e(e)
-        def
-    }
+    } ?: def
 }
 
 inline fun Number?.safe2Byte(def: Byte = 0) : Byte {
-    return try {
-        this?.toByte() ?: def
-    } catch (e: Exception) {
-        Logger.e(e)
-        def
-    }
+    return tryCatch {
+        this?.toByte()
+    } ?: def
 }
 
 inline fun CharSequence?.safe2Float(def: Float = 0f) : Float {
-    return try {
+    return tryCatch {
         if (!isNullOrEmpty()) {
             java.lang.Float.parseFloat(toString())
         } else {
             def
         }
-    } catch (e: Exception) {
-        Logger.e(e)
-        def
-    }
+    } ?: def
 }
 
 inline fun Number?.safe2Float(def: Float = 0f) : Float {
-    return try {
-        this?.toFloat() ?: def
-    } catch (e: Exception) {
-        Logger.e(e)
-        def
-    }
+    return tryCatch {
+        this?.toFloat()
+    } ?: def
 }
 
 inline fun CharSequence?.safe2Double(def: Double = 0.0) : Double {
-    return try {
+    return tryCatch {
         if (!isNullOrEmpty()) {
             java.lang.Double.parseDouble(toString())
         } else {
             def
         }
-    } catch (e: Exception) {
-        Logger.e(e)
-        def
-    }
+    } ?: def
 }
 
 inline fun Number?.safe2Double(def: Double = 0.0) : Double {
-    return try {
-        this?.toDouble() ?: def
-    } catch (e: Exception) {
-        Logger.e(e)
-        def
-    }
+    return tryCatch(def = def) {
+        this?.toDouble()
+    } ?: def
 }
 
 inline fun CharSequence?.safe2Boolean(def: Boolean = false) : Boolean {
-    return try {
+    return tryCatch {
         if (!isNullOrEmpty()) {
             java.lang.Boolean.parseBoolean(toString())
         } else {
             def
         }
-    } catch (e: Exception) {
-        Logger.e(e)
-        def
-    }
+    } ?: def
 }
 
 fun CharSequence?.trimEmptyOrNullChar(): Boolean {
@@ -368,7 +327,7 @@ inline fun measureTimeMillis(
     val start = System.currentTimeMillis()
     block()
     return (System.currentTimeMillis() - start).also { time ->
-        if (showLog && Logger.isEnable()) {
+        if (showLog && Logger.enable) {
             val owner = ownerClazz?.let { clazz ->
                 tag?.let {
                     "${clazz.simpleName}#$tag "

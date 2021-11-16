@@ -1,9 +1,9 @@
 package com.xiaosw.simple
 
 import android.content.Context
+import com.doudou.log.logi
 import com.tencent.mmkv.MMKV
 import com.xiaosw.api.AndroidContext
-import com.xiaosw.api.logger.logi
 import com.xiaosw.api.storage.DataStorageDelegate
 
 /**

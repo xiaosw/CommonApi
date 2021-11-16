@@ -1,7 +1,5 @@
 package com.xsw.ui.anim.path
 
-import com.xiaosw.api.logger.Logger
-
 /**
  * ClassName: [PathPointF]
  * Description:

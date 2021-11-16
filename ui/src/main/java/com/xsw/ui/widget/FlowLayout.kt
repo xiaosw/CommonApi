@@ -6,10 +6,8 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
-import com.xiaosw.api.extend.isNull
+import com.doudou.log.Logger
 import com.xiaosw.api.extend.use
-import com.xiaosw.api.logger.Logger
 import com.xsw.ui.R
 import java.util.*
 import java.util.concurrent.LinkedBlockingQueue

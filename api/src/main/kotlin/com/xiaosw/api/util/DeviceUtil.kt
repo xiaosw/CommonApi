@@ -12,10 +12,10 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.telephony.TelephonyManager
 import android.text.format.Formatter
+import com.doudou.log.Logger
 import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.extend.checkSelfPermissionCompat
 import com.xiaosw.api.extend.tryCatch
-import com.xiaosw.api.logger.Logger
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.Inet6Address

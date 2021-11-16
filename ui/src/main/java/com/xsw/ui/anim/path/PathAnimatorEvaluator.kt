@@ -1,7 +1,6 @@
 package com.xsw.ui.anim.path
 
 import android.animation.TypeEvaluator
-import com.xiaosw.api.logger.Logger
 import kotlin.math.pow
 
 /**

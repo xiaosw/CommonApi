@@ -4,10 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.doudou.log.Logger
 import com.xiaosw.api.annotation.MeasureTimeMillis
 import com.xiaosw.api.extend.onClick
 import com.xiaosw.api.hook.annotation.NotRegister
-import com.xiaosw.api.logger.Logger
 
 /**
  * @ClassName: [NotRegisterActivity]

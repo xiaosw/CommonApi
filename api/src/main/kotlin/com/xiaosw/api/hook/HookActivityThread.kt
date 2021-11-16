@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Message
 import com.xiaosw.api.extend.tryCatch
 import com.xiaosw.api.hook.intercept.ActivityNotRegisterInvocationIntercept
-import com.xiaosw.api.logger.Logger
 
 /**
  * @ClassName: [HookActivityThread]

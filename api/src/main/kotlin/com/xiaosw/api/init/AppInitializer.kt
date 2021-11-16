@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.annotation.Keep
 import androidx.startup.Initializer
+import com.doudou.log.Logger
 import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.BuildConfig
 import com.xiaosw.api.config.AppConfig
 import com.xiaosw.api.hook.HookManager
-import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.manager.DensityManager
 import com.xiaosw.api.manager.ThreadManager
 

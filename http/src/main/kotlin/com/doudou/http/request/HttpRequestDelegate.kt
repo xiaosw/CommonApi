@@ -4,11 +4,11 @@ import com.doudou.http.HttpMethod
 import com.doudou.http.HttpRequest
 import com.doudou.http.cipher.CipherDelegate
 import com.doudou.http.cipher.CipherType
+import com.doudou.log.Logger
 import com.xiaosw.api.delegate.CallbackDelegate
 import com.xiaosw.api.delegate.safeCallFail
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.tryCatch
-import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.util.Utils.hasNull
 import com.xiaosw.api.wrapper.GsonWrapper
 import org.json.JSONObject

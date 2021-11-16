@@ -1,6 +1,6 @@
 package com.xiaosw.api.util;
 
-import com.xiaosw.api.logger.Logger;
+import com.doudou.log.Logger;
 
 import java.security.MessageDigest;
 

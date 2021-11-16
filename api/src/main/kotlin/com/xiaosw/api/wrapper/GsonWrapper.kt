@@ -1,8 +1,8 @@
 package com.xiaosw.api.wrapper
 
 import android.text.TextUtils
+import com.doudou.log.Logger
 import com.google.gson.GsonBuilder
-import com.xiaosw.api.logger.Logger
 import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.reflect.Type
@@ -38,7 +38,7 @@ object GsonWrapper {
     /**
      * 格式化 log
      */
-    fun formatJsonToLog(log: String) = if (!Logger.isEnable()|| !isJson(log)) {
+    fun formatJsonToLog(log: String) = if (!Logger.enable|| !isJson(log)) {
         log
     } else StringBuilder("\n╔").append(LINE_BORDER)
         .append("\n║").append(log)

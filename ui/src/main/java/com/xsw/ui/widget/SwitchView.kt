@@ -16,10 +16,10 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.FloatRange
 import androidx.core.content.ContextCompat
+import com.doudou.log.Logger
 import com.xiaosw.api.extend.dp2px
 import com.xiaosw.api.extend.save
 import com.xiaosw.api.extend.use
-import com.xiaosw.api.logger.Logger
 import com.xsw.ui.R
 
 /**

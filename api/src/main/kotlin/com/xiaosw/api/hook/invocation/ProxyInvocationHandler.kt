@@ -1,7 +1,7 @@
 package com.xiaosw.api.hook.invocation
 
+import com.doudou.log.Logger
 import com.xiaosw.api.extend.tryCatch
-import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.register.Register
 import com.xiaosw.api.register.RegisterDelegate
 import java.lang.reflect.InvocationHandler
@@ -41,7 +41,7 @@ internal class ProxyInvocationHandler(
     override fun clear()= mIntercepts.clear()
 
     private inline fun printInvokeLog(method: Method, args: Array<out Any?>) {
-        if (!Logger.isEnable()) {
+        if (!Logger.enable) {
             return
         }
         tryCatch(showException = false) {

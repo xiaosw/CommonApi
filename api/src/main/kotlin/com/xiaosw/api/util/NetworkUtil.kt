@@ -6,15 +6,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.net.wifi.WifiManager
 import android.os.Parcelable
 import android.telephony.TelephonyManager
+import com.doudou.log.Logger
 import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.extend.checkSelfPermissionCompat
-import com.xiaosw.api.logger.Logger
 import java.lang.ref.WeakReference
 
 /**

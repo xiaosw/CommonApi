@@ -1,13 +1,12 @@
 package com.xiaosw.api.hook.intercept
 
 import android.content.Intent
+import com.doudou.log.Logger
 import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.extend.tryCatch
 import com.xiaosw.api.hook.HookUtil
 import com.xiaosw.api.hook.annotation.LaunchMode
-import com.xiaosw.api.hook.annotation.NotRegister
 import com.xiaosw.api.hook.invocation.InvocationHandlerIntercept
-import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.proxy.SingleInstanceActivity
 import com.xiaosw.api.proxy.SingleTaskActivity
 import com.xiaosw.api.proxy.SingleTopActivity

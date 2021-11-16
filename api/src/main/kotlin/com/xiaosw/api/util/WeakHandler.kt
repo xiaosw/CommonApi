@@ -4,9 +4,9 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.os.SystemClock
+import com.doudou.log.Logger
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.tryCatch
-import com.xiaosw.api.logger.Logger
 import java.lang.ref.WeakReference
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock

@@ -5,8 +5,6 @@ import android.os.Bundle
 import androidx.annotation.FloatRange
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.AppBarLayout
-import com.xiaosw.api.logger.Logger
-import com.xsw.ui.statusbar.immersionBar
 import kotlinx.android.synthetic.main.activity_material_design.*
 import kotlin.math.abs
 

@@ -1,8 +1,6 @@
 package com.xsw.ui.widget.banner.tranforme
 
 import android.view.View
-import androidx.viewpager.widget.ViewPager
-import com.xiaosw.api.logger.Logger
 
 /**
  * ClassName: [DepthTransformer]

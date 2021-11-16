@@ -11,10 +11,10 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.widget.RemoteViews
+import com.doudou.log.Logger
 import com.xiaosw.api.extend.checkActivityValid
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.tryCatch
-import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.util.ParseMD5Util
 import com.xsw.compat.R
 import com.xsw.compat.start.bridge.StartBridgeActivity

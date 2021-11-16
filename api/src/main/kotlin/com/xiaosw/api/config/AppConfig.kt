@@ -1,7 +1,7 @@
 package com.xiaosw.api.config
 
 import androidx.annotation.Keep
-import com.xiaosw.api.logger.Logger
+import com.doudou.log.Logger
 import com.xiaosw.api.util.NetworkUtil
 
 /**
@@ -31,7 +31,7 @@ object AppConfig {
     var isDebug = false
         set(value) {
             field = value
-            Logger.init(if (field) Logger.LogLevel.VERBOSE else Logger.LogLevel.NONE, "xsw---> ")
+            Logger.init(if (field) Logger.VERBOSE else Logger.NONE, "xsw---> ")
             NetworkUtil.init()
         }
 

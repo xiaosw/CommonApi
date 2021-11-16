@@ -5,9 +5,9 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
 import android.widget.*
+import com.doudou.log.Logger
 import com.xiaosw.api.extend.setVisibilityCompat
 
-import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.util.StringUtil
 
 

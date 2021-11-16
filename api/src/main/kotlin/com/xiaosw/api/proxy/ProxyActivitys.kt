@@ -2,7 +2,7 @@ package com.xiaosw.api.proxy
 
 import android.app.Activity
 import android.os.Bundle
-import com.xiaosw.api.logger.Logger
+import com.doudou.log.Logger
 
 /**
  * @ClassName: [ProxyActivitys]

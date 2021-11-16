@@ -3,7 +3,7 @@ package com.xsw.track
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import com.xiaosw.api.logger.Logger
+import com.doudou.log.Logger
 import com.xsw.track.intercept.OnClickIntercept
 import com.xsw.track.intercept.OnCreateViewWrapperIntercept
 

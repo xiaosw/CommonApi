@@ -1,6 +1,6 @@
 package com.xiaosw.api.init
 
-import com.xiaosw.api.logger.Logger
+import com.doudou.log.Logger
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -20,7 +20,7 @@ open class InitializerDelegate {
     fun isInitializer() = isInitializer.get()
 
     internal inline fun showTime(time: Long) {
-        if (Logger.isEnable()) {
+        if (Logger.enable) {
             Logger.i("${javaClass.simpleName}#init【${isInitializer()}】, use【${time}ms】" +
                     "in【${Thread.currentThread().name}】thread.")
         }

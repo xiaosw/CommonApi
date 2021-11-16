@@ -2,7 +2,7 @@ package com.xiaosw.api.reflect.compat
 
 import android.annotation.TargetApi
 import android.os.Build
-import com.xiaosw.api.logger.Logger
+import com.doudou.log.Logger
 import com.xiaosw.api.reflect.ReflectCompat
 import java.lang.Exception
 import java.lang.reflect.Method

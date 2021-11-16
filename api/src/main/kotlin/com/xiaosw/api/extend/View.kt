@@ -7,8 +7,8 @@ import android.text.Html
 import android.text.TextUtils
 import android.view.View
 import android.widget.TextView
+import com.doudou.log.Logger
 import com.xiaosw.api.helper.OnPreventFastClickListener
-import com.xiaosw.api.logger.Logger
 
 /**
  * @ClassName {@link View}

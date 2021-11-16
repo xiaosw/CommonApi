@@ -5,12 +5,12 @@ import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
+import com.doudou.log.Logger
 import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.extend.isDestroyed
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.showToast
 import com.xiaosw.api.init.Initializer1Delegate
-import com.xiaosw.api.logger.Logger
 import com.xiaosw.api.register.Register
 import com.xiaosw.api.register.RegisterDelegate
 import java.lang.ref.WeakReference

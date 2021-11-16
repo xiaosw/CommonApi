@@ -1,9 +1,8 @@
 package com.xiaosw.api.manager
 
-import android.util.Log
 import androidx.annotation.IntDef
+import com.doudou.log.Logger
 import com.xiaosw.api.extend.isNull
-import com.xiaosw.api.logger.Logger
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.util.concurrent.Callable
