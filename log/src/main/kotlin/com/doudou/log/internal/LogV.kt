@@ -2,7 +2,6 @@ package com.doudou.log.internal
 
 import android.util.Log
 import com.doudou.log.Logger
-import java.lang.StringBuilder
 
 /**
  * ClassName: [LogV]
@@ -21,11 +20,11 @@ internal open class LogV(preTag: String? = null) : ILog {
         get() = true
 
     override fun println(message: String?, isError: Boolean) {
-        splitMessageIfNeeded(message) {
+        splitMessageIfNeeded(message) { _, _, msg ->
             if (isError) {
-                System.err.println(message)
+                System.err.println(msg)
             } else {
-                kotlin.io.println(message)
+                kotlin.io.println(msg)
             }
         }
     }
@@ -81,41 +80,65 @@ internal open class LogV(preTag: String? = null) : ILog {
         return internalPreTag
     }
 
-    private fun splitMessageIfNeeded(message: String?, block: (message: String) -> Unit) {
+    private fun splitMessageIfNeeded(message: String?, block: (count: Int, position: Int, message: String) -> Unit) {
         message?.let {
             if (it.length <= MAX_MESSAGE_LEN) {
-                block(it)
+                block(1, 0, it)
                 return
             }
-            val bytes = it.toByteArray()
-            val size = bytes.size
-            for (offset in bytes.indices step MAX_MESSAGE_LEN) {
-                val length = MAX_MESSAGE_LEN.coerceAtMost(size - offset)
-                block(String(bytes, offset, length))
+            val len = it.length
+            val m = len % MAX_MESSAGE_LEN
+            val c = len / MAX_MESSAGE_LEN
+            val count = if (m === 0) c else c + 1
+            var pos = 0
+            for (startIndex in 0..len step MAX_MESSAGE_LEN) {
+                val endIndex = len.coerceAtMost(startIndex + MAX_MESSAGE_LEN)
+                block(count, pos, it.substring(startIndex, endIndex))
+                pos += 1
             }
         }
     }
 
     private fun println(priority: Int, tag: String? = null, msg: String? = "", tr: Throwable? = null) {
         val printTag = if (tag.isNullOrEmpty()) findTag() else tag
-        var printMsg = msg ?: EMPTY_STR
-        val stackTrace = Log.getStackTraceString(tr)
-        if (!stackTrace.isNullOrEmpty()) {
-            printMsg = if (printMsg.isNullOrEmpty()) {
-                stackTrace
-            } else {
-                "$printMsg\n$stackTrace"
+        val threadName = Thread.currentThread().name
+        LogThreadManager.execute {
+            var printMsg = msg ?: EMPTY_STR
+            val stackTrace = Log.getStackTraceString(tr)
+            if (!stackTrace.isNullOrEmpty()) {
+                printMsg = if (printMsg.isNullOrEmpty()) {
+                    stackTrace
+                } else {
+                    "$printMsg\n$stackTrace"
+                }
+            }
+            splitMessageIfNeeded(printMsg) { size, position, msg ->
+                try {
+                    val formatMsg =  if (printMsg.startsWith("java.lang.")) {
+                        "$NEW_LINE$LINE_HEADER${msg.replace(NEW_LINE, "$NEW_LINE$LINE_HEADER")}"
+                    } else {
+                        "$NEW_LINE$LINE_HEADER$msg"
+                    }
+                    // Log.e("ddd", "println: $size, $position, $msg, format = $formatMsg")
+                    if (position === 0 && size === 1) {
+                        Log.println(priority, printTag, " $LINE_HEADER_FIRST$LINE_BORDER" +
+                                "$formatMsg" +
+                                "$NEW_LINE$LINE_HEADER$LINE_BORDER" +
+                                "$NEW_LINE${LINE_HEADER}Thread: $threadName" +
+                                "$LINE_HEADER_LAST$LINE_BORDER$NEW_LINE$NEW_LINE ")
+                    } else if (position === 0 && size > 1) {
+                        Log.println(priority, printTag, " $LINE_HEADER_FIRST$LINE_BORDER$formatMsg")
+                    } else if (position === size - 1) {
+                        Log.println(priority, "", " $formatMsg" +
+                                "$NEW_LINE$LINE_HEADER$LINE_BORDER" +
+                                "$NEW_LINE${LINE_HEADER}Thread: $threadName" +
+                                "$LINE_HEADER_LAST$LINE_BORDER$NEW_LINE$NEW_LINE ")
+                    } else {
+                        Log.println(priority, "", " $formatMsg")
+                    }
+                } catch (ignore: Throwable){}
             }
         }
-        val sb = StringBuilder()
-        splitMessageIfNeeded(printMsg) {
-            sb.append("║$it")
-        }
-        try {
-            Log.println(priority, printTag, " \n╔$LINE_BORDER" +
-                    "\n${sb.toString().replace("\n", "\n║")}" +
-                    "\n╚$LINE_BORDER\n\n ")
-        } catch (ignore: Throwable){}
     }
 
     companion object {
@@ -123,15 +146,21 @@ internal open class LogV(preTag: String? = null) : ILog {
         /**
          * log single maximum output length.
          */
-        private const val MAX_MESSAGE_LEN = 3000
+        private const val MAX_MESSAGE_LEN = 3800
 
         private val LOG_CLASS: String by lazy {
             Logger::class.java.name
         }
 
+        const val NEW_LINE = "\n"
+        const val LINE_HEADER_FIRST = "$NEW_LINE╔"
+        const val LINE_HEADER = "║"
+        const val LINE_HEADER_LAST = "$NEW_LINE╚"
+
         const val LINE_BORDER = "═════════════════════════" +
                 "══════════════════════════════════════════" +
                 "══════════════════════════════════════════"
+
     }
 
 }
