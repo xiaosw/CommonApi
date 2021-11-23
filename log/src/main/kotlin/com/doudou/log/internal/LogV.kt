@@ -1,6 +1,8 @@
 package com.doudou.log.internal
 
 import android.util.Log
+import com.doudou.log.LogConfig
+import com.doudou.log.LogFormat
 import com.doudou.log.Logger
 
 /**
@@ -9,9 +11,16 @@ import com.doudou.log.Logger
  *
  * Create by X at 2021/11/12 17:41.
  */
-internal open class LogV(preTag: String? = null) : ILog {
+internal open class LogV(config: LogConfig) : ILog {
 
-    private val internalPreTag = preTag ?: ""
+    private val mInternalPreTag = config.preTag ?: ""
+    private val mMaxLen = config.maxLen
+    private val isFormatEnable = config.format?.enable ?: false
+    private val mNewLine = config.format?.newLine ?: LogFormat.NEW_LINE
+    private val mDividerLine = config.format?.dividerLine ?: LogFormat.DIVIDER_LINE
+    private val mFirstFormatLineHeader = config.format?.firstFormatLineHeader ?: LogFormat.LINE_HEADER_FIRST
+    private val mFormatLineHeader = config.format?.formatLineHeader ?: LogFormat.LINE_HEADER
+    private val mLastFormatLineHeader = config.format?.lastFormatLineHeader ?: LogFormat.LINE_HEADER_LAST
 
     override val level: Int
         get() = Logger.VERBOSE
@@ -66,7 +75,7 @@ internal open class LogV(preTag: String? = null) : ILog {
                 lastClassIsLogUtils = isLogUtils
             }
             if (traceOffset === -1) {
-                return internalPreTag
+                return mInternalPreTag
             }
             with(get(traceOffset)) {
                 var stackTrace: String = toString()
@@ -74,25 +83,25 @@ internal open class LogV(preTag: String? = null) : ILog {
                 var tag = "%s.%s%s"
                 var callerClazzName: String = className
                 callerClazzName = callerClazzName.substring(callerClazzName.lastIndexOf(".") + 1)
-                return String.format(tag, "$internalPreTag$callerClazzName", methodName, stackTrace)
+                return String.format(tag, "$mInternalPreTag$callerClazzName", methodName, stackTrace)
             }
         }
-        return internalPreTag
+        return mInternalPreTag
     }
 
     private fun splitMessageIfNeeded(message: String?, block: (count: Int, position: Int, message: String) -> Unit) {
         message?.let {
-            if (it.length <= MAX_MESSAGE_LEN) {
+            if (it.length <= mMaxLen) {
                 block(1, 0, it)
                 return
             }
             val len = it.length
-            val m = len % MAX_MESSAGE_LEN
-            val c = len / MAX_MESSAGE_LEN
+            val m = len % mMaxLen
+            val c = len / mMaxLen
             val count = if (m === 0) c else c + 1
             var pos = 0
-            for (startIndex in 0..len step MAX_MESSAGE_LEN) {
-                val endIndex = len.coerceAtMost(startIndex + MAX_MESSAGE_LEN)
+            for (startIndex in 0..len step mMaxLen) {
+                val endIndex = len.coerceAtMost(startIndex + mMaxLen)
                 block(count, pos, it.substring(startIndex, endIndex))
                 pos += 1
             }
@@ -114,25 +123,29 @@ internal open class LogV(preTag: String? = null) : ILog {
             }
             splitMessageIfNeeded(printMsg) { size, position, msg ->
                 try {
+                    if (!isFormatEnable) {
+                        Log.println(priority, printTag, "$msg")
+                        return@splitMessageIfNeeded
+                    }
                     val formatMsg =  if (printMsg.startsWith("java.lang.")) {
-                        "$NEW_LINE$LINE_HEADER${msg.replace(NEW_LINE, "$NEW_LINE$LINE_HEADER")}"
+                        "$mNewLine$mFormatLineHeader${msg.replace(mNewLine, "$mNewLine$mFormatLineHeader")}"
                     } else {
-                        "$NEW_LINE$LINE_HEADER$msg"
+                        "$mNewLine$mFormatLineHeader$msg"
                     }
                     // Log.e("ddd", "println: $size, $position, $msg, format = $formatMsg")
                     if (position === 0 && size === 1) {
-                        Log.println(priority, printTag, " $LINE_HEADER_FIRST$LINE_BORDER" +
+                        Log.println(priority, printTag, " $mFirstFormatLineHeader$mDividerLine" +
                                 "$formatMsg" +
-                                "$NEW_LINE$LINE_HEADER$LINE_BORDER" +
-                                "$NEW_LINE${LINE_HEADER}Thread: $threadName" +
-                                "$LINE_HEADER_LAST$LINE_BORDER$NEW_LINE$NEW_LINE ")
+                                "$mNewLine$mFormatLineHeader$mDividerLine" +
+                                "$mNewLine${mFormatLineHeader}Thread: $threadName" +
+                                "$mLastFormatLineHeader$mDividerLine$mNewLine$mNewLine ")
                     } else if (position === 0 && size > 1) {
-                        Log.println(priority, printTag, " $LINE_HEADER_FIRST$LINE_BORDER$formatMsg")
+                        Log.println(priority, printTag, " $mFirstFormatLineHeader$mDividerLine$formatMsg")
                     } else if (position === size - 1) {
                         Log.println(priority, "", " $formatMsg" +
-                                "$NEW_LINE$LINE_HEADER$LINE_BORDER" +
-                                "$NEW_LINE${LINE_HEADER}Thread: $threadName" +
-                                "$LINE_HEADER_LAST$LINE_BORDER$NEW_LINE$NEW_LINE ")
+                                "$mNewLine$mFormatLineHeader$mDividerLine" +
+                                "$mNewLine${mFormatLineHeader}Thread: $threadName" +
+                                "$mLastFormatLineHeader$mDividerLine$mNewLine$mNewLine ")
                     } else {
                         Log.println(priority, "", " $formatMsg")
                     }
@@ -143,23 +156,9 @@ internal open class LogV(preTag: String? = null) : ILog {
 
     companion object {
         const val EMPTY_STR = ""
-        /**
-         * log single maximum output length.
-         */
-        private const val MAX_MESSAGE_LEN = 3800
-
         private val LOG_CLASS: String by lazy {
             Logger::class.java.name
         }
-
-        const val NEW_LINE = "\n"
-        const val LINE_HEADER_FIRST = "$NEW_LINE╔"
-        const val LINE_HEADER = "║"
-        const val LINE_HEADER_LAST = "$NEW_LINE╚"
-
-        const val LINE_BORDER = "═════════════════════════" +
-                "══════════════════════════════════════════" +
-                "══════════════════════════════════════════"
 
     }
 

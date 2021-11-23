@@ -1,5 +1,6 @@
 package com.doudou.log.internal
 
+import com.doudou.log.LogConfig
 import com.doudou.log.Logger
 
 /**
@@ -8,7 +9,7 @@ import com.doudou.log.Logger
  *
  * Create by X at 2021/11/12 17:41.
  */
-internal open class LogE(preTag: String? = null) : LogW(preTag) {
+internal open class LogE(config: LogConfig) : LogW(config) {
 
     override val level: Int
         get() = Logger.ERROR

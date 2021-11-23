@@ -1,5 +1,6 @@
 package com.doudou.log.internal
 
+import com.doudou.log.LogConfig
 import com.doudou.log.Logger
 
 /**
@@ -8,7 +9,7 @@ import com.doudou.log.Logger
  *
  * Create by X at 2021/11/12 16:57.
  */
-internal class LogN : LogE() {
+internal class LogN : LogE(LogConfig(Logger.NONE)) {
 
     override val level: Int
         get() = Logger.NONE

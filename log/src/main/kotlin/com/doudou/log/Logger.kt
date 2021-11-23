@@ -20,13 +20,13 @@ object Logger {
     const val ERROR = Log.ERROR
     const val NONE = -1
 
-    private var mLog: ILog = LogFactory.create(NONE)
+    private var mLog: ILog = LogFactory.create(LogConfig(NONE))
 
     val enable = mLog.enable
 
     @JvmStatic
-    fun init(@Level level: Int, preTag: String? = null) {
-        mLog = LogFactory.create(level, preTag)
+    fun init(config: LogConfig) {
+        mLog = LogFactory.create(config)
     }
 
     @JvmStatic

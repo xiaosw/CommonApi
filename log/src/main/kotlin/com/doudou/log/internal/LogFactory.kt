@@ -1,5 +1,6 @@
 package com.doudou.log.internal
 
+import com.doudou.log.LogConfig
 import com.doudou.log.Logger
 import com.doudou.log.annotation.Level
 
@@ -11,12 +12,12 @@ import com.doudou.log.annotation.Level
  */
 internal object LogFactory {
 
-    fun create(@Level level: Int, preTag: String? = null) = when(level) {
-        Logger.VERBOSE -> LogV(preTag)
-        Logger.DEBUG -> LogD(preTag)
-        Logger.INFO -> LogI(preTag)
-        Logger.WARN -> LogW(preTag)
-        Logger.ERROR -> LogE(preTag)
+    fun create(config: LogConfig) = when(config.level) {
+        Logger.VERBOSE -> LogV(config)
+        Logger.DEBUG -> LogD(config)
+        Logger.INFO -> LogI(config)
+        Logger.WARN -> LogW(config)
+        Logger.ERROR -> LogE(config)
         else -> LogN()
     }
 

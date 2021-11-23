@@ -18,7 +18,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Logger.init(if (BuildConfig.DEBUG) Logger.VERBOSE else Logger.NONE)
         val isAttachJVMTI = JVMTIManager.attachJVMTI(this, true)
         Logger.e("isAttachJVMTI = $isAttachJVMTI")
         loge("light: ${UIModeManager.isLightMode}, dark: ${UIModeManager.isDarkMode}")
