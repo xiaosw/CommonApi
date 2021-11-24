@@ -27,7 +27,7 @@ class App : Application() {
             }
         })
         DataStorageManager.init(AppDataStorage(this))
-        DataStorageManager.put("abc", "hello")
+        DataStorageManager.put("abc", """{"hello"="hello"}""")
         loge(DataStorageManager.getString("abc"))
     }
 

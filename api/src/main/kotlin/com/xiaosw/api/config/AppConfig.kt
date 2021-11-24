@@ -36,7 +36,7 @@ object AppConfig {
             Logger.init(LogConfig(if (field) Logger.VERBOSE else Logger.NONE
                 , "xsw---> "
                 , LogConfig.MAX_LEN
-                , LogFormat()))
+                , LogFormat(enable = true, formatJson = true)))
             NetworkUtil.init()
         }
 

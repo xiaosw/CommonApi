@@ -16,12 +16,13 @@ data class LogConfig @JvmOverloads constructor (
     val format: LogFormat? = LogFormat()
 ) : Serializable {
     companion object {
-        const val MAX_LEN = 8000
+        const val MAX_LEN = 5000
     }
 }
 
 data class LogFormat @JvmOverloads constructor (
     val enable: Boolean = true,
+    val formatJson: Boolean = true,
     val newLine: String = NEW_LINE,
     val dividerLine: String = DIVIDER_LINE,
     val firstFormatLineHeader: String = LINE_HEADER_FIRST,

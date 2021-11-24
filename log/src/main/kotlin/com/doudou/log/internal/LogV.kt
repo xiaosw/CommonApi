@@ -1,9 +1,14 @@
 package com.doudou.log.internal
 
+import android.text.TextUtils
 import android.util.Log
 import com.doudou.log.LogConfig
 import com.doudou.log.LogFormat
 import com.doudou.log.Logger
+import com.doudou.log.format.JsonPrinter
+import com.doudou.log.format.PrinterFactory
+import org.json.JSONArray
+import org.json.JSONObject
 
 /**
  * ClassName: [LogV]
@@ -11,11 +16,12 @@ import com.doudou.log.Logger
  *
  * Create by X at 2021/11/12 17:41.
  */
-internal open class LogV(config: LogConfig) : ILog {
+internal open class LogV(val config: LogConfig) : ILog {
 
     private val mInternalPreTag = config.preTag ?: ""
     private val mMaxLen = config.maxLen
     private val isFormatEnable = config.format?.enable ?: false
+    private val isFormatJson = config.format?.formatJson ?: true
     private val mNewLine = config.format?.newLine ?: LogFormat.NEW_LINE
     private val mDividerLine = config.format?.dividerLine ?: LogFormat.DIVIDER_LINE
     private val mFirstFormatLineHeader = config.format?.firstFormatLineHeader ?: LogFormat.LINE_HEADER_FIRST
@@ -114,41 +120,21 @@ internal open class LogV(config: LogConfig) : ILog {
         LogThreadManager.execute {
             var printMsg = msg ?: EMPTY_STR
             val stackTrace = Log.getStackTraceString(tr)
-            if (!stackTrace.isNullOrEmpty()) {
+            val isException = !stackTrace.isNullOrEmpty()
+            val isJson = if (isException) {
                 printMsg = if (printMsg.isNullOrEmpty()) {
                     stackTrace
                 } else {
                     "$printMsg\n$stackTrace"
                 }
+                false
+            } else {
+                JsonPrinter.isJson(printMsg)
             }
             splitMessageIfNeeded(printMsg) { size, position, msg ->
                 try {
-                    if (!isFormatEnable) {
-                        Log.println(priority, printTag, "$msg")
-                        return@splitMessageIfNeeded
-                    }
-                    val formatMsg =  if (printMsg.startsWith("java.lang.")) {
-                        "$mNewLine$mFormatLineHeader${msg.replace(mNewLine, "$mNewLine$mFormatLineHeader")}"
-                    } else {
-                        "$mNewLine$mFormatLineHeader$msg"
-                    }
-                    // Log.e("ddd", "println: $size, $position, $msg, format = $formatMsg")
-                    if (position === 0 && size === 1) {
-                        Log.println(priority, printTag, " $mFirstFormatLineHeader$mDividerLine" +
-                                "$formatMsg" +
-                                "$mNewLine$mFormatLineHeader$mDividerLine" +
-                                "$mNewLine${mFormatLineHeader}Thread: $threadName" +
-                                "$mLastFormatLineHeader$mDividerLine$mNewLine$mNewLine ")
-                    } else if (position === 0 && size > 1) {
-                        Log.println(priority, printTag, " $mFirstFormatLineHeader$mDividerLine$formatMsg")
-                    } else if (position === size - 1) {
-                        Log.println(priority, "", " $formatMsg" +
-                                "$mNewLine$mFormatLineHeader$mDividerLine" +
-                                "$mNewLine${mFormatLineHeader}Thread: $threadName" +
-                                "$mLastFormatLineHeader$mDividerLine$mNewLine$mNewLine ")
-                    } else {
-                        Log.println(priority, "", " $formatMsg")
-                    }
+                    PrinterFactory.create(config.format, isJson)
+                        .println(priority, printTag, size, position, msg, threadName, isException)
                 } catch (ignore: Throwable){}
             }
         }
