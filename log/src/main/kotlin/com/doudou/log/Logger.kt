@@ -1,7 +1,6 @@
 package com.doudou.log
 
 import android.util.Log
-import com.doudou.log.annotation.Level
 import com.doudou.log.internal.ILog
 import com.doudou.log.internal.LogFactory
 
@@ -43,8 +42,20 @@ object Logger {
 
     @JvmStatic
     @JvmOverloads
+    fun println(isError: Boolean = false, messageProvider: () -> String?) {
+        mLog.println(messageProvider, isError)
+    }
+
+    @JvmStatic
+    @JvmOverloads
     fun v(message: String? = null, tag: String? = null, tr: Throwable? = null) {
         mLog.v(tag, message, tr)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun v(tag: String? = null, tr: Throwable? = null, messageProvider: () -> String?) {
+        mLog.v(tag, messageProvider, tr)
     }
 
     @JvmStatic
@@ -55,8 +66,20 @@ object Logger {
 
     @JvmStatic
     @JvmOverloads
+    fun d(tag: String? = null, tr: Throwable? = null, messageProvider: () -> String?) {
+        mLog.d(tag, messageProvider, tr)
+    }
+
+    @JvmStatic
+    @JvmOverloads
     fun i(message: String? = null, tag: String? = null, tr: Throwable? = null) {
         mLog.i(tag, message, tr)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun i(tag: String? = null, tr: Throwable? = null, messageProvider: () -> String?) {
+        mLog.i(tag, messageProvider, tr)
     }
 
     @JvmStatic
@@ -67,8 +90,20 @@ object Logger {
 
     @JvmStatic
     @JvmOverloads
+    fun w(tag: String? = null, tr: Throwable? = null, messageProvider: () -> String?) {
+        mLog.w(tag, messageProvider, tr)
+    }
+
+    @JvmStatic
+    @JvmOverloads
     fun e(message: String? = null, tag: String? = null, tr: Throwable? = null) {
         mLog.e(tag, message, tr)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun e(tag: String? = null, tr: Throwable? = null, messageProvider: () -> String?) {
+        mLog.e(tag, messageProvider, tr)
     }
 
     @JvmStatic
@@ -82,9 +117,15 @@ object Logger {
 // ext
 ///////////////////////////////////////////////////////////////////////////
 inline fun logp(message: String? = null, isError: Boolean = false) = Logger.println(message, isError)
+fun logp(isError: Boolean = false, messageProvider: () -> String?) = Logger.println(isError, messageProvider)
 inline fun logv(message: String? = null, tag: String? = null, tr: Throwable? = null) = Logger.v(message, tag, tr)
+fun logv(tag: String? = null, tr: Throwable? = null, messageProvider: () -> String?) = Logger.v(tag, tr, messageProvider)
 inline fun logd(message: String? = null, tag: String? = null, tr: Throwable? = null) = Logger.d(message, tag, tr)
+fun logd(tag: String? = null, tr: Throwable? = null, messageProvider: () -> String?) = Logger.d(tag, tr, messageProvider)
 inline fun logi(message: String? = null, tag: String? = null, tr: Throwable? = null) = Logger.i(message, tag, tr)
+fun logi(tag: String? = null, tr: Throwable? = null, messageProvider: () -> String?) = Logger.i(tag, tr, messageProvider)
 inline fun logw(message: String? = null, tag: String? = null, tr: Throwable? = null) = Logger.w(message, tag, tr)
+fun logw(tag: String? = null, tr: Throwable? = null, messageProvider: () -> String?) = Logger.w(tag, tr, messageProvider)
 inline fun loge(message: String? = null, tag: String? = null, tr: Throwable? = null) = Logger.e(message, tag, tr)
+fun loge(tag: String? = null, tr: Throwable? = null, messageProvider: () -> String?) = Logger.e(tag, tr, messageProvider)
 inline fun loge(tr: Throwable? = null) = Logger.e(null, null, tr = tr)

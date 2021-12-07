@@ -1,14 +1,11 @@
 package com.doudou.log.internal
 
-import android.text.TextUtils
 import android.util.Log
 import com.doudou.log.LogConfig
 import com.doudou.log.LogFormat
 import com.doudou.log.Logger
 import com.doudou.log.format.JsonPrinter
 import com.doudou.log.format.PrinterFactory
-import org.json.JSONArray
-import org.json.JSONObject
 
 /**
  * ClassName: [LogV]
@@ -44,25 +41,43 @@ internal open class LogV(val config: LogConfig) : ILog {
         }
     }
 
+    override fun println(messageProvider: () -> String?, isError: Boolean) =
+        println(messageProvider.invoke(), isError)
+
     override fun v(tag: String?, message: String?, tr: Throwable?) {
         println(Log.VERBOSE, tag, message, tr)
     }
+
+    override fun v(tag: String?, messageProvider: () -> String?, th: Throwable?) =
+        v(tag, messageProvider.invoke(), th)
 
     override fun d(tag: String?, message: String?, tr: Throwable?) {
         println(Log.DEBUG, tag, message, tr)
     }
 
+    override fun d(tag: String?, messageProvider: () -> String?, th: Throwable?) =
+        d(tag, messageProvider.invoke(), th)
+
     override fun i(tag: String?, message: String?, tr: Throwable?) {
         println(Log.INFO, tag, message, tr)
     }
+
+    override fun i(tag: String?, messageProvider: () -> String?, th: Throwable?) =
+        i(tag, messageProvider.invoke(), th)
 
     override fun w(tag: String?, message: String?, tr: Throwable?) {
         println(Log.WARN, tag, message, tr)
     }
 
+    override fun w(tag: String?, messageProvider: () -> String?, th: Throwable?) =
+        w(tag, messageProvider.invoke(), th)
+
     override fun e(tag: String?, message: String?, tr: Throwable?) {
         println(Log.ERROR, tag, message, tr)
     }
+
+    override fun e(tag: String?, messageProvider: () -> String?, th: Throwable?) =
+        e(tag, messageProvider.invoke(), th)
 
     override fun findTag(ignoreDisalbe: Boolean) : String {
         if (!ignoreDisalbe && !enable) {
@@ -73,12 +88,14 @@ internal open class LogV(val config: LogConfig) : ILog {
             var lastClassIsLogUtils= false
             for (position in 0 until size) {
                 val e: StackTraceElement = get(position)
-                val isLogUtils = e.className == LOG_CLASS
-                if (!isLogUtils && lastClassIsLogUtils) { // Target Class
+                val isLogClass = e.className.let {
+                    it == LOG_CLASS || it == LOG_CLASS_KT
+                }
+                if (!isLogClass && lastClassIsLogUtils) { // Target Class
                     traceOffset = position
                     break
                 }
-                lastClassIsLogUtils = isLogUtils
+                lastClassIsLogUtils = isLogClass
             }
             if (traceOffset === -1) {
                 return mInternalPreTag
@@ -144,6 +161,10 @@ internal open class LogV(val config: LogConfig) : ILog {
         const val EMPTY_STR = ""
         private val LOG_CLASS: String by lazy {
             Logger::class.java.name
+        }
+
+        private val LOG_CLASS_KT: String by lazy {
+            "${LOG_CLASS}Kt"
         }
 
     }

@@ -14,10 +14,12 @@ internal open class LogD(config: LogConfig) : LogV(config) {
     override val level: Int
         get() = Logger.DEBUG
 
-    override fun println(message: String?, isError: Boolean) {
-    }
+    override fun println(message: String?, isError: Boolean) {}
 
-    override fun v(tag: String?, message: String?, tr: Throwable?) {
-    }
+    override fun println(messageProvider: () -> String?, isError: Boolean) {}
+
+    override fun v(tag: String?, message: String?, tr: Throwable?) {}
+
+    override fun v(tag: String?, messageProvider: () -> String?, th: Throwable?) {}
 
 }

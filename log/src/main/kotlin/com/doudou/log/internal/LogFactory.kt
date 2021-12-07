@@ -2,7 +2,6 @@ package com.doudou.log.internal
 
 import com.doudou.log.LogConfig
 import com.doudou.log.Logger
-import com.doudou.log.annotation.Level
 
 /**
  * ClassName: [LogFactory]
