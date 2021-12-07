@@ -18,6 +18,7 @@ ext {
     core_ktx="androidx.core:core-ktx:$CORE_KTX_VERSION"
     constraint_layout="androidx.constraintlayout:constraintlayout:$CONSTRAINT_LAYOUT_VERSION"
     material="com.google.android.material:material:$MATERIAL_VERSION"
+    multidex="androidx.multidex:multidex:$MULTIDEX_VERSION"
 
     // jet pack
     start_up="androidx.startup:startup-runtime:$START_UP_VERSION"

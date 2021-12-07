@@ -32,7 +32,7 @@
             android:theme="@style/AppTheme.Material.Light"
             android:icon="@mipmap/ic_featured_light"
             android:roundIcon="@mipmap/ic_featured_light"
-            android:enabled="true">
+            android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

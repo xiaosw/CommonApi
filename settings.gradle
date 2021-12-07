@@ -1,3 +1,4 @@
+include ':keep'
 include ':log'
 include ':http'
 include ':track'
