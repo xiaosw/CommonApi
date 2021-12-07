@@ -4,6 +4,7 @@ import androidx.annotation.Keep
 import com.doudou.log.LogConfig
 import com.doudou.log.LogFormat
 import com.doudou.log.Logger
+import com.xiaosw.api.manager.LogRecordManager
 import com.xiaosw.api.util.NetworkUtil
 
 /**
@@ -36,7 +37,8 @@ object AppConfig {
             Logger.init(LogConfig(if (field) Logger.VERBOSE else Logger.NONE
                 , "xsw---> "
                 , LogConfig.MAX_LEN
-                , LogFormat(enable = true, formatJson = true)))
+                , LogFormat(enable = true, formatJson = true)
+                , LogRecordManager.logRecord))
             NetworkUtil.init()
         }
 

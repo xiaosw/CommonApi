@@ -149,6 +149,7 @@ internal open class LogV(val config: LogConfig) : ILog {
                 JsonPrinter.isJson(printMsg)
             }
             splitMessageIfNeeded(printMsg) { size, position, msg ->
+                config?.record?.onRecord(priority, printTag, msg)
                 try {
                     PrinterFactory.create(config.format, isJson)
                         .println(priority, printTag, size, position, msg, threadName, isException)
