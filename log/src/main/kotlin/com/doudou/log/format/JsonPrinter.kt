@@ -28,13 +28,13 @@ internal open class JsonPrinter(format: LogFormat) : FormatPrinter(format) {
             super.println(priority, tag, size, position, message, threadName, isException)
             return
         }
-        val formatMsg = " ${format.firstFormatLineHeader}${format.dividerLine}" +
+        val formatMsg = " ${format.newLine}${format.firstFormatLineHeader}${format.dividerLine}" +
                 "${format.newLine}${format.formatLineHeader}Thread:$threadName" +
                 "${format.newLine}${format.formatLineHeader}${format.dividerLine}" +
                 "${format.newLine}${format.formatLineHeader}$message" +
                 "${format.newLine}${format.formatLineHeader}${format.dividerLine}" +
                 "${format.newLine}${format.formatLineHeader}${formatJsonStr(message)}" +
-                "${format.lastFormatLineHeader}${format.dividerLine}${format.newLine}${format.newLine} "
+                "${format.newLine}${format.lastFormatLineHeader}${format.dividerLine}${format.newLine}${format.newLine} "
         Log.println(priority, tag, formatMsg)
 
     }

@@ -2,7 +2,6 @@ package com.doudou.log.internal
 
 import android.util.Log
 import com.doudou.log.LogConfig
-import com.doudou.log.LogFormat
 import com.doudou.log.Logger
 import com.doudou.log.format.JsonPrinter
 import com.doudou.log.format.PrinterFactory
@@ -17,13 +16,6 @@ internal open class LogV(val config: LogConfig) : ILog {
 
     private val mInternalPreTag = config.preTag ?: ""
     private val mMaxLen = config.maxLen
-    private val isFormatEnable = config.format?.enable ?: false
-    private val isFormatJson = config.format?.formatJson ?: true
-    private val mNewLine = config.format?.newLine ?: LogFormat.NEW_LINE
-    private val mDividerLine = config.format?.dividerLine ?: LogFormat.DIVIDER_LINE
-    private val mFirstFormatLineHeader = config.format?.firstFormatLineHeader ?: LogFormat.LINE_HEADER_FIRST
-    private val mFormatLineHeader = config.format?.formatLineHeader ?: LogFormat.LINE_HEADER
-    private val mLastFormatLineHeader = config.format?.lastFormatLineHeader ?: LogFormat.LINE_HEADER_LAST
 
     override val level: Int
         get() = Logger.VERBOSE
@@ -149,7 +141,7 @@ internal open class LogV(val config: LogConfig) : ILog {
                 JsonPrinter.isJson(printMsg)
             }
             splitMessageIfNeeded(printMsg) { size, position, msg ->
-                config?.record?.onRecord(priority, printTag, msg)
+                config.record?.onRecord(priority, printTag, msg)
                 try {
                     PrinterFactory.create(config.format, isJson)
                         .println(priority, printTag, size, position, msg, threadName, isException)

@@ -25,17 +25,17 @@ data class LogConfig @JvmOverloads constructor (
 data class LogFormat @JvmOverloads constructor (
     val enable: Boolean = true,
     val formatJson: Boolean = true,
-    val newLine: String = NEW_LINE,
     val dividerLine: String = DIVIDER_LINE,
     val firstFormatLineHeader: String = LINE_HEADER_FIRST,
     val formatLineHeader: String = LINE_HEADER,
     val lastFormatLineHeader: String = LINE_HEADER_LAST
 ) : Serializable {
+    val newLine = NEW_LINE
     companion object {
         const val NEW_LINE = "\n"
-        const val LINE_HEADER_FIRST = "$NEW_LINE╔"
+        const val LINE_HEADER_FIRST = "╔"
         const val LINE_HEADER = "║"
-        const val LINE_HEADER_LAST = "$NEW_LINE╚"
+        const val LINE_HEADER_LAST = "╚"
 
         const val DIVIDER_LINE = "═════════════════════════" +
                 "══════════════════════════════════════════" +

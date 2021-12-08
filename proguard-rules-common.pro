@@ -117,6 +117,7 @@
 }
 
 # 避免Serializable接口的子类中指定的某些成员变量和方法混淆
+-keep public class * implements java.io.Serializable
 -keepclassmembers class * implements java.io.Serializable {
     static final long serialVersionUID;
     private static final java.io.ObjectStreamField[] serialPersistentFields;

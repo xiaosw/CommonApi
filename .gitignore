@@ -8,3 +8,5 @@
 .externalNativeBuild
 .cxx
 .idea
+mapping.txt
+seeds.txt

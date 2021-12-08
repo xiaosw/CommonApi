@@ -28,19 +28,19 @@ internal open class FormatPrinter(val format: LogFormat) : Printer {
         }
         // Log.e("ddd", "println: $size, $position, $msg, format = $formatMsg")
         if (position === 0 && size === 1) {
-            Log.println(priority, tag, " ${format.firstFormatLineHeader}${format.dividerLine}" +
+            Log.println(priority, tag, " ${format.newLine}${format.firstFormatLineHeader}${format.dividerLine}" +
                     "${format.newLine}${format.formatLineHeader}Thread: $threadName" +
                     "${format.newLine}${format.formatLineHeader}${format.dividerLine}" +
                     "$formatMsg" +
-                    "${format.lastFormatLineHeader}${format.dividerLine}${format.newLine}${format.newLine} ")
+                    "${format.newLine}${format.lastFormatLineHeader}${format.dividerLine}${format.newLine}${format.newLine} ")
         } else if (position === 0 && size > 1) {
-            Log.println(priority, tag, " ${format.firstFormatLineHeader}${format.dividerLine}" +
+            Log.println(priority, tag, " ${format.newLine}${format.firstFormatLineHeader}${format.dividerLine}" +
                     "${format.newLine}${format.formatLineHeader}Thread: $threadName" +
                     "${format.newLine}${format.formatLineHeader}${format.dividerLine}" +
                     "$formatMsg")
         } else if (position === size - 1) {
             Log.println(priority, "", " $formatMsg" +
-                    "${format.lastFormatLineHeader}${format.dividerLine}${format.newLine}${format.newLine} ")
+                    "${format.newLine}${format.lastFormatLineHeader}${format.dividerLine}${format.newLine}${format.newLine} ")
         } else {
             Log.println(priority, "", " $formatMsg")
         }
