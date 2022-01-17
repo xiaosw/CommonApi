@@ -17,7 +17,7 @@ object RestartAppManager {
 
     @JvmStatic
     @JvmOverloads
-    fun restartApp(context: Context = AndroidContext.get()) {
+    fun restartApp(context: Context = AndroidContext.get(), isChangeAppIcon: Boolean = false) {
         val ctx = context.findActivity() ?: context
         with(ctx) {
             val isActivity = (this is Activity)
@@ -25,6 +25,7 @@ object RestartAppManager {
                 if (!isActivity) {
                     it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
+                it.putExtra(RestartBridgeActivity.KEY_CHANGE_APP_ICON, isChangeAppIcon)
             })
             if (this is Activity) {
                 overridePendingTransition(0, 0)

@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         ActivityLifeManager.register(this)
+        Logger.e("onCreate")
 
         registerReceiver(object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -200,6 +201,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
             setComponentEnabledSetting(targetPN
                 , PackageManager.COMPONENT_ENABLED_STATE_ENABLED
                 , PackageManager.DONT_KILL_APP)
+            RestartAppManager.restartApp(this@MainActivity, true)
         }
     }
 
