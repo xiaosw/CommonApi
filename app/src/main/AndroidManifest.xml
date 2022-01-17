@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
 
-        <activity-alias android:name=".MainAliasActivity"
+        <activity-alias android:name="com.xiaosw.simple.MainAliasActivity"
             android:targetActivity=".MainActivity"
             android:theme="@style/AppTheme.Material.Light"
             android:icon="@mipmap/ic_featured_light"

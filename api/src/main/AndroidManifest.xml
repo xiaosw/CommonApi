@@ -19,6 +19,12 @@
             android:enabled="true"
             android:exported="false"/>
 
+        <activity android:name=".restart.RestartBridgeActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":restart"/>
+
         <activity android:name=".proxy.SingleTopActivity"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop"

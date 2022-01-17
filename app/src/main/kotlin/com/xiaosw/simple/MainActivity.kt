@@ -19,6 +19,7 @@ import com.xiaosw.api.annotation.AutoAdjustDensity
 import com.xiaosw.api.extend.dp2px
 import com.xiaosw.api.manager.ActivityLifeManager
 import com.xiaosw.api.manager.DensityManager
+import com.xiaosw.api.restart.RestartAppManager
 import com.xiaosw.api.util.FpsMonitor
 import com.xiaosw.api.util.ToastUtil
 import com.xsw.compat.start.StartManager
@@ -173,6 +174,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
                     R.id.tab_home -> {
                         loge("首页")
                         changeIcon(this@MainActivity.javaClass.name)
+//                        RestartAppManager.restartApp(this@MainActivity)
                     }
 
                     R.id.tab_mine -> {
@@ -186,11 +188,16 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
     }
 
     private fun changeIcon(className: String) {
+        val targetPN = ComponentName(this@MainActivity, className)
         with(packageManager) {
+            if (getComponentEnabledSetting(targetPN) === PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
+                Logger.e("$targetPN is enable!")
+                return
+            }
             setComponentEnabledSetting(componentName
                 , PackageManager.COMPONENT_ENABLED_STATE_DISABLED
                 , PackageManager.DONT_KILL_APP)
-            setComponentEnabledSetting(ComponentName(this@MainActivity, className)
+            setComponentEnabledSetting(targetPN
                 , PackageManager.COMPONENT_ENABLED_STATE_ENABLED
                 , PackageManager.DONT_KILL_APP)
         }

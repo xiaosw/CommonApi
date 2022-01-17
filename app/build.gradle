@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'com.xsw.track'
 
-apply plugin: 'me.ele.lancet'
+//apply plugin: 'me.ele.lancet'
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION as int
