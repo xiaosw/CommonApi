@@ -15,10 +15,12 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.doudou.log.Logger
 import com.doudou.log.loge
+import com.doudou.log.record.ILogRecord
 import com.xiaosw.api.annotation.AutoAdjustDensity
 import com.xiaosw.api.extend.dp2px
 import com.xiaosw.api.manager.ActivityLifeManager
 import com.xiaosw.api.manager.DensityManager
+import com.xiaosw.api.manager.LogRecordManager
 import com.xiaosw.api.restart.RestartAppManager
 import com.xiaosw.api.util.FpsMonitor
 import com.xiaosw.api.util.ToastUtil
@@ -58,6 +60,12 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         setContentView(R.layout.activity_main)
         ActivityLifeManager.register(this)
         Logger.e("onCreate")
+        LogRecordManager.register(object : ILogRecord {
+            override fun onRecord(priority: Int, tag: String, msg: String) {
+                Logger.e("onRecord-------------> $priority:$tag:$msg")
+            }
+
+        })
 
         registerReceiver(object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {

@@ -24,11 +24,18 @@ internal open class LogV(val config: LogConfig) : ILog {
         get() = true
 
     override fun println(message: String?, isError: Boolean) {
+        val tag = findTag()
+        var isRecordLog = isRecordLog()
         splitMessageIfNeeded(message) { _, _, msg ->
-            if (isError) {
-                System.err.println(msg)
+            val priority = if (isError) {
+                System.err.println("$tag：$msg")
+                Log.ERROR
             } else {
-                kotlin.io.println(msg)
+                kotlin.io.println("$tag：$msg")
+                Log.VERBOSE
+            }
+            if (!isRecordLog) {
+                config.record?.onRecord(priority, tag, msg)
             }
         }
     }
@@ -126,6 +133,7 @@ internal open class LogV(val config: LogConfig) : ILog {
     private fun println(priority: Int, tag: String? = null, msg: String? = "", tr: Throwable? = null) {
         val printTag = if (tag.isNullOrEmpty()) findTag() else tag
         val threadName = Thread.currentThread().name
+        var isRecordLog = isRecordLog()
         LogThreadManager.execute {
             var printMsg = msg ?: EMPTY_STR
             val stackTrace = Log.getStackTraceString(tr)
@@ -140,14 +148,28 @@ internal open class LogV(val config: LogConfig) : ILog {
             } else {
                 JsonPrinter.isJson(printMsg)
             }
+
             splitMessageIfNeeded(printMsg) { size, position, msg ->
-                config.record?.onRecord(priority, printTag, msg)
+                if (!isRecordLog) {
+                    config.record?.onRecord(priority, printTag, msg)
+                }
                 try {
                     PrinterFactory.create(config.format, isJson)
                         .println(priority, printTag, size, position, msg, threadName, isException)
                 } catch (ignore: Throwable){}
             }
         }
+    }
+
+    private fun isRecordLog() : Boolean {
+        Thread.currentThread().stackTrace?.forEach {
+            it.className?.let { cn ->
+                if (cn.startsWith(LOG_RECORD_MANAGER_CLASS) || cn.startsWith(LOG_RECORD_MANAGER_CLASS_KT)) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     companion object {
@@ -159,6 +181,9 @@ internal open class LogV(val config: LogConfig) : ILog {
         private val LOG_CLASS_KT: String by lazy {
             "${LOG_CLASS}Kt"
         }
+
+        private const val LOG_RECORD_MANAGER_CLASS = "com.xiaosw.api.manager.LogRecordManager"
+        private const val LOG_RECORD_MANAGER_CLASS_KT = "com.xiaosw.api.manager.LogRecordManagerKt"
 
     }
 
