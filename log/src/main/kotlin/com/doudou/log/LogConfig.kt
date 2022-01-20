@@ -16,7 +16,7 @@ data class LogConfig @JvmOverloads constructor (
     val format: LogFormat? = LogFormat()
 ) : Serializable {
     companion object {
-        const val MAX_LEN = 5000
+        const val MAX_LEN = 3000
     }
 }
 
