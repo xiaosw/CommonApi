@@ -21,5 +21,14 @@
 #-renamesourcefileattribute SourceFile
 -keep class com.doudou.log.Logger* {
     *;
+    public static <fields>;
 }
--keep class com.doudou.log.record.ILogRecord
+
+-keep class com.doudou.log.LogConfig {
+    public static <fields>;
+}
+
+-keep class com.doudou.log.record.LogRecordManager {
+    public * get*();
+    void init(android.content.Context);
+}

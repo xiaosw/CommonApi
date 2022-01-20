@@ -7,6 +7,7 @@ import android.os.SystemClock
 import com.doudou.log.Logger
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.tryCatch
+import java.lang.IllegalArgumentException
 import java.lang.ref.WeakReference
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
@@ -151,9 +152,9 @@ class WeakHandler @JvmOverloads constructor (
 
         override fun run() {
             mChainedRef?.get()?.remove()
-            with(mDelegate?.get()) {
+            mDelegate?.get()?.run {
                 Logger.v("weak runnable run: $this")
-                this?.run()
+                run()
             }
         }
     }

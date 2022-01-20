@@ -12,6 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 internal object LogThreadManager {
 
+    const val DEF_LOG_THREAD_PREFIX_NAME = "App-doudou-logger"
+
     private val sLogThread by lazy {
         ThreadPoolExecutor(0,
             1,
@@ -27,7 +29,7 @@ internal object LogThreadManager {
         block.invoke()
     }
 
-    private class AppThreadFactory constructor(val name: String? = "App-logger") : ThreadFactory {
+    private class AppThreadFactory constructor(val name: String? = DEF_LOG_THREAD_PREFIX_NAME) : ThreadFactory {
 
         private val mCount = AtomicInteger()
 

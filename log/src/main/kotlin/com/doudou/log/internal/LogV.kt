@@ -5,6 +5,7 @@ import com.doudou.log.LogConfig
 import com.doudou.log.Logger
 import com.doudou.log.format.JsonPrinter
 import com.doudou.log.format.PrinterFactory
+import com.doudou.log.record.LogRecordManager
 
 /**
  * ClassName: [LogV]
@@ -25,7 +26,7 @@ internal open class LogV(val config: LogConfig) : ILog {
 
     override fun println(message: String?, isError: Boolean) {
         val tag = findTag()
-        var isRecordLog = isRecordLog()
+        var isRecordLogThread = isRecordLogThread(Thread.currentThread())
         splitMessageIfNeeded(message) { _, _, msg ->
             val priority = if (isError) {
                 System.err.println("$tag：$msg")
@@ -34,8 +35,8 @@ internal open class LogV(val config: LogConfig) : ILog {
                 kotlin.io.println("$tag：$msg")
                 Log.VERBOSE
             }
-            if (!isRecordLog) {
-                config.record?.onRecord(priority, tag, msg)
+            if (!isRecordLogThread) {
+                LogRecordManager.onLogRecord(priority, tag, msg)
             }
         }
     }
@@ -132,8 +133,9 @@ internal open class LogV(val config: LogConfig) : ILog {
 
     private fun println(priority: Int, tag: String? = null, msg: String? = "", tr: Throwable? = null) {
         val printTag = if (tag.isNullOrEmpty()) findTag() else tag
-        val threadName = Thread.currentThread().name
-        var isRecordLog = isRecordLog()
+        val callThread = Thread.currentThread()
+        val threadName = callThread.name
+        val isRecordLogThread = isRecordLogThread(callThread)
         LogThreadManager.execute {
             var printMsg = msg ?: EMPTY_STR
             val stackTrace = Log.getStackTraceString(tr)
@@ -150,8 +152,8 @@ internal open class LogV(val config: LogConfig) : ILog {
             }
 
             splitMessageIfNeeded(printMsg) { size, position, msg ->
-                if (!isRecordLog) {
-                    config.record?.onRecord(priority, printTag, msg)
+                if (!isRecordLogThread) {
+                    LogRecordManager.onLogRecord(priority, printTag, msg)
                 }
                 try {
                     PrinterFactory.create(config.format, isJson)
@@ -161,10 +163,14 @@ internal open class LogV(val config: LogConfig) : ILog {
         }
     }
 
-    private fun isRecordLog() : Boolean {
-        Thread.currentThread().stackTrace?.forEach {
+    private fun isRecordLogThread(thread: Thread) : Boolean {
+        if (thread.name.startsWith(LogThreadManager.DEF_LOG_THREAD_PREFIX_NAME)) {
+            return true
+        }
+        thread.stackTrace?.forEach {
             it.className?.let { cn ->
-                if (cn.startsWith(LOG_RECORD_MANAGER_CLASS) || cn.startsWith(LOG_RECORD_MANAGER_CLASS_KT)) {
+                if (cn.startsWith(LOG_RECORD_MANAGER_CLASS)
+                    || cn.startsWith(LOG_RECORD_MANAGER_CLASS_KT)) {
                     return true
                 }
             }
@@ -182,8 +188,13 @@ internal open class LogV(val config: LogConfig) : ILog {
             "${LOG_CLASS}Kt"
         }
 
-        private const val LOG_RECORD_MANAGER_CLASS = "com.xiaosw.api.manager.LogRecordManager"
-        private const val LOG_RECORD_MANAGER_CLASS_KT = "com.xiaosw.api.manager.LogRecordManagerKt"
+        private val LOG_RECORD_MANAGER_CLASS by lazy {
+            LogRecordManager::class.java.name
+        }
+
+        private val LOG_RECORD_MANAGER_CLASS_KT : String by lazy {
+            "${LOG_RECORD_MANAGER_CLASS}Kt"
+        }
 
     }
 

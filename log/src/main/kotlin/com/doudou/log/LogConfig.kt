@@ -1,7 +1,6 @@
 package com.doudou.log
 
 import com.doudou.log.annotation.Level
-import com.doudou.log.record.ILogRecord
 import java.io.Serializable
 
 /**
@@ -14,8 +13,7 @@ data class LogConfig @JvmOverloads constructor (
     @Level val level: Int,
     val preTag: String? = null,
     val maxLen: Int = MAX_LEN,
-    val format: LogFormat? = LogFormat(),
-    val record: ILogRecord? = null
+    val format: LogFormat? = LogFormat()
 ) : Serializable {
     companion object {
         const val MAX_LEN = 5000

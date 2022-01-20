@@ -14,6 +14,7 @@ import com.doudou.log.Logger
 import com.doudou.log.loge
 import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.exception.TryCatchException
+import com.xiaosw.api.global.GlobalWeakHandler
 import com.xiaosw.api.logger.report.ReportManager
 import com.xiaosw.api.util.EnvironmentUtil
 import com.xiaosw.api.util.ScreenUtil
@@ -339,6 +340,16 @@ inline fun measureTimeMillis(
 }
 
 inline fun isMainThread() = Looper.getMainLooper().thread == Thread.currentThread()
+
+inline fun runOnUiThread(crossinline block: () -> Unit) {
+    if (isMainThread()) {
+        block.invoke()
+        return
+    }
+    GlobalWeakHandler.mainHandler.post {
+        block.invoke()
+    }
+}
 
 inline fun <reified T : Any> Any.optionalImpl() : T {
     val clazz = T::class.java

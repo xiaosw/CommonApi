@@ -1,8 +1,10 @@
 package com.doudou.log
 
+import android.content.Context
 import android.util.Log
 import com.doudou.log.internal.ILog
 import com.doudou.log.internal.LogFactory
+import com.doudou.log.record.LogRecordManager
 
 /**
  * ClassName: [Logger]
@@ -24,8 +26,11 @@ object Logger {
     val enable = mLog.enable
 
     @JvmStatic
-    fun init(config: LogConfig) {
+    fun init(context: Context, config: LogConfig) {
         mLog = LogFactory.create(config)
+        if (mLog.enable) {
+            LogRecordManager.init(context)
+        }
     }
 
     @JvmStatic
