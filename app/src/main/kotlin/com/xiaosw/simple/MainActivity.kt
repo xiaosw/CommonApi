@@ -187,6 +187,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
             }
 
         }
+
     }
 
     private fun changeIcon(className: String) {

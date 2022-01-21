@@ -1,7 +1,7 @@
 package com.doudou.log.internal
 
+import android.util.Log
 import com.doudou.log.LogConfig
-import com.doudou.log.Logger
 
 /**
  * ClassName: [LogFactory]
@@ -11,12 +11,12 @@ import com.doudou.log.Logger
  */
 internal object LogFactory {
 
-    fun create(config: LogConfig) = when(config.level) {
-        Logger.VERBOSE -> LogV(config)
-        Logger.DEBUG -> LogD(config)
-        Logger.INFO -> LogI(config)
-        Logger.WARN -> LogW(config)
-        Logger.ERROR -> LogE(config)
+    fun create(config: LogConfig) = when(config.behavior.level) {
+        Log.VERBOSE -> LogV(config)
+        Log.DEBUG -> LogD(config)
+        Log.INFO -> LogI(config)
+        Log.WARN -> LogW(config)
+        Log.ERROR -> LogE(config)
         else -> LogN()
     }
 

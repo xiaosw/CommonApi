@@ -17,32 +17,37 @@ internal open class LogV(val config: LogConfig) : ILog {
 
     private val mInternalPreTag = config.preTag ?: ""
     private val mMaxLen = config.maxLen
-
-    override val level: Int
-        get() = Logger.VERBOSE
+    private val isOnlyRecord = config.behavior.behavior === Logger.BEHAVIOR_ONLY_RECORD
 
     override val enable: Boolean
         get() = true
 
-    override fun println(message: String?, isError: Boolean) {
+    final override fun println(message: String?, isError: Boolean) {
         val tag = findTag()
         var isRecordLogThread = isRecordLogThread(Thread.currentThread())
-        splitMessageIfNeeded(message) { _, _, msg ->
-            val priority = if (isError) {
-                System.err.println("$tag：$msg")
-                Log.ERROR
-            } else {
-                kotlin.io.println("$tag：$msg")
-                Log.VERBOSE
-            }
-            if (!isRecordLogThread) {
-                LogRecordManager.onLogRecord(priority, tag, msg)
+        LogThreadManager.startLog {
+            val priority = if (isError) Log.ERROR else Log.VERBOSE
+            splitMessageIfNeeded(message) { _, _, msg ->
+                if (config.behavior.behavior != Logger.BEHAVIOR_ONLY_RECORD) {
+                    printlnOnlyWrite(tag, msg, isError)
+                }
+                if (!isRecordLogThread) {
+                    LogRecordManager.onLogRecord(priority, tag, msg)
+                }
             }
         }
     }
 
-    override fun println(messageProvider: () -> String?, isError: Boolean) =
+    final override fun println(messageProvider: () -> String?, isError: Boolean) =
         println(messageProvider.invoke(), isError)
+
+    open fun printlnOnlyWrite(tag: String, message: String?, isError: Boolean) {
+        if (isError) {
+            System.err.println("$tag：$message")
+        } else {
+            kotlin.io.println("$tag：$message")
+        }
+    }
 
     override fun v(tag: String?, message: String?, tr: Throwable?) {
         println(Log.VERBOSE, tag, message, tr)
@@ -156,8 +161,10 @@ internal open class LogV(val config: LogConfig) : ILog {
                     LogRecordManager.onLogRecord(priority, printTag, msg)
                 }
                 try {
-                    PrinterFactory.create(config.format, isJson)
-                        .println(priority, printTag, size, position, msg, threadName, isException)
+                    if (!isOnlyRecord) {
+                        PrinterFactory.create(config.format, isJson)
+                            .println(priority, printTag, size, position, msg, threadName, isException)
+                    }
                 } catch (ignore: Throwable){}
             }
         }

@@ -14,14 +14,13 @@ import com.doudou.log.record.LogRecordManager
  */
 object Logger {
 
-    const val VERBOSE = Log.VERBOSE
-    const val DEBUG = Log.DEBUG
-    const val INFO = Log.INFO
-    const val WARN = Log.WARN
-    const val ERROR = Log.ERROR
-    const val NONE = -1
+    internal const val NONE = -1
+    private const val BEHAVIOR_NONE = NONE
+    internal const val BEHAVIOR_ONLY_PRINT = 1
+    internal const val BEHAVIOR_ONLY_RECORD = 2
+    private const val BEHAVIOR_ALL = 4
 
-    private var mLog: ILog = LogFactory.create(LogConfig(NONE))
+    private var mLog: ILog = LogFactory.create(LogConfig(Behavior.NONE))
 
     val enable = mLog.enable
 
@@ -29,6 +28,7 @@ object Logger {
     fun init(context: Context, config: LogConfig) {
         mLog = LogFactory.create(config)
         LogRecordManager.init(context, config)
+
     }
 
     @JvmStatic
@@ -112,6 +112,25 @@ object Logger {
     @JvmStatic
     fun e(tr: Throwable? = null) {
         mLog.e(null, null, tr)
+    }
+
+    enum class Behavior(val level: Int, val behavior: Int) {
+        NONE(Logger.NONE, BEHAVIOR_NONE),
+        V_ONLY_PRINT(Log.VERBOSE, BEHAVIOR_ONLY_PRINT),
+        V_ONLY_RECORD(Log.VERBOSE, BEHAVIOR_ONLY_RECORD),
+        V_ALL(Log.VERBOSE, BEHAVIOR_ALL),
+        D_ONLY_PRINT(Log.DEBUG, BEHAVIOR_ONLY_PRINT),
+        D_ONLY_RECORD(Log.DEBUG, BEHAVIOR_ONLY_RECORD),
+        D_ALL(Log.DEBUG, BEHAVIOR_ALL),
+        I_ONLY_PRINT(Log.INFO, BEHAVIOR_ONLY_PRINT),
+        I_ONLY_RECORD(Log.INFO, BEHAVIOR_ONLY_RECORD),
+        I_ALL(Log.INFO, BEHAVIOR_ALL),
+        W_ONLY_PRINT(Log.WARN, BEHAVIOR_ONLY_PRINT),
+        W_ONLY_RECORD(Log.WARN, BEHAVIOR_ONLY_RECORD),
+        W_ALL(Log.WARN, BEHAVIOR_ALL),
+        E_ONLY_PRINT(Log.ERROR, BEHAVIOR_ONLY_PRINT),
+        E_ONLY_RECORD(Log.ERROR, BEHAVIOR_ONLY_RECORD),
+        E_ALL(Log.ERROR, BEHAVIOR_ALL),
     }
 
 }

@@ -23,10 +23,9 @@ class App : MultiDexApplication() {
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         Logger.init(base,
-            LogConfig(if (BuildConfig.DEBUG) Logger.VERBOSE else Logger.NONE
+            LogConfig(if (BuildConfig.DEBUG) Logger.Behavior.V_ALL else Logger.Behavior.V_ONLY_RECORD
             , "doudou---> "
             , LogConfig.MAX_LEN
-            , false
             , LogFormat(enable = true, formatJson = true, "────────────────────────────────────────────────────────", "┌", "│", "└")))
         //WelcomeActivity为原启动页，注意不限进程,放在最上面，上面不要有其他初始化(MultiDex.install除外)
 //        if(KeepAliveManager.attachBaseContext(this, null)){

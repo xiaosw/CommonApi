@@ -1,6 +1,5 @@
 package com.doudou.log
 
-import com.doudou.log.annotation.Level
 import java.io.Serializable
 
 /**
@@ -10,10 +9,9 @@ import java.io.Serializable
  * Create by X at 2021/11/23 14:27.
  */
 data class LogConfig @JvmOverloads constructor (
-    @Level val level: Int,
+    val behavior: Logger.Behavior,
     val preTag: String? = null,
     val maxLen: Int = MAX_LEN,
-    val saveToDisk: Boolean = true,
     val format: LogFormat? = LogFormat()
 ) : Serializable {
     companion object {

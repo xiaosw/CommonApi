@@ -1,7 +1,5 @@
 package com.doudou.log.internal
 
-import com.doudou.log.annotation.Level
-
 /**
  * ClassName: [ILog]
  * Description:
@@ -10,7 +8,6 @@ import com.doudou.log.annotation.Level
  */
 internal interface ILog {
 
-    @Level val level: Int
     val enable: Boolean
 
     fun findTag(ignoreDisable: Boolean = false) : String

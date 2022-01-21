@@ -1,7 +1,6 @@
 package com.doudou.log.internal
 
 import com.doudou.log.LogConfig
-import com.doudou.log.Logger
 
 /**
  * ClassName: [LogE]
@@ -11,12 +10,7 @@ import com.doudou.log.Logger
  */
 internal open class LogE(config: LogConfig) : LogW(config) {
 
-    override val level: Int
-        get() = Logger.ERROR
-
-    override fun println(message: String?, isError: Boolean) {}
-
-    override fun println(messageProvider: () -> String?, isError: Boolean) {}
+    override fun printlnOnlyWrite(tag: String, message: String?, isError: Boolean) {}
 
     override fun v(tag: String?, message: String?, tr: Throwable?) {}
 
