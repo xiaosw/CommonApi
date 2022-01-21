@@ -28,6 +28,10 @@
     public static <fields>;
 }
 
+-keep class com.doudou.log.LogFormat {
+    public static <fields>;
+}
+
 -keep class com.doudou.log.record.LogRecordManager {
     public * get*();
     void init(android.content.Context);

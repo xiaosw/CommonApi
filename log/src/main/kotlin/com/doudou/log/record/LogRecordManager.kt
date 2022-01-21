@@ -1,8 +1,11 @@
 package com.doudou.log.record
 
 import android.content.Context
+import com.doudou.log.LogConfig
 import com.doudou.log.Logger
 import com.doudou.log.internal.LogThreadManager
+import com.doudou.log.logw
+import com.doudou.log.logi
 import java.io.*
 import java.text.SimpleDateFormat
 
@@ -39,12 +42,16 @@ object LogRecordManager {
     var logOutDir: String = ""
         private set
 
-    fun init(context: Context) {
+    fun init(context: Context, config: LogConfig) {
+        if (!config.saveToDisk) {
+            logw("app disable save log to disk.")
+            return
+        }
         context?.let {
             (it.externalCacheDir ?: it.cacheDir)?.absolutePath?.let { cacheDir ->
                 if (cacheDir.isNotEmpty()) {
                     logOutDir = "$cacheDir/logger/record"
-                    Logger.i("app logger record dir: $logOutDir")
+                    logi("app logger record dir: $logOutDir")
                 }
             }
         }
@@ -77,7 +84,7 @@ object LogRecordManager {
         if (content.isEmpty() || outDir.isEmpty() || fileName.isEmpty()) {
             return
         }
-        LogThreadManager.execute {
+        LogThreadManager.startRecord {
             try {
                 with(File(outDir)) {
                     if (!exists()) {

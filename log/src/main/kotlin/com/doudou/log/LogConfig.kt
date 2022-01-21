@@ -13,6 +13,7 @@ data class LogConfig @JvmOverloads constructor (
     @Level val level: Int,
     val preTag: String? = null,
     val maxLen: Int = MAX_LEN,
+    val saveToDisk: Boolean = true,
     val format: LogFormat? = LogFormat()
 ) : Serializable {
     companion object {

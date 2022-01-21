@@ -6,7 +6,6 @@ import com.doudou.log.LogConfig
 import com.doudou.log.LogFormat
 import com.doudou.log.Logger
 import com.doudou.log.loge
-import com.doudou.log.record.LogRecordManager
 import com.xiaosw.api.extend.processName
 import com.xiaosw.api.manager.UIModeManager
 import com.xiaosw.api.storage.DataStorageManager
@@ -27,6 +26,7 @@ class App : MultiDexApplication() {
             LogConfig(if (BuildConfig.DEBUG) Logger.VERBOSE else Logger.NONE
             , "doudou---> "
             , LogConfig.MAX_LEN
+            , false
             , LogFormat(enable = true, formatJson = true, "────────────────────────────────────────────────────────", "┌", "│", "└")))
         //WelcomeActivity为原启动页，注意不限进程,放在最上面，上面不要有其他初始化(MultiDex.install除外)
 //        if(KeepAliveManager.attachBaseContext(this, null)){

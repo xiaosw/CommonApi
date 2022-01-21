@@ -28,9 +28,7 @@ object Logger {
     @JvmStatic
     fun init(context: Context, config: LogConfig) {
         mLog = LogFactory.create(config)
-        if (mLog.enable) {
-            LogRecordManager.init(context)
-        }
+        LogRecordManager.init(context, config)
     }
 
     @JvmStatic

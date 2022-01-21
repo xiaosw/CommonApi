@@ -136,7 +136,7 @@ internal open class LogV(val config: LogConfig) : ILog {
         val callThread = Thread.currentThread()
         val threadName = callThread.name
         val isRecordLogThread = isRecordLogThread(callThread)
-        LogThreadManager.execute {
+        LogThreadManager.startLog {
             var printMsg = msg ?: EMPTY_STR
             val stackTrace = Log.getStackTraceString(tr)
             val isException = !stackTrace.isNullOrEmpty()
