@@ -142,31 +142,33 @@ internal open class LogV(val config: LogConfig) : ILog {
         val threadName = callThread.name
         val isRecordLogThread = isRecordLogThread(callThread)
         LogThreadManager.startLog {
-            var printMsg = msg ?: EMPTY_STR
-            val stackTrace = Log.getStackTraceString(tr)
-            val isException = !stackTrace.isNullOrEmpty()
-            val isJson = if (isException) {
-                printMsg = if (printMsg.isNullOrEmpty()) {
-                    stackTrace
-                } else {
-                    "$printMsg\n$stackTrace"
-                }
-                false
-            } else {
-                JsonPrinter.isJson(printMsg)
-            }
-
-            splitMessageIfNeeded(printMsg) { size, position, msg ->
-                if (!isRecordLogThread) {
-                    LogRecordManager.onLogRecord(priority, printTag, msg)
-                }
-                try {
-                    if (!isOnlyRecord) {
-                        PrinterFactory.create(config.format, isJson)
-                            .println(priority, printTag, size, position, msg, threadName, isException)
+            try {
+                var printMsg = msg ?: EMPTY_STR
+                val stackTrace = Log.getStackTraceString(tr)
+                val isException = !stackTrace.isNullOrEmpty()
+                val isJson = if (isException) {
+                    printMsg = if (printMsg.isNullOrEmpty()) {
+                        stackTrace
+                    } else {
+                        "$printMsg\n$stackTrace"
                     }
-                } catch (ignore: Throwable){}
-            }
+                    false
+                } else {
+                    JsonPrinter.hasJson(printMsg)
+                }
+
+                splitMessageIfNeeded(printMsg) { size, position, msg ->
+                    if (!isRecordLogThread) {
+                        LogRecordManager.onLogRecord(priority, printTag, msg)
+                    }
+                    try {
+                        if (!isOnlyRecord) {
+                            PrinterFactory.create(config.format, isJson)
+                                .println(priority, printTag, size, position, msg, threadName, isException)
+                        }
+                    } catch (ignore: Throwable){}
+                }
+            } catch (ignore: Throwable) {}
         }
     }
 

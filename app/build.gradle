@@ -63,6 +63,9 @@ dependencies {
     implementation 'com.tencent:mmkv:1.2.10'
 
     compileOnly "me.ele:lancet-base:$LANCET_VERSION"
+    
+    implementation 'com.github.salomonbrys.kotson:kotson:2.5.0'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
 }
 
 trackConfig {
