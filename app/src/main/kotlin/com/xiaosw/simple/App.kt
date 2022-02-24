@@ -26,7 +26,10 @@ class App : MultiDexApplication() {
             LogConfig(if (BuildConfig.DEBUG) Logger.Behavior.V_ALL else Logger.Behavior.V_ONLY_RECORD
             , "doudou---> "
             , LogConfig.MAX_LEN
-            , LogFormat(enable = true, formatJson = true, "────────────────────────────────────────────────────────", "┌", "│", "└")))
+            , LogFormat(enable = true, formatJson = true, "────────────────────────────────────────────────────────", "┌", "│", "└")
+            , mutableListOf<Class<*>?>().also {
+                it.add(LogUtil::class.java)
+            }))
         //WelcomeActivity为原启动页，注意不限进程,放在最上面，上面不要有其他初始化(MultiDex.install除外)
 //        if(KeepAliveManager.attachBaseContext(this, null)){
 //            //保活进程不要做任何操作

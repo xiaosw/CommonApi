@@ -60,6 +60,18 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         ActivityLifeManager.register(this)
         Logger.e("onCreate")
 
+        loge {
+            """the json is: {"key":"value"}"""
+        }
+        loge {
+            """{"key":"value"}"""
+        }
+        loge {
+            """{"key":"value"} is json"""
+        }
+
+        LogUtil.loge("test LogUtil wrapper.")
+
         registerReceiver(object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val result = StartManager.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("pinduoduo://")))

@@ -18,6 +18,22 @@ internal open class LogV(val config: LogConfig) : ILog {
     private val mInternalPreTag = config.preTag ?: ""
     private val mMaxLen = config.maxLen
     private val isOnlyRecord = config.behavior.behavior === Logger.BEHAVIOR_ONLY_RECORD
+    private val mLoggerClassMap by lazy {
+        mutableMapOf<String, Any?>().also {
+            it[LOG_CLASS] = LOG_CLASS
+            val logClassKt = "$LOG_CLASS$KT"
+            it[logClassKt] = logClassKt
+            config?.loggerWrapperClassList?.forEach { logClass ->
+                logClass?.name?.let { javaClass ->
+                    it[javaClass] = javaClass
+                    if (!javaClass.endsWith("Kt")) {
+                        val javaClassKt = "$javaClass$KT"
+                        it[javaClassKt] = javaClassKt
+                    }
+                }
+            }
+        }
+    }
 
     override val enable: Boolean
         get() = true
@@ -93,9 +109,7 @@ internal open class LogV(val config: LogConfig) : ILog {
             var lastClassIsLogUtils= false
             for (position in 0 until size) {
                 val e: StackTraceElement = get(position)
-                val isLogClass = e.className.let {
-                    it == LOG_CLASS || it == LOG_CLASS_KT
-                }
+                val isLogClass = mLoggerClassMap.containsKey(e.className)
                 if (!isLogClass && lastClassIsLogUtils) { // Target Class
                     traceOffset = position
                     break
@@ -146,7 +160,7 @@ internal open class LogV(val config: LogConfig) : ILog {
                 var printMsg = msg ?: EMPTY_STR
                 val stackTrace = Log.getStackTraceString(tr)
                 val isException = !stackTrace.isNullOrEmpty()
-                val isJson = if (isException) {
+                val hasJson = if (isException) {
                     printMsg = if (printMsg.isNullOrEmpty()) {
                         stackTrace
                     } else {
@@ -163,7 +177,7 @@ internal open class LogV(val config: LogConfig) : ILog {
                     }
                     try {
                         if (!isOnlyRecord) {
-                            PrinterFactory.create(config.format, isJson)
+                            PrinterFactory.create(config.format, hasJson)
                                 .println(priority, printTag, size, position, msg, threadName, isException)
                         }
                     } catch (ignore: Throwable){}
@@ -189,12 +203,9 @@ internal open class LogV(val config: LogConfig) : ILog {
 
     companion object {
         const val EMPTY_STR = ""
+        private const val KT = "Kt"
         private val LOG_CLASS: String by lazy {
             Logger::class.java.name
-        }
-
-        private val LOG_CLASS_KT: String by lazy {
-            "${LOG_CLASS}Kt"
         }
 
         private val LOG_RECORD_MANAGER_CLASS by lazy {

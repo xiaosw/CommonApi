@@ -12,7 +12,8 @@ data class LogConfig @JvmOverloads constructor (
     val behavior: Logger.Behavior,
     val preTag: String? = null,
     val maxLen: Int = MAX_LEN,
-    val format: LogFormat? = LogFormat()
+    val format: LogFormat? = LogFormat(),
+    val loggerWrapperClassList: MutableList<Class<*>?>? = null
 ) : Serializable {
     companion object {
         const val MAX_LEN = 3000

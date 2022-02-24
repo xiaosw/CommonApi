@@ -33,9 +33,7 @@ object Logger {
 
     @JvmStatic
     @JvmOverloads
-    fun findTag(ignoreDisable: Boolean = false) {
-        mLog.findTag(ignoreDisable)
-    }
+    fun findTag(ignoreDisable: Boolean = false) = mLog.findTag(ignoreDisable)
 
     @JvmStatic
     @JvmOverloads

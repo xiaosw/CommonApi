@@ -29,12 +29,10 @@ internal open class JsonPrinter(format: LogFormat) : FormatPrinter(format) {
             return
         }
         var isJson = isJson(message)
-        var hasJson = false
         val formatJson = StringBuilder()
         if (isJson) {
             formatJson.append(formatJsonStr(message))
-        } else if (hasJson(message)) {
-            hasJson = true
+        } else {
             var prefixMsg = ""
             var json = ""
             var suffixMsg = ""
@@ -82,10 +80,6 @@ internal open class JsonPrinter(format: LogFormat) : FormatPrinter(format) {
             if (suffixMsg.isNotEmpty()) {
                 formatJson.append("\n${format.formatLineHeader}${suffixMsg.trim()}")
             }
-        }
-        if (!isJson && !hasJson) {
-            super.println(priority, tag, size, position, message, threadName, isException)
-            return
         }
         val formatMsg = " ${format.newLine}${format.firstFormatLineHeader}${format.dividerLine}" +
                 "${format.newLine}${format.formatLineHeader}Thread:$threadName" +

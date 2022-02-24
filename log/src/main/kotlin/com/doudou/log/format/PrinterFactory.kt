@@ -14,11 +14,11 @@ internal object PrinterFactory {
         mutableMapOf<String, Printer?>()
     }
 
-    fun create(format: LogFormat?, isJson: Boolean) : Printer = format?.let {
+    fun create(format: LogFormat?, hasJson: Boolean) : Printer = format?.let {
         if (!it.enable) {
             return@let normal()
         }
-        if (isJson) {
+        if (hasJson) {
             return@let json(it)
         }
         format(it)
