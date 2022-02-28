@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.FragmentActivity
+import com.xiaosw.api.util.ProcessUtil
 import com.xiaosw.api.util.ScreenUtil
 import com.xiaosw.api.util.ToastUtil
 import java.io.BufferedReader
@@ -100,31 +101,7 @@ fun Context?.isDestroyed() : Boolean {
     return isDestroyed
 }
 
-inline fun Context?.processName() = tryCatch {
-    var processName = tryCatch {
-        (this?.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager)?.let { am ->
-            am.runningAppProcesses?.forEach { process ->
-                if (process?.pid === Process.myPid()) {
-                    return@tryCatch process.processName
-                }
-            }
-            Global.EMPTY_STR
-        } ?: Global.EMPTY_STR
-    }
-    if (!processName.trimEmptyOrNullChar()) {
-        return processName
-    }
-    processName = tryCatch {
-        BufferedReader(FileReader("/proc/${Process.myPid()}/cmdline")).use {
-            val name = it.readLine()?.replace("[^(a-zA-Z:._ \\-)]".toRegex(), "")
-            if (!name.trimEmptyOrNullChar()) {
-                return name?.trim()
-            }
-            Global.EMPTY_STR
-        }
-    } ?: Global.EMPTY_STR
-    processName
-}
+inline fun Context?.processName() = ProcessUtil.processName
 
 inline fun Context?.isMainProcess() = tryCatch {
     this?.let {
