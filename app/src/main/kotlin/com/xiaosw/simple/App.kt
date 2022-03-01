@@ -8,6 +8,7 @@ import com.doudou.log.Logger
 import com.doudou.log.loge
 import com.xiaosw.api.extend.processName
 import com.xiaosw.api.manager.UIModeManager
+import com.xiaosw.api.netspeed.NetworkSpeedManager
 import com.xiaosw.api.storage.DataStorageManager
 import com.xsw.track.jvmti.JVMTIManager
 
@@ -59,6 +60,7 @@ class App : MultiDexApplication() {
             }
         })
         DataStorageManager.init(AppDataStorage(this))
+        NetworkSpeedManager.init(this)
     }
 
 }

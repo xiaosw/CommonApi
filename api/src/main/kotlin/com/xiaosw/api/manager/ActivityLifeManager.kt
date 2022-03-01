@@ -47,7 +47,7 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks,
 
     private var mActiveStartTime = 0L
 
-    private val mIsAppForeground by lazy {
+    val isAppForeground by lazy {
         AtomicBoolean()
     }
 
@@ -153,14 +153,14 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks,
     }
 
     private inline fun notifyAppForegroundIfNeeded() {
-        if (mIsAppForeground.get()) {
+        if (isAppForeground.get()) {
             return
         }
         mRegisterDelegate.forEach {
             it.onAppForeground(isFirstLauncher.get())
         }
         mActiveStartTime = SystemClock.elapsedRealtime()
-        mIsAppForeground.compareAndSet(false, true)
+        isAppForeground.compareAndSet(false, true)
         isFirstLauncher.compareAndSet(true, false)
     }
 
@@ -169,7 +169,7 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks,
         if (ctx.isNull()) {
             ctx = AndroidContext.get()
         }
-        if (ctx.isNull() || !mIsAppForeground.get()) {
+        if (ctx.isNull() || !isAppForeground.get()) {
             return
         }
         if (mStartCount === 0) {
@@ -178,7 +178,7 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks,
                 it.onAppBackground(activeTime)
             }
             mActiveStartTime = 0L
-            mIsAppForeground.compareAndSet(true, false)
+            isAppForeground.compareAndSet(true, false)
         }
     }
 

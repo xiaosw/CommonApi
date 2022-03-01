@@ -4,7 +4,6 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -20,6 +19,9 @@ import com.xiaosw.api.annotation.AutoAdjustDensity
 import com.xiaosw.api.extend.dp2px
 import com.xiaosw.api.manager.ActivityLifeManager
 import com.xiaosw.api.manager.DensityManager
+import com.xiaosw.api.netspeed.NetworkSpeedManager
+import com.xiaosw.api.netspeed.NetworkType
+import com.xiaosw.api.netspeed.OnNetworkBucketChangeListener
 import com.xiaosw.api.restart.RestartAppManager
 import com.xiaosw.api.util.FpsMonitor
 import com.xiaosw.api.util.ToastUtil
@@ -48,7 +50,23 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         object : FpsMonitor.OnFpsMonitorListener {
             override fun onFpsMonitor(fps: Int) {Boolean
 //                Logger.i("fps: $fps")
-//                tv_fps.text = "FPS:$fps"
+                tv_fps.text = "FPS:$fps"
+            }
+        }
+    }
+
+    private val monNetworkBucketChange by lazy {
+        object : OnNetworkBucketChangeListener {
+            override fun onNetworkBucketChange(
+                type: NetworkType,
+                avg: Float,
+                max: Long,
+                min: Long
+            ) {
+                tv_net_speed.text = "type = ${type.desc}" +
+                        ", max = ${NetworkSpeedManager.formatSpeed(max * 1F)}" +
+                        ", min = ${NetworkSpeedManager.formatSpeed(min * 1F)}" +
+                        ", avg = ${NetworkSpeedManager.formatSpeed(avg * 1F)}"
             }
         }
     }
@@ -82,7 +100,9 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
             it.addAction(Intent.ACTION_SCREEN_OFF)
         })
 
-//        FpsMonitor.start(mFpsCallback)
+        FpsMonitor.start(mFpsCallback)
+        NetworkSpeedManager.startTrack(this, 1_000)
+        NetworkSpeedManager.register(monNetworkBucketChange)
 
         tv_text.setOnClickListener {
             //startActivity(Intent(this, NotRegisterActivity::class.java))
@@ -250,6 +270,14 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
 
     override fun onClick(v: View?) {
         Logger.e("onClick: v = $v")
+    }
+
+    override fun onDestroy() {
+        FpsMonitor.stop()
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            NetworkSpeedManager.stopTrack()
+        }
+        super.onDestroy()
     }
 
 }
