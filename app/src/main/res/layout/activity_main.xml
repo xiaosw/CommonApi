@@ -48,7 +48,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="网速"
-                android:textSize="16sp"
+                android:textSize="12sp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_ping"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Ping"
+                android:textSize="12sp"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"/>
 

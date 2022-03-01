@@ -89,7 +89,7 @@ class DefaultDataStorageDelegate(
         }
 
         override fun commit() = edit?.let {
-            ThreadManager.execute(ThreadManager.THREAD_TYPE_WORK) {
+            ThreadManager.execute(ThreadManager.ThreadType.THREAD_TYPE_WORK) {
                 it.commit()
             }
             true

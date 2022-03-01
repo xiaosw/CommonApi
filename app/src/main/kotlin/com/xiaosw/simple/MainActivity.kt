@@ -22,6 +22,7 @@ import com.xiaosw.api.manager.DensityManager
 import com.xiaosw.api.netspeed.NetworkSpeedManager
 import com.xiaosw.api.netspeed.NetworkType
 import com.xiaosw.api.netspeed.OnNetworkBucketChangeListener
+import com.xiaosw.api.netspeed.Ping
 import com.xiaosw.api.restart.RestartAppManager
 import com.xiaosw.api.util.FpsMonitor
 import com.xiaosw.api.util.ToastUtil
@@ -220,6 +221,12 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
 
         }
 
+        Ping.ping("www.baidu.com", 5, 1f, object : Ping.PingCallback {
+            override fun onPing(data: Ping.PingStatistics) {
+                tv_ping.text = "$data"
+            }
+
+        })
     }
 
     private fun changeIcon(className: String) {

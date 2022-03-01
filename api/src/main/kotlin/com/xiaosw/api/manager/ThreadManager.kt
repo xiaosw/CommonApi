@@ -1,15 +1,8 @@
 package com.xiaosw.api.manager
 
-import androidx.annotation.IntDef
 import com.doudou.log.Logger
-import com.xiaosw.api.extend.isNull
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-import java.util.concurrent.Callable
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.ThreadFactory
-import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.*
+import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.locks.ReentrantLock
 
 /**
@@ -22,91 +15,137 @@ import java.util.concurrent.locks.ReentrantLock
 object ThreadManager {
 
     private val WORK_CORE_SIZE = Runtime.getRuntime().availableProcessors() + 1
-    private var mWorkExecutor: ExecutorService? = null
-    private var mIoExecutor: ExecutorService? = null
     private val mLook by lazy {
         ReentrantLock()
     }
+    private val mExecutors by lazy {
+        mutableMapOf<ThreadType, ExecutorService>()
+    }
 
-    private inline fun executor(@ThreadType type: Int) : ExecutorService {
+    private inline fun executor(type: ThreadType) : ExecutorService {
         return try {
             mLook.lock()
-            when(type) {
-                THREAD_TYPE_IO -> {
-                    if (mIoExecutor.isNull() || mIoExecutor?.isShutdown == true) {
-                        mIoExecutor = Executors.newFixedThreadPool(WORK_CORE_SIZE * 2
-                            , AppThreadFactory("app-io-thread"))
-                    }
-                    mIoExecutor!!
+            return mExecutors[type]?.let {
+                if (it.isShutdown) {
+                    createExecutorIfNeeded(type)
+                } else {
+                    it
                 }
-
-                else -> {
-                    if (mWorkExecutor.isNull() || mWorkExecutor?.isShutdown == true) {
-                        mWorkExecutor = Executors.newFixedThreadPool(WORK_CORE_SIZE
-                            , AppThreadFactory("app-work-thread"))
-                    }
-                    return mWorkExecutor!!
-                }
-            }
+            } ?: createExecutorIfNeeded(type)
         } finally {
             mLook.unlock()
         }
     }
 
-    @JvmStatic
-    fun submit(@ThreadType type: Int = THREAD_TYPE_WORK, task: Runnable) = executor(type).submit(task)
-
-    @JvmStatic
-    fun <T> submit(@ThreadType type: Int = THREAD_TYPE_WORK, task: Callable<T>) = executor(type).submit<T>(task)
-
-    @JvmStatic
-    fun execute(@ThreadType type: Int = THREAD_TYPE_WORK, task: Runnable) = executor(type).execute(task)
-
-    @JvmStatic
-    fun isShutdown(@ThreadType type: Int) : Boolean {
+    private fun createExecutorIfNeeded(type: ThreadType) : ExecutorService {
+        val old = mExecutors[type]
+        if (null != old && !old.isShutdown) {
+            return old
+        }
         return when(type) {
-            THREAD_TYPE_WORK -> {
-                mWorkExecutor?.isShutdown ?: true
+            ThreadType.THREAD_TYPE_IO -> {
+                ThreadPoolExecutor(
+                    0
+                    , WORK_CORE_SIZE * 2
+                    , 60
+                    , TimeUnit.SECONDS
+                    , LinkedBlockingQueue()
+                    , AppThreadFactory("app-io-thread"))
             }
 
-            THREAD_TYPE_IO -> {
-                mIoExecutor?.isShutdown ?: true
+            ThreadType.THREAD_TYPE_NET -> {
+                ThreadPoolExecutor(
+                    0
+                    , WORK_CORE_SIZE
+                    , 60
+                    , TimeUnit.SECONDS
+                    , LinkedBlockingQueue()
+                    , AppThreadFactory("app-net-thread"))
             }
 
-            else -> true
+            else -> {
+                ThreadPoolExecutor(
+                    WORK_CORE_SIZE
+                    , WORK_CORE_SIZE
+                    , 60
+                    , TimeUnit.SECONDS
+                    , LinkedBlockingQueue()
+                    , AppThreadFactory("app-net-thread"))
+            }
         }
     }
 
     @JvmStatic
-    fun shutdown(@ThreadType type: Int) {
-        when(type) {
-            THREAD_TYPE_WORK -> {
-                internalShutdown(mWorkExecutor)
-                mWorkExecutor = null
-            }
+    fun submit(type: ThreadType = ThreadType.THREAD_TYPE_WORK, task: Runnable) = executor(type).submit(
+        task
+    )
 
-            THREAD_TYPE_IO -> {
-                internalShutdown(mIoExecutor, true)
-                mIoExecutor = null
-            }
-        }
+    @JvmStatic
+    fun submitWork(task: Runnable) = executor(ThreadType.THREAD_TYPE_WORK).submit(
+        task
+    )
+
+    @JvmStatic
+    fun submitIo(task: Runnable) = executor(ThreadType.THREAD_TYPE_IO).submit(
+        task
+    )
+    @JvmStatic
+    fun submitNet(task: Runnable) = executor(ThreadType.THREAD_TYPE_NET).submit(
+        task
+    )
+
+
+    @JvmStatic
+    fun <T> submit(type: ThreadType = ThreadType.THREAD_TYPE_WORK, task: Callable<T>) = executor(type).submit(
+        task
+    )
+
+    @JvmStatic
+    fun <T> submitWork(task: Callable<T>) = executor(ThreadType.THREAD_TYPE_WORK).submit(
+        task
+    )
+
+    @JvmStatic
+    fun <T> submitIo(task: Callable<T>) = executor(ThreadType.THREAD_TYPE_IO).submit(
+        task
+    )
+
+    @JvmStatic
+    fun <T> submitNet(task: Callable<T>) = executor(ThreadType.THREAD_TYPE_NET).submit(
+        task
+    )
+
+    @JvmStatic
+    fun execute(type: ThreadType = ThreadType.THREAD_TYPE_WORK, task: Runnable) = executor(type).execute(
+        task
+    )
+
+    @JvmStatic
+    fun executeWork(task: Runnable) = executor(ThreadType.THREAD_TYPE_WORK).execute(
+        task
+    )
+
+    @JvmStatic
+    fun executeIo(task: Runnable) = executor(ThreadType.THREAD_TYPE_IO).execute(
+        task
+    )
+
+    @JvmStatic
+    fun executeNet(task: Runnable) = executor(ThreadType.THREAD_TYPE_NET).execute(
+        task
+    )
+
+    @JvmStatic
+    fun isShutdown(type: ThreadType) = mExecutors[type]?.isShutdown ?: true
+
+    @JvmStatic
+    fun shutdown(type: ThreadType) = internalShutdown(mExecutors[type]).also {
+        mExecutors.remove(type)
     }
 
     @JvmStatic
-    fun shutdownNow(@ThreadType type: Int) {
-        when(type) {
-            THREAD_TYPE_WORK -> {
-                internalShutdown(mWorkExecutor, true)
-                mWorkExecutor = null
-            }
-
-            THREAD_TYPE_IO -> {
-                internalShutdown(mIoExecutor, true)
-                mIoExecutor = null
-            }
-
-            else -> null
-        }
+    fun shutdownNow(type: ThreadType) = internalShutdown(mExecutors[type], true).also {
+        mExecutors.remove(type)
     }
 
     private inline fun internalShutdown(executor: ExecutorService?, now: Boolean = false) {
@@ -125,25 +164,27 @@ object ThreadManager {
     fun release() {
         try {
             mLook.lock()
-            shutdownNow(THREAD_TYPE_WORK)
-            mWorkExecutor = null
-            shutdownNow(THREAD_TYPE_IO)
-            mIoExecutor = null
+            if (mExecutors.isEmpty()) {
+                return
+            }
+            mExecutors.forEach {
+                internalShutdown(it.value, false)
+            }
+            mExecutors.clear()
         } finally {
             mLook.unlock()
         }
     }
 
-    const val THREAD_TYPE_WORK = 1
-    const val THREAD_TYPE_IO = 2
-
-    @IntDef(THREAD_TYPE_WORK, THREAD_TYPE_IO)
-    @Retention(RetentionPolicy.SOURCE)
-    annotation class ThreadType
+    enum class ThreadType {
+        THREAD_TYPE_WORK,
+        THREAD_TYPE_IO,
+        THREAD_TYPE_NET
+    }
 
     class AppThreadFactory constructor(val name: String? = "app-thread") : ThreadFactory {
 
-        private val count = AtomicInteger()
+        private val count = AtomicLong()
 
         override fun newThread(r: Runnable): Thread {
             val realName = "$name-${count.incrementAndGet()}"

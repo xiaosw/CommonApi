@@ -720,7 +720,7 @@ public class AppUtils {
             callBackInMainThread(callBack, _isAppForeground(context));
             return;
         }
-        ThreadManager.execute(ThreadManager.THREAD_TYPE_WORK, new Runnable() {
+        ThreadManager.execute(ThreadManager.ThreadType.THREAD_TYPE_WORK, new Runnable() {
             @Override
             public void run() {
                 try {

@@ -25,7 +25,7 @@ class AppInitializer : Initializer<Unit> {
     override fun create(context: Context) {
         AndroidContext.init(context)
         AppConfig.isDebug = BuildConfig.DEBUG
-        ThreadManager.execute(ThreadManager.THREAD_TYPE_WORK, Runnable {
+        ThreadManager.execute(ThreadManager.ThreadType.THREAD_TYPE_WORK, Runnable {
             context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
                 ?.metaData?.let { metaData ->
                     DensityManager.init(context
