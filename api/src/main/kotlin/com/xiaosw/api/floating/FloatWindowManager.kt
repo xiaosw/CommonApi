@@ -6,6 +6,7 @@ import android.os.Build
 import android.provider.Settings
 import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.floating.internal.GlobalFloatWindowLayout
+import com.xiaosw.api.floating.internal.SingleFloatWindowLayout
 
 /**
  * ClassName: [FloatWindowManager]
@@ -19,11 +20,24 @@ object FloatWindowManager {
         mutableMapOf<Any, FloatWindowController?>()
     }
 
-    fun get(key: Any) = mDelegates[key]?.let {
-        it
-    } ?: GlobalFloatWindowLayout().also {
-        mDelegates[key] = it
+    @JvmStatic
+    @JvmOverloads
+    fun get(owner: Any, isGlobal: Boolean = true) : FloatWindowController {
+        val key = "${owner.hashCode()}_${if (isGlobal) "" else ""}"
+        mDelegates[key]?.let {
+            return it
+        }
+        return if (isGlobal) {
+            GlobalFloatWindowLayout().also {
+                mDelegates[key] = it
+            }
+        } else {
+            SingleFloatWindowLayout().also {
+                mDelegates[key] = it
+            }
+        }
     }
+
 
     fun canDrawOverlays() : Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M

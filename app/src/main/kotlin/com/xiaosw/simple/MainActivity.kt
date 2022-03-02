@@ -250,7 +250,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
     }
 
     private fun showFloatWindow() {
-        FloatWindowManager.get(this)
+        FloatWindowManager.get(this, true)
             .onlyAppForeground(true)
             .upAnimDuration(1_000)
             .show(TextView(this).apply {

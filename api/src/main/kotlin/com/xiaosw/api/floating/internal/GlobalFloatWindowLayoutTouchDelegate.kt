@@ -8,12 +8,12 @@ import android.view.WindowManager
 import com.xiaosw.api.util.ScreenUtil
 
 /**
- * ClassName: [GlobalFloatWindowTouchDelegate]
+ * ClassName: [GlobalFloatWindowLayoutTouchDelegate]
  * Description:
  *
  * Create by X at 2022/03/02 15:37.
  */
-internal class GlobalFloatWindowTouchDelegate {
+internal class GlobalFloatWindowLayoutTouchDelegate : FloatWindowLayoutTouchDelegate<GlobalFloatWindowLayout> {
     private val mLocationOnScreen by lazy {
         IntArray(2)
     }
@@ -29,7 +29,7 @@ internal class GlobalFloatWindowTouchDelegate {
     private var mLastRawY = 0f
     private var isDrag = false
 
-    fun attach(target: GlobalFloatWindowLayout) {
+    override fun attach(target: GlobalFloatWindowLayout) {
         if (isAttach) {
             return
         }
@@ -41,8 +41,7 @@ internal class GlobalFloatWindowTouchDelegate {
         isAttach = true
     }
 
-    fun handleDispatchTouchEvent(event: MotionEvent) : Boolean {
-        val params = target.layoutParams as WindowManager.LayoutParams
+    override fun handleDispatchTouchEvent(event: MotionEvent) : Boolean {
         val rawX = event.rawX
         val rawY = event.rawY
         when (event.action) {
@@ -56,10 +55,9 @@ internal class GlobalFloatWindowTouchDelegate {
                 val moveX: Float = rawX - mLastRawX
                 val moveY: Float = rawY - mLastRawY
                 if (moveX != 0F || moveY != 0F) {
-                    params.x += moveX.toInt()
-                    params.y += moveY.toInt()
-                    wm.updateViewLayout(target, params)
-                    isDrag = true
+                    if (target.onDrag(moveX, moveY)) {
+                        isDrag = true
+                    }
                 }
                 mLastRawX = rawX
                 mLastRawY = rawY
