@@ -2,6 +2,7 @@ package com.xiaosw.simple
 
 import android.content.*
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -16,13 +17,13 @@ import com.chad.library.adapter.base.BaseViewHolder
 import com.doudou.log.Logger
 import com.doudou.log.loge
 import com.xiaosw.api.annotation.AutoAdjustDensity
-import com.xiaosw.api.extend.dp2px
+import com.xiaosw.api.extend.*
+import com.xiaosw.api.floating.FloatWindowManager
 import com.xiaosw.api.manager.ActivityLifeManager
 import com.xiaosw.api.manager.DensityManager
 import com.xiaosw.api.netspeed.NetworkSpeedManager
 import com.xiaosw.api.netspeed.NetworkType
 import com.xiaosw.api.netspeed.OnNetworkBucketChangeListener
-import com.xiaosw.api.netspeed.Ping
 import com.xiaosw.api.restart.RestartAppManager
 import com.xiaosw.api.util.FpsMonitor
 import com.xiaosw.api.util.ToastUtil
@@ -78,7 +79,9 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         setContentView(R.layout.activity_main)
         ActivityLifeManager.register(this)
         Logger.e("onCreate")
-
+        tv_fps.onClick {
+            showFloatWindow()
+        }
         loge {
             """the json is: {"key":"value"}"""
         }
@@ -102,7 +105,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         })
 
         FpsMonitor.start(mFpsCallback)
-        NetworkSpeedManager.startTrack(this, 1_000)
+        NetworkSpeedManager.startTrack(this, 60_000)
         NetworkSpeedManager.register(monNetworkBucketChange)
 
         tv_text.setOnClickListener {
@@ -221,12 +224,12 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
 
         }
 
-        Ping.ping("www.baidu.com", 5, 1f, object : Ping.PingCallback {
-            override fun onPing(data: Ping.PingStatistics) {
-                tv_ping.text = "$data"
-            }
-
-        })
+//        Ping.ping("www.baidu.com", 5, 1f, object : Ping.PingCallback {
+//            override fun onPing(data: Ping.PingStatistics) {
+//                tv_ping.text = "$data"
+//            }
+//
+//        })
     }
 
     private fun changeIcon(className: String) {
@@ -243,6 +246,32 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
                 , PackageManager.COMPONENT_ENABLED_STATE_ENABLED
                 , PackageManager.DONT_KILL_APP)
             RestartAppManager.restartApp(this@MainActivity, true)
+        }
+    }
+
+    private fun showFloatWindow() {
+        FloatWindowManager.get(this)
+            .onlyAppForeground(true)
+            .upAnimDuration(1_000)
+            .show(TextView(this).apply {
+            text = "Hello FloatWindow"
+            textSize = dp2sp(18f)
+            setTextColor(Color.RED)
+            setPadding(20, 20, 20, 20)
+            onClick {
+                textSize = dp2sp(30f)
+                showToast("$text")
+            }
+        }).also {
+            it?.let {
+                loge {
+                    "show float window: ${it.isShowing()}"
+                }
+                return@also
+            }
+            if (!FloatWindowManager.canDrawOverlays()) {
+                FloatWindowManager.openDrawOverlays()
+            }
         }
     }
 
@@ -273,6 +302,7 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
 
     override fun onAppBackground(activeTime: Long) {
         Logger.i("onAppBackground：activeTime = $activeTime")
+//        FloatWindowManager.get(this).dismiss()
     }
 
     override fun onClick(v: View?) {
