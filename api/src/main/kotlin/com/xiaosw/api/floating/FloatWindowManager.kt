@@ -5,8 +5,10 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import com.xiaosw.api.AndroidContext
+import com.xiaosw.api.extend.isNotNull
 import com.xiaosw.api.floating.internal.GlobalFloatWindowLayout
 import com.xiaosw.api.floating.internal.SingleFloatWindowLayout
+import com.xiaosw.api.util.Utils
 
 /**
  * ClassName: [FloatWindowManager]
@@ -23,21 +25,25 @@ object FloatWindowManager {
     @JvmStatic
     @JvmOverloads
     fun get(owner: Any, isGlobal: Boolean = true) : FloatWindowController {
-        val key = "${owner.hashCode()}_${if (isGlobal) "" else ""}"
+        val key = createKey(owner, isGlobal)
         mDelegates[key]?.let {
             return it
         }
         return if (isGlobal) {
-            GlobalFloatWindowLayout().also {
+            GlobalFloatWindowLayout(owner).also {
                 mDelegates[key] = it
             }
         } else {
-            SingleFloatWindowLayout().also {
+            SingleFloatWindowLayout(owner).also {
                 mDelegates[key] = it
             }
         }
     }
 
+    @JvmOverloads
+    @JvmStatic
+    fun hasFloatingWindow(owner: Any, isGlobal: Boolean = true) =
+        mDelegates[createKey(owner, isGlobal)].isNotNull()
 
     fun canDrawOverlays() : Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
@@ -55,5 +61,13 @@ object FloatWindowManager {
             })
         }
     }
+
+    internal fun remove(owner: Any, isGlobal: Boolean = true) {
+        val key = createKey(owner, isGlobal)
+        mDelegates.remove(key)
+    }
+
+    private fun createKey(owner: Any, isGlobal: Boolean) =
+        "${owner.hashCode()}_${if (isGlobal) "global" else "single"}"
 
 }

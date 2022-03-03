@@ -153,7 +153,7 @@ class WeakHandler @JvmOverloads constructor (
         override fun run() {
             mChainedRef?.get()?.remove()
             mDelegate?.get()?.run {
-                Logger.v("weak runnable run: $this")
+//                Logger.v("weak runnable run: $this")
                 run()
             }
         }

@@ -26,7 +26,8 @@ class App : MultiDexApplication() {
         Logger.init(base,
             LogConfig(if (BuildConfig.DEBUG) Logger.Behavior.V_ALL else Logger.Behavior.V_ONLY_RECORD
             , "doudou---> "
-            , LogConfig.MAX_LEN
+            , LogConfig.MAX_LEN_TAG
+            , LogConfig.MAX_LEN_MESSAGE
             , LogFormat(enable = true, formatJson = true, "────────────────────────────────────────────────────────", "┌", "│", "└")
             , mutableListOf<Class<*>?>().also {
                 it.add(LogUtil::class.java)

@@ -2,43 +2,36 @@ package com.xiaosw.api.floating.internal
 
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ViewGroup
-import android.view.WindowManager
 import com.xiaosw.api.util.ScreenUtil
 
 /**
- * ClassName: [GlobalFloatWindowLayoutTouchDelegate]
+ * ClassName: [SingleFloatWindowLayoutTouchDelegate]
  * Description:
  *
  * Create by X at 2022/03/02 15:37.
  */
-internal class GlobalFloatWindowLayoutTouchDelegate : FloatWindowLayoutTouchDelegate {
-    private val mLocationOnScreen by lazy {
-        IntArray(2)
-    }
+internal class SingleFloatWindowLayoutTouchDelegate : FloatWindowLayoutTouchDelegate {
 
     private var isAttach = false
     private lateinit var target: FloatWindowLayout<*>
-    private lateinit var params: WindowManager.LayoutParams
+    private lateinit var params: ViewGroup.LayoutParams
     private lateinit var context: Context
-    private var mScreenCX = 0
-    private lateinit var wm: WindowManager
 
     private var mLastRawX = 0f
     private var mLastRawY = 0f
     private var isDrag = false
+    private var mScreenWidth = 0
 
     override fun attach(target: FloatWindowLayout<*>) {
         if (isAttach) {
             return
         }
         this.target = target
-        params = target.layoutParams as WindowManager.LayoutParams
+        params = target.layoutParams as ViewGroup.LayoutParams
         context = target.context
-        wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        mScreenCX = ScreenUtil.getScreenWidth(context) / 2
+        mScreenWidth = ScreenUtil.getScreenWidth(context)
         isAttach = true
     }
 
@@ -75,39 +68,17 @@ internal class GlobalFloatWindowLayoutTouchDelegate : FloatWindowLayoutTouchDele
     }
 
     private fun touchUpLocked() {
-        target.getLocationOnScreen(mLocationOnScreen)
-        val cx = mLocationOnScreen[0] + (target.width / 2)
-        val to = if (mScreenCX > cx) {
-            when {
-                params.gravity and Gravity.LEFT != 0 -> {
-                    0
-                }
-                params.gravity and Gravity.RIGHT != 0 -> {
-                    -(ScreenUtil.getScreenWidth(context) - target.width)
-                }
-                else -> {
-                    -(mScreenCX - target.width / 2)
-                }
-            }
+        val selfCX = target.x + target.width / 2
+        val to = if (mScreenWidth / 2 > selfCX) {
+            0f
         } else {
-            when {
-                params.gravity and Gravity.LEFT != 0 -> {
-                    (ScreenUtil.getScreenWidth(context) - target.width)
-                }
-                params.gravity and Gravity.RIGHT != 0 -> {
-                    0
-                }
-                else -> {
-                    mScreenCX - target.width / 2
-                }
-            }
+            (mScreenWidth - target.width) * 1F
         }
-        with(ObjectAnimator.ofInt(params.x, to)) {
+        with(ObjectAnimator.ofFloat(target.x, to)) {
             duration = target.upAnimDuration
             interpolator = target.upAnimInterceptor
             addUpdateListener {
-                params.x = it.animatedValue as Int
-                wm.updateViewLayout(target, params)
+                target.x = it.animatedValue as Float
             }
             start()
         }

@@ -8,8 +8,10 @@ import android.view.animation.Interpolator
 import android.widget.FrameLayout
 import com.xiaosw.api.AndroidContext
 import com.xiaosw.api.floating.FloatWindowController
+import com.xiaosw.api.floating.FloatWindowManager
 import com.xiaosw.api.floating.OnFloatWindowVisibilityChangeListener
 import com.xiaosw.api.register.RegisterDelegate
+import com.xiaosw.api.storage.DataStorageManager
 
 /**
  * ClassName: [FloatWindowLayout]
@@ -17,8 +19,9 @@ import com.xiaosw.api.register.RegisterDelegate
  *
  * Create by X at 2022/03/01 16:15.
  */
-internal abstract class FloatWindowLayout @JvmOverloads constructor(
-    context: Context = AndroidContext.get()
+internal abstract class FloatWindowLayout<T : FloatWindowLayoutTouchDelegate> @JvmOverloads constructor(
+    private val owner: Any
+    , context: Context = AndroidContext.get()
     , attrs: AttributeSet? = null
     , defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr)
@@ -28,7 +31,7 @@ internal abstract class FloatWindowLayout @JvmOverloads constructor(
         RegisterDelegate.createWeak<OnFloatWindowVisibilityChangeListener>()
     }
 
-    protected var mFloatingState = FloatingState.INIT
+    var mFloatingState = FloatingState.INIT
         private set(value) {
             if (field == value) {
                 return
@@ -61,15 +64,19 @@ internal abstract class FloatWindowLayout @JvmOverloads constructor(
 
     override fun clear() = mOnFloatWindowVisibilityChangeListeners.clear()
 
-    override fun show(child: View) : FloatWindowController {
+    override fun owner() = owner
+
+    override fun show(child: View) : Boolean {
         if (isShowing()) {
-            return this
+            return true
         }
-        if (addFloatingToWindow()) {
-            addView(child)
-            mFloatingState = FloatingState.SHOWING
+        val isAddedToWindow = addFloatingToWindow()
+        if (!isAddedToWindow) {
+           return false
         }
-        return this
+        addView(child)
+        mFloatingState = FloatingState.SHOWING
+        return true
     }
 
     override fun onlyAppForeground(onlyAppForeground: Boolean): FloatWindowController {
@@ -93,6 +100,9 @@ internal abstract class FloatWindowLayout @JvmOverloads constructor(
         }
         removeAllViews()
         mFloatingState = FloatingState.DISMISS
+        FloatWindowManager.remove(owner, isGlobal())
+        DataStorageManager.put(ownerKey(KEY_FLOATING_LOCATION_X), x)
+        DataStorageManager.put(ownerKey(KEY_FLOATING_LOCATION_Y), y)
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -120,10 +130,19 @@ internal abstract class FloatWindowLayout @JvmOverloads constructor(
         mFloatingState = state
     }
 
-    abstract fun providerTouchDelegate() : FloatWindowLayoutTouchDelegate<FloatWindowLayout>
+    protected fun ownerKey(key: String) = "${key}_${owner.hashCode()}"
+
+    abstract fun providerTouchDelegate() : T
 
     abstract fun addFloatingToWindow() : Boolean
 
     abstract fun onDrag(moveX: Float, moveY: Float) : Boolean
+
+    abstract fun isGlobal() : Boolean
+
+    internal companion object {
+        const val KEY_FLOATING_LOCATION_X = "key_floating_location_x"
+        const val KEY_FLOATING_LOCATION_Y = "key_floating_location_y"
+    }
 
 }

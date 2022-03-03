@@ -86,7 +86,7 @@ fun Context?.findActivity() : Activity? {
     return null
 }
 
-fun Context?.isDestroyed() : Boolean {
+fun Context?.isDestroyedCompat() : Boolean {
     val activity = findActivity()
     if (activity.isNull()) {
         return true

@@ -16,8 +16,9 @@ import com.doudou.log.record.LogRecordManager
 internal open class LogV(val config: LogConfig) : ILog {
 
     private val mInternalPreTag = config.preTag ?: ""
-    private val mMaxLen = config.maxLen
+    private val mMaxLen = config.messageMaxLen
     private val isOnlyRecord = config.behavior.behavior === Logger.BEHAVIOR_ONLY_RECORD
+    private val tagMaxLen = config.tagMaxLen
     private val mLoggerClassMap by lazy {
         mutableMapOf<String, Any?>().also {
             it[LOG_CLASS] = LOG_CLASS
@@ -177,8 +178,11 @@ internal open class LogV(val config: LogConfig) : ILog {
                     }
                     try {
                         if (!isOnlyRecord) {
+                            val realTag = if (printTag.length > tagMaxLen) {
+                                printTag.substring(0, tagMaxLen)
+                            } else printTag
                             PrinterFactory.create(config.format, hasJson)
-                                .println(priority, printTag, size, position, msg, threadName, isException)
+                                .println(priority, realTag, size, position, msg, threadName, isException)
                         }
                     } catch (ignore: Throwable){}
                 }

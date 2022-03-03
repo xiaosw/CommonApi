@@ -8,9 +8,9 @@ import android.view.MotionEvent
  *
  * Create by X at 2022/03/02 17:18.
  */
-internal interface FloatWindowLayoutTouchDelegate<T : FloatWindowLayout> {
+internal interface FloatWindowLayoutTouchDelegate {
 
-    fun attach(target: T)
+    fun attach(target: FloatWindowLayout<*>)
 
     fun handleDispatchTouchEvent(event: MotionEvent) : Boolean
 

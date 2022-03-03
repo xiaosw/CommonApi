@@ -11,12 +11,14 @@ import java.io.Serializable
 data class LogConfig @JvmOverloads constructor (
     val behavior: Logger.Behavior,
     val preTag: String? = null,
-    val maxLen: Int = MAX_LEN,
+    val tagMaxLen: Int = MAX_LEN_TAG,
+    val messageMaxLen: Int = MAX_LEN_MESSAGE,
     val format: LogFormat? = LogFormat(),
     val loggerWrapperClassList: MutableList<Class<*>?>? = null
 ) : Serializable {
     companion object {
-        const val MAX_LEN = 3000
+        const val MAX_LEN_TAG = 84
+        const val MAX_LEN_MESSAGE = 3000
     }
 }
 

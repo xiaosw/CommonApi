@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import com.doudou.log.Logger
 import com.xiaosw.api.AndroidContext
-import com.xiaosw.api.extend.isDestroyed
+import com.xiaosw.api.extend.isDestroyedCompat
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.showToast
 import com.xiaosw.api.init.Initializer1Delegate
@@ -42,7 +42,7 @@ object ActivityLifeManager : Application.ActivityLifecycleCallbacks,
 
     fun topActivity(): Activity? {
         val activity = mCurrentActivityRef?.get()
-        return if (activity.isDestroyed()) null else activity
+        return if (activity.isDestroyedCompat()) null else activity
     }
 
     private var mActiveStartTime = 0L

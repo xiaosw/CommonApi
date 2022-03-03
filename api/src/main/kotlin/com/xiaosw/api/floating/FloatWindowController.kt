@@ -12,7 +12,7 @@ import com.xiaosw.api.register.Register
  */
 interface FloatWindowController : Register<OnFloatWindowVisibilityChangeListener> {
 
-    fun show(view: View) : FloatWindowController
+    fun show(view: View) : Boolean
 
     fun dismiss()
 
@@ -23,5 +23,7 @@ interface FloatWindowController : Register<OnFloatWindowVisibilityChangeListener
     fun upAnimDuration(duration: Long = 500L) : FloatWindowController
 
     fun upAnimInterceptor(interceptor: Interpolator) : FloatWindowController
+
+    fun owner() : Any
 
 }

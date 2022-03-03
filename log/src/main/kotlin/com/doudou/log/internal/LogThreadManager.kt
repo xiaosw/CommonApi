@@ -28,7 +28,7 @@ internal object LogThreadManager {
 
     private val sLogRecordThread by lazy {
         ThreadPoolExecutor(0,
-            1,
+            3,
             60L,
             TimeUnit.SECONDS,
             LinkedBlockingQueue(),

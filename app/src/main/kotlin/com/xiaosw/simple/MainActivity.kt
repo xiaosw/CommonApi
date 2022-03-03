@@ -250,29 +250,27 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
     }
 
     private fun showFloatWindow() {
-        FloatWindowManager.get(this, true)
-            .onlyAppForeground(true)
+        FloatWindowManager.get("main_activity", false)
             .upAnimDuration(1_000)
-            .show(TextView(this).apply {
-            text = "Hello FloatWindow"
-            textSize = dp2sp(18f)
-            setTextColor(Color.RED)
-            setPadding(20, 20, 20, 20)
-            onClick {
-                textSize = dp2sp(30f)
-                showToast("$text")
-            }
-        }).also {
-            it?.let {
-                loge {
-                    "show float window: ${it.isShowing()}"
+            .run {
+                show(TextView(this@MainActivity).apply {
+                    text = "Hello FloatWindow"
+                    textSize = dp2sp(18f)
+                    setTextColor(Color.RED)
+                    setPadding(20, 20, 20, 20)
+                    onClick {
+                        textSize = dp2sp(30f)
+                        showToast("$text")
+                    }
+                }).also {
+                    loge {
+                        "show floating window: $it"
+                    }
+                    if (!FloatWindowManager.canDrawOverlays()) {
+                        FloatWindowManager.openDrawOverlays()
+                    }
                 }
-                return@also
             }
-            if (!FloatWindowManager.canDrawOverlays()) {
-                FloatWindowManager.openDrawOverlays()
-            }
-        }
     }
 
     private fun displaySwitchViewState(switchView: SwitchView) {
