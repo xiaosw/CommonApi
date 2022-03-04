@@ -1,0 +1,8 @@
+#!/bin/bash
+if [[ -n "$1" ]]; then
+	command="tasklist //fi \"PID eq $1\""
+	echo "execute 【 $command 】"
+	eval $command
+else
+	echo "pid can be not null!"
+fi

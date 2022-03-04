@@ -1,0 +1,8 @@
+#!/bin/bash
+if [[ -n "$1" ]]; then
+	command="taskkill //pid $1 //f"
+	echo "execute 【 $command 】"
+	eval $command
+else
+	echo "pid can be not null!"
+fi

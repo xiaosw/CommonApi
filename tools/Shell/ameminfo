@@ -1,0 +1,11 @@
+#!/bin/bash
+custom=""
+if [[ -n $1 ]]; then
+	custom=$1
+fi
+if [[ -n $2 ]]; then
+	custom="$custom | findstr $2"
+fi
+cmd="adb shell dumpsys meminfo $custom"
+echo "execute 【 $cmd 】"
+eval $cmd

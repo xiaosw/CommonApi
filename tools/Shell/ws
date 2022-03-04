@@ -1,0 +1,8 @@
+#!/bin/bash
+if [[ -n $1 ]]; then
+	command="java -jar /d/Dev/Tool/walle-cli-all.jar show $1"
+	echo "execute 【 $command 】"
+	eval $command
+else
+	echo "invalid path!"
+fi
