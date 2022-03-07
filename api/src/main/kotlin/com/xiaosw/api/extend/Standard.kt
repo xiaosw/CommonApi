@@ -2,9 +2,7 @@ package com.xiaosw.api.extend
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.PixelFormat
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Looper
@@ -189,6 +187,40 @@ inline fun Bitmap?.toDrawable(
         } ?: BitmapDrawable(bitmap)
     } ?: null
 }
+
+@JvmOverloads
+fun Bitmap?.scaleTo(dstWidth: Float, dstHeight: Float, useRatio: Boolean = true) = this?.let {
+    if (useRatio) {
+        return@let Bitmap.createScaledBitmap(it, dstWidth.toInt(), dstHeight.toInt(), false)
+    }
+    if (dstWidth === width.toFloat() && dstHeight === height.toFloat()) {
+        return this
+    }
+    val sx = dstWidth / width
+    val sy = dstHeight / height
+    val matrix = Matrix().apply {
+        setScale(sx, sy)
+    }
+    val out = Bitmap.createBitmap((width * sx).toInt(), (height * sy).toInt(), config)
+    Canvas(out).drawBitmap(this, matrix, Paint(Paint.ANTI_ALIAS_FLAG))
+    return@let out
+} ?: null
+
+@JvmOverloads
+fun Bitmap?.roundTo(rx: Float, ry: Float) = this?.let {
+    if (rx < 0 || ry < 0) {
+        return@let it
+    }
+    val rectF = RectF(0F, 0F, it.width * 1F, it.height * 1F)
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    val out = Bitmap.createBitmap(width, height, config)
+    with(Canvas(out)) {
+        drawRoundRect(rectF, rx, ry, paint)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        drawBitmap(this@roundTo, 0F, 0f, paint)
+    }
+    out
+} ?: null
 
 inline fun Drawable.toBitmap() : Bitmap? {
     if (this is BitmapDrawable) {
