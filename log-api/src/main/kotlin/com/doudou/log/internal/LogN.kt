@@ -1,12 +1,14 @@
 package com.doudou.log.internal
 
+import com.doudou.log.api.ILog
+
 /**
  * ClassName: [LogN]
  * Description:
  *
  * Create by X at 2021/11/12 16:57.
  */
-internal class LogN : ILog {
+class LogN : ILog {
     override val enable: Boolean
         get() = false
 

@@ -2,9 +2,10 @@ package com.doudou.log
 
 import android.content.Context
 import android.util.Log
-import com.doudou.log.internal.ILog
-import com.doudou.log.internal.LogFactory
-import com.doudou.log.record.LogRecordManager
+import com.doudou.log.api.ILog
+import com.doudou.log.api.ILogFactory
+import com.doudou.log.api.ILogRecord
+import com.doudou.log.internal.LogN
 
 /**
  * ClassName: [Logger]
@@ -16,20 +17,43 @@ object Logger {
 
     internal const val NONE = -1
     private const val BEHAVIOR_NONE = NONE
-    internal const val BEHAVIOR_ONLY_PRINT = 1
-    internal const val BEHAVIOR_ONLY_RECORD = 2
+    const val BEHAVIOR_ONLY_PRINT = 1
+    const val BEHAVIOR_ONLY_RECORD = 2
     private const val BEHAVIOR_ALL = 4
 
-    private var mLog: ILog = LogFactory.create(LogConfig(Behavior.NONE))
+    var logRecord: ILogRecord? = null
+    var logFactory: ILogFactory? = null
+        set(value) {
+            field = value
+            internalInitLocked()
+        }
+    private var mLog: ILog = LogN()
+    private var mLogConfig: LogConfig? = null
+        private set(value) {
+            field = value
+            internalInitLocked()
+        }
 
     val enable = mLog.enable
 
     @JvmStatic
     fun init(context: Context, config: LogConfig) {
-        mLog = LogFactory.create(config)
-        LogRecordManager.init(context, config)
-
+        mLogConfig = config
     }
+
+    private fun internalInitLocked() {
+        mLogConfig?.let {
+            logFactory?.apply {
+                mLog = create(it)
+            }
+        }
+    }
+
+    @JvmStatic
+    fun getLogFiles() = logRecord?.getLogFiles()
+
+    @JvmStatic
+    fun getLogOutDir() = logRecord?.getLogOutDir()
 
     @JvmStatic
     @JvmOverloads

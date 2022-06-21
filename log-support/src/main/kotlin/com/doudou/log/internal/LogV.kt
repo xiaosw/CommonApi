@@ -3,6 +3,7 @@ package com.doudou.log.internal
 import android.util.Log
 import com.doudou.log.LogConfig
 import com.doudou.log.Logger
+import com.doudou.log.api.ILog
 import com.doudou.log.format.JsonPrinter
 import com.doudou.log.format.PrinterFactory
 import com.doudou.log.record.LogRecordManager

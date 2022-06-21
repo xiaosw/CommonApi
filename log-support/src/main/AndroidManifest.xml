@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.doudou.log">
+    package="com.doudou.log.support">
+
+    <application>
+        <provider
+            android:authorities="${applicationId}.log.AutoInjectProvider"
+            android:name="com.doudou.log.inject.AutoInjectProvider"
+            android:enabled="true"
+            android:exported="false"/>
+    </application>
 
 </manifest>

@@ -41,15 +41,14 @@ android {
 dependencies {
     implementation rootProject.ext.core_ktx
     implementation rootProject.ext.kotlin
-    implementation project(":log-api")
 }
 
-String jarNamePrefix = "log_support"
-String classDir = "log-support"
+String jarNamePrefix = "log_api"
+String classDir = "log-api"
 String versionNamePrefix = ""
 task makeJar(type: Jar, dependsOn: build) {
     versionNamePrefix = jarNamePrefix + "_v%1s.jar"
-    classDir = "log-support"
+    classDir = "log"
     String verName = String.format(versionNamePrefix, android.defaultConfig.versionName)
 
     //删除存在的

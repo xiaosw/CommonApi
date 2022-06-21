@@ -1,8 +1,9 @@
 package com.doudou.log.record
 
-import android.content.Context
+import com.doudou.log.AndroidContext
 import com.doudou.log.LogConfig
 import com.doudou.log.Logger
+import com.doudou.log.api.ILogRecord
 import com.doudou.log.logw
 
 
@@ -12,20 +13,21 @@ import com.doudou.log.logw
  *
  * Create by X at 2022/01/20 09:43.
  */
-object LogRecordManager : ILogRecordOpen {
+object LogRecordManager : ILogRecord {
 
     private var mRecord: ILogRecordInternal = LogRecordIgnore()
 
-    internal fun init(context: Context, config: LogConfig) {
+    internal fun init(config: LogConfig) {
         if (config.behavior == Logger.Behavior.NONE
             || config.behavior.behavior == Logger.BEHAVIOR_ONLY_PRINT) {
             logw("app disable save log to disk.")
             return
         }
-        context?.let {
+        AndroidContext.get()?.let {
             (it.externalCacheDir ?: it.cacheDir)?.absolutePath?.let { cacheDir ->
                 if (cacheDir.isNotEmpty()) {
                     mRecord = LogRecordWrite("$cacheDir/logger/record")
+                    Logger.logRecord = mRecord
                 }
             }
         }

@@ -1,4 +1,4 @@
-package com.doudou.log.internal
+package com.doudou.log.api
 
 /**
  * ClassName: [ILog]
@@ -6,7 +6,7 @@ package com.doudou.log.internal
  *
  * Create by X at 2021/11/12 16:57.
  */
-internal interface ILog {
+interface ILog {
 
     val enable: Boolean
 

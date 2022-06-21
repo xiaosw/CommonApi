@@ -1,14 +1,14 @@
-package com.doudou.log.record
+package com.doudou.log.api
 
 import java.io.File
 
 /**
- * ClassName: [ILogRecordOpen]
+ * ClassName: [ILogRecord]
  * Description:
  *
  * Create by X at 2022/01/21 18:24.
  */
-interface ILogRecordOpen {
+interface ILogRecord {
 
     fun getLogFiles() : List<File>?
 
