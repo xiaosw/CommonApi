@@ -31,5 +31,5 @@ dependencies {
     api fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     api 'android.arch.work:work-runtime:1.0.1'
 
-    api project(":log")
+    api project(':log-support')
 }

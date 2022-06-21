@@ -1,5 +1,5 @@
 include ':keep'
-include ':log'
+include ':log-support'
 include ':http'
 include ':track'
 include ':api', ':compat', ':ui', ':app'
