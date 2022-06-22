@@ -46,6 +46,14 @@
 -keepattributes SourceFile,LineNumberTable
 # 混淆采用的算法
 -optimizations !code/simplification/cast,!field/*,!class/merging/*
+# 可以把你的代码以及所使用到的各种第三方库代码统统移动到同一个包下， 默认根目录
+-repackageclasses
+# 指定一个混淆类名、成员变量名、方法名的字典。默认情况下代码命名会被混淆成 abcdefg
+-obfuscationdictionary rule_obfuscation.txt
+# 混淆类名的字典
+#-classobfuscationdictionary rule_classobfuscation.txt
+# 混淆包名的字典
+#-packageobfuscationdictionary rule_pkgobfuscation.txt
 
 # dump.txt文件列出apk包内所有class的内部结构
 -dump class_files.txt
