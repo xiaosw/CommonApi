@@ -5,13 +5,12 @@ import com.doudou.http.location.ServerLocationManager
 import com.doudou.http.params.ClientParams
 import com.doudou.http.params.ClientParams.Companion.EMPTY_COMMON_PARAMS
 import com.doudou.http.request.HttpRequestDelegate
-import com.xiaosw.api.delegate.CallbackDelegate
-import com.xiaosw.api.delegate.JsonDelegate
-import com.xiaosw.api.delegate.safeCallFail
-import com.xiaosw.api.delegate.safeCallSuccess
+import com.doudou.log.Logger
+import com.xiaosw.api.delegate.*
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.tryCatch
 import com.xiaosw.api.manager.DispatcherManager
+import com.xiaosw.api.wrapper.GsonWrapper
 
 /**
  * ClassName: [HttpManager]
@@ -22,8 +21,8 @@ import com.xiaosw.api.manager.DispatcherManager
  */
 object HttpManager : ClientParams {
     private var mClientParams: ClientParams? = null
-    private lateinit var mCipherDelegate: CipherDelegate
-    private lateinit var mHttpRequestDelegate: HttpRequestDelegate
+    private var mCipherDelegate: CipherDelegate = CipherDelegate.DEF_CIPHER
+    private var mHttpRequestDelegate: HttpRequestDelegate = HttpRequestDelegate.DEF_HTTP_REQUEST
 
     var jsonParse: JsonDelegate = JsonDelegate.DEF
 
@@ -35,8 +34,12 @@ object HttpManager : ClientParams {
     fun init(params: ClientParams?, cipher: CipherDelegate = CipherDelegate.DEF_CIPHER,
              httpRequest: HttpRequestDelegate = HttpRequestDelegate.DEF_HTTP_REQUEST) {
         mClientParams = params
-        mCipherDelegate = cipher
-        mHttpRequestDelegate = httpRequest
+        cipher?.let {
+            mCipherDelegate = it
+        }
+        httpRequest?.let {
+            mHttpRequestDelegate = it
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -48,10 +51,10 @@ object HttpManager : ClientParams {
     override val token: String
         get() = mClientParams?.token ?: ""
 
-    override val commonParams: Map<String?, String?>
+    override val commonParams: MutableMap<String?, Any?>
         get() = mClientParams?.commonParams ?: EMPTY_COMMON_PARAMS
 
-    override val secondCommonParams: Map<String?, String?>
+    override val secondCommonParams: MutableMap<String?, Any?>
         get() = mClientParams?.secondCommonParams ?: EMPTY_COMMON_PARAMS
 
     ///////////////////////////////////////////////////////////////////////////
@@ -78,11 +81,32 @@ object HttpManager : ClientParams {
                 }
             }
         }
-        mHttpRequestDelegate.request(request, mCipherDelegate, object : CallbackDelegate<String> {
+        val startReqNs = System.nanoTime()
+        val nlh = Logger.logConfig?.format?.formatLineHeader ?: ""
+        Logger.i {
+            val h = if (!request.headerMap?.isNullOrEmpty()) {
+                "\n${nlh}header = ${GsonWrapper.toJson(request.headerMap)}"
+            } else ""
+            "req: $startReqNs " +
+                    "\n${nlh}url = $url" +
+                    "\n${nlh}method = ${request.method}$h" +
+                    "\n${nlh}et = ${request.encryptType}" +
+                    "\n${nlh}ep = ${GsonWrapper.toJson(mCipherDelegate?.en(params, request.encryptType))}" +
+                    "\n${nlh}dp = ${GsonWrapper.toJson(request.params)}"
+        }
+        mHttpRequestDelegate.request(request, mCipherDelegate, object : CallbackDelegate2<String, MutableMap<String?, Any?>> {
 
-            override fun onSuccess(s: String) {
+            override fun onSuccess(result: String, ext: MutableMap<String?, Any?>?) {
+                Logger.i {
+                    "resp: $startReqNs " +
+                            "\n${nlh}url = $url" +
+                            "\n${nlh}method = ${request.method}" +
+                            "\n${nlh}et = ${request.encryptType}" +
+                            "\n${nlh}ep = $result" +
+                            "\n${nlh}dp = ${mCipherDelegate?.de(result, request.encryptType)}"
+                }
                 tryCatch {
-                    convertResponse(s, callback)?.let {
+                    convertResponse(result, callback)?.let {
                         safeCallSuccess(callback, it)
                     } ?: safeCallFail(callback, "convert response error")
                     return
@@ -90,6 +114,12 @@ object HttpManager : ClientParams {
             }
 
             override fun onFailure(code: Int?, reason: String?) {
+                Logger.e {
+                    "resp: $startReqNs " +
+                            "\n${nlh}url = $url" +
+                            "\n${nlh}method = ${request.method}" +
+                            "\n${nlh}code = $code, reason = $reason"
+                }
                 safeCallFail(callback, reason)
             }
         })
@@ -103,11 +133,11 @@ object HttpManager : ClientParams {
      * @param headerMap
      * @param callback
      */
-    fun postGzip(url: String?, content: String?, headerMap: Map<String?, String?>? = null,
+    fun postGzip(url: String?, content: String?, headerMap: MutableMap<String?, Any?>? = null,
                  callback: CallbackDelegate<String>?) {
-        mHttpRequestDelegate.postGzip(url, content, headerMap, object : CallbackDelegate<String>{
-            override fun onSuccess(s: String) {
-                callback.safeCallSuccess(s)
+        mHttpRequestDelegate.postGzip(url, content, headerMap, object : CallbackDelegate2<String, MutableMap<String?, Any?>>{
+            override fun onSuccess(result: String, ext: MutableMap<String?, Any?>?) {
+                callback.safeCallSuccess(result)
             }
 
             override fun onFailure(code: Int?, reason: String?) {

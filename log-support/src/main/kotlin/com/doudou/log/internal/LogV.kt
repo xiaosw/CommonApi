@@ -28,7 +28,7 @@ internal open class LogV(val config: LogConfig) : ILog {
             config?.loggerWrapperClassList?.forEach { logClass ->
                 logClass?.name?.let { javaClass ->
                     it[javaClass] = javaClass
-                    if (!javaClass.endsWith("Kt")) {
+                    if (!javaClass.endsWith(KT)) {
                         val javaClassKt = "$javaClass$KT"
                         it[javaClassKt] = javaClassKt
                     }
@@ -111,7 +111,15 @@ internal open class LogV(val config: LogConfig) : ILog {
             var lastClassIsLogUtils= false
             for (position in 0 until size) {
                 val e: StackTraceElement = get(position)
-                val isLogClass = mLoggerClassMap.containsKey(e.className)
+//                val isLogClass = mLoggerClassMap.containsKey(e.className)
+                val className = e.className
+                var isLogClass = false
+                for (key in mLoggerClassMap.keys) {
+                    if (className.startsWith(key)) {
+                        isLogClass = true
+                        break
+                    }
+                }
                 if (!isLogClass && lastClassIsLogUtils) { // Target Class
                     traceOffset = position
                     break

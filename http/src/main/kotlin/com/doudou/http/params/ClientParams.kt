@@ -28,15 +28,15 @@ interface ClientParams {
      * 一级公参
      * @return
      */
-    val commonParams: Map<String?, String?>?
+    val commonParams: MutableMap<String?, Any?>?
 
     /**
      * 二级公参
      * @return
      */
-    val secondCommonParams: Map<String?, String?>?
+    val secondCommonParams: MutableMap<String?, Any?>?
 
     companion object {
-        val EMPTY_COMMON_PARAMS: MutableMap<String?, String?> = mutableMapOf()
+        val EMPTY_COMMON_PARAMS: MutableMap<String?, Any?> = mutableMapOf()
     }
 }

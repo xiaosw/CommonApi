@@ -33,7 +33,7 @@ object GsonWrapper {
     fun <T> fromJson(json: String?, typeOfT: Type) : T = gson().fromJson(json, typeOfT)
 
     @JvmStatic
-    fun toJson(obj: Any) = gson().toJson(obj)
+    fun toJson(obj: Any?) = gson().toJson(obj)
 
     /**
      * 格式化 log

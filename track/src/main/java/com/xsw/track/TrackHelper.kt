@@ -49,7 +49,7 @@ object TrackHelper {
     ) {
         val widgetName = name ?: ""
         createdView?.run {
-            Logger.i("onCreateView: parent = $parent, name = $widgetName, createdView = $createdView")
+//            Logger.i("onCreateView: parent = $parent, name = $widgetName, createdView = $createdView")
             onCreateViewWrapperIntercept?.onInterceptCreateView(parent, widgetName, context, attrs, createdView)
         }
     }

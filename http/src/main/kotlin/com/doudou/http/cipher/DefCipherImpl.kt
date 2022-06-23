@@ -8,11 +8,11 @@ package com.doudou.http.cipher
  * Create by X at 2021/06/25 17:16.
  */
 class DefCipherImpl : CipherDelegate() {
-    override fun javaBase64En(params: Map<String?, String?>?): Map<String?, String?>? {
+    override fun javaBase64En(params: MutableMap<String?, Any?>?): MutableMap<String?, Any?>? {
         return params
     }
 
-    override fun javaBpSingEn(params: Map<String?, String?>?): Map<String?, String?>? {
+    override fun javaBpSingEn(params: MutableMap<String?, Any?>?): MutableMap<String?, Any?>?? {
         return params
     }
 

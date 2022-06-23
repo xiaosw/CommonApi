@@ -6,6 +6,7 @@ import com.doudou.http.cipher.CipherDelegate
 import com.doudou.http.cipher.CipherType
 import com.doudou.log.Logger
 import com.xiaosw.api.delegate.CallbackDelegate
+import com.xiaosw.api.delegate.CallbackDelegate2
 import com.xiaosw.api.delegate.safeCallFail
 import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.tryCatch
@@ -22,7 +23,7 @@ import java.lang.Exception
  */
 abstract class HttpRequestDelegate {
 
-    fun preCheckPostGzip(url: String?, content: String?, callback: CallbackDelegate<*>? = null) : Boolean {
+    fun preCheckPostGzip(url: String?, content: String?, callback: CallbackDelegate2<*, MutableMap<String?, Any?>>? = null) : Boolean {
         if (hasNull(url)) {
             callback.safeCallFail(ERROR_URL_ILLEGAL,"url 异常")
             return false
@@ -35,9 +36,9 @@ abstract class HttpRequestDelegate {
     }
 
     fun en(cipher: CipherDelegate, cipherType: CipherType?
-           , content: Map<String?, String?>?) : Map<String?, String?> {
+           , content: MutableMap<String?, Any?>?) : MutableMap<String?, Any?> {
         if (content.isNullOrEmpty()) {
-            return mapOf()
+            return mutableMapOf()
         }
         return cipher?.tryCatch {
             cipherType?.let {
@@ -65,7 +66,7 @@ abstract class HttpRequestDelegate {
 
     fun request(httpRequest: HttpRequest,
                 cipherDelegate: CipherDelegate,
-                callback: CallbackDelegate<String>? = null) {
+                callback: CallbackDelegate2<String, MutableMap<String?, Any?>>? = null) {
         if (!httpRequest.isValid) {
             callback.safeCallFail(ERROR, "request params illegal!")
             return
@@ -94,16 +95,16 @@ abstract class HttpRequestDelegate {
     protected abstract fun request(url: String,
                                    method: HttpMethod,
                                    retryCount: Int,
-                                   ep: Map<String?, String?>,
-                                   headerMap: Map<String?, String?>,
+                                   ep: MutableMap<String?, Any?>,
+                                   headerMap: MutableMap<String?, Any?>,
                                    cipherType: CipherType,
                                    cipherDelegate: CipherDelegate,
-                                   callback: CallbackDelegate<String>? = null)
+                                   callback: CallbackDelegate2<String, MutableMap<String?, Any?>>? = null)
 
     abstract fun postGzip(url: String?,
                           content: String?,
-                          headerMap: Map<String?, String?>? = null,
-                          callback: CallbackDelegate<String>?)
+                          headerMap: MutableMap<String?, Any?>? = null,
+                          callback: CallbackDelegate2<String, MutableMap<String?, Any?>>?)
 
     companion object {
         val DEF_HTTP_REQUEST by lazy {

@@ -2,6 +2,7 @@ package com.xiaosw.simple
 
 import android.content.Context
 import androidx.multidex.MultiDexApplication
+import com.doudou.http.HttpManager
 import com.doudou.log.LogConfig
 import com.doudou.log.LogFormat
 import com.doudou.log.Logger
@@ -31,6 +32,7 @@ class App : MultiDexApplication() {
             , LogFormat(enable = true, formatJson = true, "────────────────────────────────────────────────────────", "┌", "│", "└")
             , mutableListOf<Class<*>?>().also {
                 it.add(LogUtil::class.java)
+//                it.add(HttpManager::class.java)
             }))
         //WelcomeActivity为原启动页，注意不限进程,放在最上面，上面不要有其他初始化(MultiDex.install除外)
 //        if(KeepAliveManager.attachBaseContext(this, null)){

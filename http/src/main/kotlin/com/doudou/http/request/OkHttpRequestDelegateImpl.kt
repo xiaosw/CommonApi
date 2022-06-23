@@ -4,8 +4,8 @@ import com.doudou.http.HttpMethod
 import com.doudou.http.cipher.CipherDelegate
 import com.doudou.http.cipher.CipherType
 import com.doudou.http.interceptor.GzipInterceptor
-import com.doudou.http.interceptor.HttpLoggingInterceptor
 import com.xiaosw.api.delegate.CallbackDelegate
+import com.xiaosw.api.delegate.CallbackDelegate2
 import com.xiaosw.api.delegate.safeCallFail
 import com.xiaosw.api.delegate.safeCallSuccess
 import okhttp3.*
@@ -27,7 +27,7 @@ open class OkHttpRequestDelegateImpl : HttpRequestDelegate() {
         OkHttpClient.Builder()
                 .connectTimeout(TIME_OUT_CONNECT, TimeUnit.MILLISECONDS)
                 .readTimeout(TIME_OUT_READ, TimeUnit.MILLISECONDS)
-                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+//                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
                 .build()
     }
 
@@ -36,18 +36,18 @@ open class OkHttpRequestDelegateImpl : HttpRequestDelegate() {
                 .connectTimeout(TIME_OUT_CONNECT, TimeUnit.MILLISECONDS)
                 .readTimeout(TIME_OUT_READ, TimeUnit.MILLISECONDS)
                 .addInterceptor(GzipInterceptor())
-                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+//                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
                 .build()
     }
 
-    override fun request(url: String, method: HttpMethod, retryCount: Int, ep: Map<String?, String?>,
-                         headerMap: Map<String?, String?>, cipherType: CipherType,
-                         cipherDelegate: CipherDelegate, callback: CallbackDelegate<String>?) {
+    override fun request(url: String, method: HttpMethod, retryCount: Int, ep: MutableMap<String?, Any?>,
+                         headerMap: MutableMap<String?, Any?>, cipherType: CipherType,
+                         cipherDelegate: CipherDelegate, callback: CallbackDelegate2<String, MutableMap<String?, Any?>>?) {
         if (method == HttpMethod.GET) {
             HttpUrl.parse(url)?.newBuilder()?.let { urlBuilder ->
                 ep.keys?.forEach {
                     it?.let {
-                        urlBuilder.addQueryParameter(it, ep[it] ?: "")
+                        urlBuilder.addQueryParameter(it, ep[it]?.toString())
                     }
                 }
                 Request.Builder().url(urlBuilder.build()).get()
@@ -56,14 +56,14 @@ open class OkHttpRequestDelegateImpl : HttpRequestDelegate() {
             Request.Builder().url(url).post(FormBody.Builder().also { formBuilder ->
                 ep.keys?.forEach {
                     it?.apply {
-                        formBuilder.add(it, ep[it] ?: "")
+                        formBuilder.add(it, ep[it]?.toString())
                     }
                 }
             }.build())
         }?.also { builder ->
             headerMap.keys?.forEach {
                 it?.let {
-                    builder.addHeader(it, headerMap[it] ?: "")
+                    builder.addHeader(it, headerMap[it]?.toString())
                 }
             }
         }?.build()?.run {
@@ -74,8 +74,8 @@ open class OkHttpRequestDelegateImpl : HttpRequestDelegate() {
     }
 
     override fun postGzip(url: String?, content: String?,
-                          headerMap: Map<String?, String?>?,
-                          callback: CallbackDelegate<String>?) {
+                          headerMap: MutableMap<String?, Any?>?,
+                          callback: CallbackDelegate2<String, MutableMap<String?, Any?>>?) {
         try {
             if (!preCheckPostGzip(url, content, callback)) {
                 return
@@ -99,7 +99,7 @@ open class OkHttpRequestDelegateImpl : HttpRequestDelegate() {
             }).also { builder ->
                 headerMap?.entries?.forEach {
                     it?.let {
-                        builder.addHeader("${it.key}", it.value ?: "")
+                        builder.addHeader("${it.key}", it.value?.toString())
                     }
                 }
             }.build()
@@ -117,7 +117,7 @@ open class OkHttpRequestDelegateImpl : HttpRequestDelegate() {
             retryCount: Int = 0,
             cipher: CipherDelegate,
             cipherType: CipherType?,
-            callback: CallbackDelegate<String>?
+            callback: CallbackDelegate2<String, MutableMap<String?, Any?>>?
     ) = object : Callback {
 
         private var requestCount = 0
@@ -133,7 +133,13 @@ open class OkHttpRequestDelegateImpl : HttpRequestDelegate() {
 
         override fun onResponse(call: Call, response: Response?) {
             response?.body()?.string()?.let {
-                callback.safeCallSuccess(de(cipher, cipherType, it))
+                val ext = mutableMapOf<String?, Any?>()
+                response?.headers()?.let { headers ->
+                    headers.names().forEach { headerKey ->
+                        ext[headerKey] = headers.values(headerKey)
+                    }
+                }
+                callback.safeCallSuccess(de(cipher, cipherType, it), ext)
             } ?: callback.safeCallFail(ERROR, "服务器异常")
         }
     }

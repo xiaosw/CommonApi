@@ -1,7 +1,10 @@
 package com.doudou.http.interceptor;
 
 
+import com.doudou.log.LogConfig;
+import com.doudou.log.LogFormat;
 import com.doudou.log.Logger;
+import com.xiaosw.api.util.Utils;
 
 import kotlin.text.Charsets;
 import okhttp3.*;
@@ -109,40 +112,55 @@ public class HttpLoggingInterceptor implements Interceptor {
         boolean hasRequestBody = requestBody != null;
 
         Connection connection = chain.connection();
-        String requestStartMessage = "--> "
-                + request.method()
-                + ' ' + request.url()
-                + (connection != null ? " " + connection.protocol() : "");
-        if (!logHeaders && hasRequestBody) {
-            requestStartMessage += " (" + requestBody.contentLength() + "-byte body)";
+        final long startNs = System.nanoTime();
+        String nlh = "";
+        LogConfig logConfig = Logger.INSTANCE.getLogConfig();
+        if (null != logConfig) {
+            LogFormat logFormat = logConfig.getFormat();
+            if (null != logFormat) {
+                String lh = logFormat.getFormatLineHeader();
+                if (null != lh) {
+                    nlh = lh;
+                }
+            }
         }
-        Logger.i(requestStartMessage);
-
+        Logger.INSTANCE.getLogConfig().getFormat().getFirstFormatLineHeader();
+        StringBuffer sb = new StringBuffer("request --> id = ").append(startNs).append("\n")
+                .append(nlh).append("url = ").append(request.url()).append("\n")
+                .append(nlh).append("method = ").append(request.method()).append("\n")
+                .append(nlh).append("protocol = ").append(connection != null ? " " + connection.protocol() : "").append("\n");
+        if (!logHeaders && hasRequestBody) {
+            sb.append(" (" + requestBody.contentLength() + "-byte body)\n");
+        }
         if (logHeaders) {
             if (hasRequestBody) {
                 // Request body headers are only present when installed as a network interceptor. Force
                 // them to be included (when available) so there values are known.
                 if (requestBody.contentType() != null) {
-                    Logger.i("Content-Type: " + requestBody.contentType());
+                    sb.append(nlh).append("Content-Type: ").append(requestBody.contentType()).append("\n");
                 }
                 if (requestBody.contentLength() != -1) {
-                    Logger.i("Content-Length: " + requestBody.contentLength());
+                    sb.append(nlh).append("Content-Length: ").append(requestBody.contentLength()).append("\n");
                 }
             }
 
             Headers headers = request.headers();
-            for (int i = 0, count = headers.size(); i < count; i++) {
-                String name = headers.name(i);
-                // Skip headers from the request body as they are explicitly logged above.
-                if (!"Content-Type".equalsIgnoreCase(name) && !"Content-Length".equalsIgnoreCase(name)) {
-                    Logger.i(name + ": " + headers.value(i));
+            if (null != headers && headers.size() > 0) {
+                sb.append(nlh).append("\n")
+                        .append(nlh).append("Header:\n");
+                for (int i = 0, count = headers.size(); i < count; i++) {
+                    String name = headers.name(i);
+                    // Skip headers from the request body as they are explicitly logged above.
+                    if (!"Content-Type".equalsIgnoreCase(name) && !"Content-Length".equalsIgnoreCase(name)) {
+                        sb.append(nlh).append(name).append(": ").append(headers.value(i)).append("\n");
+                    }
                 }
             }
 
             if (!logBody || !hasRequestBody) {
-                Logger.i("--> END " + request.method());
+                sb.append(nlh).append("--> END ").append(request.method());
             } else if (bodyHasUnknownEncoding(request.headers())) {
-                Logger.i("--> END " + request.method() + " (encoded body omitted)");
+                sb.append(nlh).append("--> END ").append(request.method()).append(" (encoded body omitted)");
             } else {
                 Buffer buffer = new Buffer();
                 requestBody.writeTo(buffer);
@@ -152,49 +170,51 @@ public class HttpLoggingInterceptor implements Interceptor {
                 if (contentType != null) {
                     charset = contentType.charset(UTF8);
                 }
-
-                Logger.i("");
                 if (isPlaintext(buffer)) {
                     String result = buffer.readString(charset);
-                    Logger.i("request: " + result);
-                    Logger.i("--> END " + request.method()
-                            + " (" + requestBody.contentLength() + "-byte body)");
+                    sb.append(nlh).append("Params: ").append(result).append("\n")
+                            .append(nlh).append("--> END ").append(request.method()).append(" (").append(requestBody.contentLength()).append("-byte body)");
                 } else {
-                    Logger.i("--> END " + request.method() + " (binary "
-                            + requestBody.contentLength() + "-byte body omitted)");
+                    sb.append(nlh).append("--> END ").append(request.method()).append(" (binary ")
+                            .append(requestBody.contentLength()).append("-byte body omitted)");
                 }
             }
+            Logger.i(sb.toString());
         }
 
-        long startNs = System.nanoTime();
         Response response;
         try {
             response = chain.proceed(request);
         } catch (Exception e) {
-            Logger.e("<-- HTTP FAILED: " + e);
+            Logger.e(sb.toString(), Logger.findTag(), e);
             throw e;
         }
+        sb = new StringBuffer().append("response --> id = ").append(startNs).append("\n")
+                .append(nlh).append("url = ").append(request.url()).append("\n")
+                .append(nlh).append("method = ").append(request.method());
         long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
 
         ResponseBody responseBody = response.body();
         long contentLength = responseBody.contentLength();
         String bodySize = contentLength != -1 ? contentLength + "-byte" : "unknown-length";
-        Logger.i("<-- "
-                + response.code()
-                + (response.message().isEmpty() ? "" : ' ' + response.message())
-                + ' ' + response.request().url()
-                + " (" + tookMs + "ms" + (!logHeaders ? ", " + bodySize + " body" : "") + ')');
-
+        sb.append("\n").append(nlh).append("code = ").append(response.code()).append("\n")
+                .append(nlh).append("message = ").append(response.message()).append("\n")
+                .append(nlh).append("duration = ").append(tookMs).append("ms\n");
         if (logHeaders) {
             Headers headers = response.headers();
+            sb.append(nlh).append("\n").append(nlh).append("Header:");
             for (int i = 0, count = headers.size(); i < count; i++) {
-                Logger.i(headers.name(i) + ": " + headers.value(i));
+                String v = headers.value(i);
+                if (!Utils.isEmpty(v)) {
+                    v = v.replace("[", "【").replace("]", "】");
+                }
+                sb.append("\n").append(nlh).append(headers.name(i)).append(": ").append(v);
             }
 
             if (!logBody || !HttpHeaders.hasBody(response)) {
-                Logger.i("<-- END HTTP");
+//                sb.append(nlh).append("<-- END HTTP");
             } else if (bodyHasUnknownEncoding(response.headers())) {
-                Logger.i("<-- END HTTP (encoded body omitted)");
+//                sb.append(nlh).append("<-- END HTTP (encoded body omitted)");
             } else {
                 BufferedSource source = responseBody.source();
                 source.request(Long.MAX_VALUE); // Buffer the entire body.
@@ -222,26 +242,27 @@ public class HttpLoggingInterceptor implements Interceptor {
                 }
 
                 if (!isPlaintext(buffer)) {
-                    Logger.i("");
-                    Logger.i("<-- END HTTP (binary " + buffer.size() + "-byte body omitted)");
+                    sb.append(nlh).append("<-- END HTTP (binary " + buffer.size() + "-byte body omitted)");
+                    Logger.i(sb.toString());
                     return response;
                 }
 
                 if (contentLength != 0) {
-                    Logger.i("");
                     String result = buffer.clone().readString(charset);
-                    Logger.i(result);
+                    sb.append(nlh).append("\n").append(nlh).append("result: ").append(result);
                 }
 
                 if (gzippedLength != null) {
-                    Logger.i("<-- END HTTP (" + buffer.size() + "-byte, "
+                    sb.append("\n").append(nlh).append("<-- END HTTP (" + buffer.size() + "-byte, "
                             + gzippedLength + "-gzipped-byte body)");
                 } else {
-                    Logger.i("<-- END HTTP (" + buffer.size() + "-byte body)");
+                    sb.append("\n").append(nlh).append("<-- END HTTP (" + buffer.size() + "-byte body)");
                 }
             }
+        } else {
+            sb.append(nlh).append("body size: ").append(bodySize);
         }
-
+        Logger.i(sb.toString());
         return response;
     }
 

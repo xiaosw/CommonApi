@@ -25,8 +25,8 @@ class HttpRequest(
      * 加密方式
      */
     val encryptType: CipherType,
-    params: MutableMap<String?, String?>,
-    header: Map<String?, String?>,
+    params: MutableMap<String?, Any?>,
+    header: MutableMap<String?, Any?>,
     retryCount: Int,
     addCommonParams: Boolean,
     addSecondCommonParams: Boolean
@@ -35,12 +35,12 @@ class HttpRequest(
     /**
      * 请求参数
      */
-    private val mParams: MutableMap<String?, String?>
+    private val mParams: MutableMap<String?, Any?>
 
     /**
      * 请求头参数
      */
-    var headerMap: Map<String?, String?>
+    var headerMap: MutableMap<String?, Any?>
 
     /**
      * 重试次数
@@ -56,7 +56,7 @@ class HttpRequest(
      * 是否需要添加二级公参
      */
     val isAddSecondCommonParams: Boolean
-    val params: MutableMap<String?, String?>
+    val params: MutableMap<String?, Any?>
         get() = mParams
     val isValid: Boolean
         get() = !url.trimEmptyOrNullChar() && !method.isNull()
@@ -65,8 +65,8 @@ class HttpRequest(
         private var mUrl: String? = null
         private var mMethod: HttpMethod? = null
         private var mEncryptType: CipherType? = null
-        private var mParams: MutableMap<String?, String?>? = null
-        private var mHeader: Map<String?, String?>? = null
+        private var mParams: MutableMap<String?, Any?>? = null
+        private var mHeader: MutableMap<String?, Any?>? = null
         private var mRetryCount = 1
         private var addCommonParams = true
         private var addSecondCommonParams = true
@@ -85,12 +85,12 @@ class HttpRequest(
             return this
         }
 
-        fun setParams(params: MutableMap<String?, String?>?): Builder {
+        fun setParams(params: MutableMap<String?, Any?>?): Builder {
             mParams = params
             return this
         }
 
-        fun setHeader(header: Map<String?, String?>?): Builder {
+        fun setHeader(header: MutableMap<String?, Any?>?): Builder {
             mHeader = header
             return this
         }

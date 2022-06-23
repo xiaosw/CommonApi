@@ -28,7 +28,7 @@ object Logger {
             internalInitLocked()
         }
     private var mLog: ILog = LogN()
-    private var mLogConfig: LogConfig? = null
+    var logConfig: LogConfig? = null
         private set(value) {
             field = value
             internalInitLocked()
@@ -38,11 +38,11 @@ object Logger {
 
     @JvmStatic
     fun init(context: Context, config: LogConfig) {
-        mLogConfig = config
+        logConfig = config
     }
 
     private fun internalInitLocked() {
-        mLogConfig?.let {
+        logConfig?.let {
             logFactory?.apply {
                 mLog = create(it)
             }

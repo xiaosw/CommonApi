@@ -14,9 +14,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import com.doudou.http.HttpManager
+import com.doudou.http.HttpMethod
+import com.doudou.http.HttpRequest
 import com.doudou.log.Logger
 import com.doudou.log.loge
 import com.xiaosw.api.annotation.AutoAdjustDensity
+import com.xiaosw.api.delegate.CallbackDelegate
 import com.xiaosw.api.extend.*
 import com.xiaosw.api.floating.FloatWindowManager
 import com.xiaosw.api.manager.ActivityLifeManager
@@ -230,6 +234,27 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
 //            }
 //
 //        })
+        HttpManager.request(HttpRequest.Builder()
+            .setUrl("https://center.mfsnake.com/config/cloud")
+            .setMethod(HttpMethod.POST)
+            .setParams(mutableMapOf<String?, Any?>().also {
+                it["username"] = "admin"
+                it["password"] = "123456"
+            })
+            .build(), object : CallbackDelegate<String> {
+            override fun onSuccess(result: String) {
+                Logger.e {
+                    result
+                }
+            }
+
+            override fun onFailure(code: Int?, reason: String?) {
+                Logger.e {
+                    "code = $code, reason = $reason"
+                }
+            }
+
+        })
     }
 
     private fun changeIcon(className: String) {
