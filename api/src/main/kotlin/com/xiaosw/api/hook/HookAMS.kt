@@ -3,6 +3,8 @@ package com.xiaosw.api.hook
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Build
+import com.doudou.log.Logger
+import com.xiaosw.api.extend.isNull
 import com.xiaosw.api.extend.tryCatch
 
 /**
@@ -20,7 +22,13 @@ internal object HookAMS : BaseHook() {
     }
 
     private inline fun internalHookAMS() : Boolean {
-        var target = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        var target = /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // ActivityTaskManager
+            HookUtil.safe2Class("android.app.ActivityTaskManager")?.run {
+                // IActivityTaskManagerSingleton
+                HookUtil.getDeclaredField(this, "IActivityTaskManagerSingleton")?.get(null)
+            }
+        } else*/ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // IActivityManagerSingleton
             HookUtil.getDeclaredField(
                 ActivityManager::class.java
@@ -38,16 +46,31 @@ internal object HookAMS : BaseHook() {
 
     private inline fun proxyAms(obj: Any) = obj.tryCatch {
         // Singleton Field
-        val mInstanceField = HookUtil.safe2Class("android.util.Singleton")
-            ?.getDeclaredField("mInstance")?.also {
+        val mSingletonClazz = HookUtil.safe2Class("android.util.Singleton")
+            ?: return@tryCatch false
+
+        var mInstanceField = mSingletonClazz?.getDeclaredField("mInstance")?.also {
                 it.isAccessible = true
+            } ?: return@tryCatch false
+
+        // IActivityManager/IActivityTaskManager
+        var targetProxy = mInstanceField.get(obj)
+        if (null == targetProxy) {
+            mSingletonClazz?.getDeclaredMethod("get").also {
+                it.isAccessible = true
+                it.invoke(obj)?.also {
+                    targetProxy = mSingletonClazz?.getDeclaredField("mInstance")?.let { mInstance ->
+                        mInstance.isAccessible = true
+                        mInstance.get(obj)
+                    }
+                }
             }
-            ?: return false
 
-        // IActivityManager
-        val iActivityManager = mInstanceField?.get(obj) ?: return false
-
-        return proxy(mInstanceField, obj, iActivityManager)
+        }
+        if (null == targetProxy) {
+            return@tryCatch false
+        }
+        return proxy(mInstanceField, obj, targetProxy)
     } ?: false
 
 }
