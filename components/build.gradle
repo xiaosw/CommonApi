@@ -1,0 +1,80 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdkVersion COMPILE_SDK_VERSION as int
+    buildToolsVersion BUILD_TOOLS_VERSION as String
+
+    defaultConfig {
+        minSdkVersion MIN_SDK_VERSION as int
+        targetSdkVersion TARGET_SDK_VERSION as int
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', '../proguard-rules-common.pro'
+        }
+    }
+
+    sourceSets.main {
+        java.srcDirs += "src/main/kotlin"
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'publicsuffixes.gz'
+    }
+}
+
+dependencies {
+    implementation rootProject.ext.core_ktx
+    implementation rootProject.ext.kotlin
+    implementation project(":log-api")
+}
+
+String jarNamePrefix = "component"
+String classDir = "components"
+String versionNamePrefix = ""
+task makeJar(type: Jar, dependsOn: build) {
+    versionNamePrefix = jarNamePrefix + "_v%1s.jar"
+    classDir = "log-support"
+    String verName = String.format(versionNamePrefix, android.defaultConfig.versionName)
+
+    //删除存在的
+    delete "build/libs/" + verName
+    archiveName = verName
+    String fromDir = "${projectDir}/build/intermediates/aar_main_jar/release/classes.jar"
+    from(project.zipTree(fromDir))
+    exclude('com/my/core/extra/logutilsimpl/**/*.class')
+    destinationDir = file('build/libs')
+}
+
+task makeAar(type: Copy, dependsOn: build) {
+    versionNamePrefix = jarNamePrefix + "_v%1s.aar"
+    String verName = String.format(versionNamePrefix, android.defaultConfig.versionName)
+
+    //删除存在的
+    delete "build/libs/" + verName
+    //设置拷贝的文件
+    from('build/outputs/aar/')
+    //打进jar包后的文件目录
+    into('build/libs/')
+    //将classes.jar放入build/libs/目录下
+    //include ,exclude参数来设置过滤
+    //（我们只关心classes.jar这个文件）
+    include("${classDir}-release.aar")
+    //重命名
+    rename("${classDir}-release.aar", verName)
+}

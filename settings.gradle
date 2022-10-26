@@ -1,3 +1,4 @@
+include ':components'
 include ':log-api'
 include ':keep'
 include ':log-support'

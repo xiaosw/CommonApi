@@ -106,37 +106,41 @@ internal open class LogV(val config: LogConfig) : ILog {
         if (!ignoreDisalbe && !enable) {
             return ""
         }
-        with(Thread.currentThread().stackTrace) {
-            var traceOffset = -1
-            var lastClassIsLogUtils= false
-            for (position in 0 until size) {
-                val e: StackTraceElement = get(position)
+        try {
+            with(Thread.currentThread().stackTrace) {
+                var traceOffset = -1
+                var lastClassIsLogUtils= false
+                for (position in 0 until size) {
+                    val e: StackTraceElement = get(position)
 //                val isLogClass = mLoggerClassMap.containsKey(e.className)
-                val className = e.className
-                var isLogClass = false
-                for (key in mLoggerClassMap.keys) {
-                    if (className.startsWith(key)) {
-                        isLogClass = true
+                    val className = e.className
+                    var isLogClass = false
+                    for (key in mLoggerClassMap.keys) {
+                        if (className.startsWith(key)) {
+                            isLogClass = true
+                            break
+                        }
+                    }
+                    if (!isLogClass && lastClassIsLogUtils) { // Target Class
+                        traceOffset = position
                         break
                     }
+                    lastClassIsLogUtils = isLogClass
                 }
-                if (!isLogClass && lastClassIsLogUtils) { // Target Class
-                    traceOffset = position
-                    break
+                if (traceOffset === -1) {
+                    return mInternalPreTag
                 }
-                lastClassIsLogUtils = isLogClass
+                with(get(traceOffset)) {
+                    var stackTrace: String = toString()
+                    stackTrace = stackTrace.substring(stackTrace.lastIndexOf(40.toChar()))
+                    var tag = "%s.%s%s"
+                    var callerClazzName: String = className
+                    callerClazzName = callerClazzName.substring(callerClazzName.lastIndexOf(".") + 1)
+                    return String.format(tag, "$mInternalPreTag$callerClazzName", methodName, stackTrace)
+                }
             }
-            if (traceOffset === -1) {
-                return mInternalPreTag
-            }
-            with(get(traceOffset)) {
-                var stackTrace: String = toString()
-                stackTrace = stackTrace.substring(stackTrace.lastIndexOf(40.toChar()), stackTrace.length)
-                var tag = "%s.%s%s"
-                var callerClazzName: String = className
-                callerClazzName = callerClazzName.substring(callerClazzName.lastIndexOf(".") + 1)
-                return String.format(tag, "$mInternalPreTag$callerClazzName", methodName, stackTrace)
-            }
+        } catch (e: Exception) {
+            //
         }
         return mInternalPreTag
     }
