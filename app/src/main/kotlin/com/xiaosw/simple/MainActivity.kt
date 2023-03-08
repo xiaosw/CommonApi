@@ -2,6 +2,7 @@ package com.xiaosw.simple
 
 import android.content.*
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ContextThemeWrapper
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -40,6 +42,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.random.Random
 
 /**
@@ -82,21 +86,21 @@ class MainActivity : AppCompatActivity(), ActivityLifeManager.AppLifecycleListen
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         ActivityLifeManager.register(this)
-        Logger.e("onCreate")
+        Logger.e("onCreate：${resources.configuration.locale}, ${resources.getString(R.string.app_str_home)}")
         tv_fps.onClick {
             showFloatWindow()
         }
-        loge {
-            """the json is: {"key":"value"}"""
-        }
-        loge {
-            """{"key":"value"}"""
-        }
-        loge {
-            """{"key":"value"} is json"""
-        }
-
-        LogUtil.loge("test LogUtil wrapper.")
+//        loge {
+//            """the json is: {"key":"value"}"""
+//        }
+//        loge {
+//            """{"key":"value"}"""
+//        }
+//        loge {
+//            """{"key":"value"} is json"""
+//        }
+//
+//        LogUtil.loge("test LogUtil wrapper.")
 
         registerReceiver(object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {

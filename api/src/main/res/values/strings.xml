@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">api</string>
+    <string name="str_language_lang">en</string>
+    <string name="str_language_country"></string>
 </resources>

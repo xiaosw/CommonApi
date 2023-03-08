@@ -2,6 +2,7 @@ package com.xiaosw.simple
 
 import android.content.Context
 import androidx.multidex.MultiDexApplication
+import com.doudou.api.manager.LanguageManager
 import com.doudou.http.HttpManager
 import com.doudou.log.LogConfig
 import com.doudou.log.LogFormat
@@ -12,6 +13,7 @@ import com.xiaosw.api.manager.UIModeManager
 import com.xiaosw.api.netspeed.NetworkSpeedManager
 import com.xiaosw.api.storage.DataStorageManager
 import com.xsw.track.jvmti.JVMTIManager
+import java.util.*
 
 /**
  * @ClassName: [App]
@@ -23,6 +25,8 @@ import com.xsw.track.jvmti.JVMTIManager
 class App : MultiDexApplication() {
 
     override fun attachBaseContext(base: Context) {
+//        val configuration = base.resources.configuration
+//        configuration.setLocale(Locale.ENGLISH)
         super.attachBaseContext(base)
         Logger.init(base,
             LogConfig(if (BuildConfig.DEBUG) Logger.Behavior.V_ALL else Logger.Behavior.V_ONLY_RECORD
@@ -63,6 +67,8 @@ class App : MultiDexApplication() {
             }
         })
         DataStorageManager.init(AppDataStorage(this))
+        LanguageManager.init(this)
+//        LanguageManager.switchAppLanguage(this, "zh", "")
         NetworkSpeedManager.init(this)
     }
 

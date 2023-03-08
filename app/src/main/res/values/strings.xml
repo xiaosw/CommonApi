@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CommonApi</string>
+    <string name="app_str_home">Home</string>
 </resources>
