@@ -34,7 +34,8 @@ object Logger {
             internalInitLocked()
         }
 
-    val enable = mLog.enable
+    var enable = mLog.enable
+        private set
 
     @JvmStatic
     fun init(context: Context, config: LogConfig) {
@@ -44,7 +45,9 @@ object Logger {
     private fun internalInitLocked() {
         logConfig?.let {
             logFactory?.apply {
-                mLog = create(it)
+                mLog = create(it).also {
+                    enable = it.enable
+                }
             }
         }
     }

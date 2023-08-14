@@ -19,6 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keeppackagenames com.doudou.log
 -keep class com.doudou.log.Logger* {
     *;
     public static <fields>;

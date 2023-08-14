@@ -47,7 +47,7 @@
 # 混淆采用的算法
 -optimizations !code/simplification/cast,!field/*,!class/merging/*
 # 可以把你的代码以及所使用到的各种第三方库代码统统移动到同一个包下， 默认根目录
--repackageclasses
+#-repackageclasses
 # 指定一个混淆类名、成员变量名、方法名的字典。默认情况下代码命名会被混淆成 abcdefg
 -obfuscationdictionary rule_obfuscation.txt
 # 混淆类名的字典
